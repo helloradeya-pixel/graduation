@@ -50,11 +50,9 @@ const LeadForm = () => {
 
       const res = await fetch('/api/lead', {
         method: 'POST',
-
         headers: {
           'Content-Type': 'application/json',
         },
-
         body: JSON.stringify(form),
       });
 
@@ -66,9 +64,17 @@ const LeadForm = () => {
         return;
       }
 
-      // META PIXEL LEAD EVENT
-      // @ts-ignore
-      fbq('track', 'Lead');
+      // =========================
+      // META PIXEL - LEAD EVENT
+      // =========================
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'Lead', {
+          content_name: 'Graduation Lead',
+          status: 'form_submit',
+          campus: campus,
+          budget: form.budget,
+        });
+      }
 
       const message = `Halo admin 👋
 
@@ -95,7 +101,6 @@ Boleh dibantu info detail paketnya ya 🙏`;
       });
     } catch (error) {
       console.log(error);
-
       alert('❌ Terjadi error');
     } finally {
       setLoading(false);
@@ -125,6 +130,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
   return (
     <section id="leadform" className="scroll-mt-32 bg-black py-28 text-white">
       <div className="mx-auto max-w-3xl px-8 md:px-16">
+
         {/* HEADER */}
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.4em] text-neutral-500">
@@ -142,6 +148,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
 
         {/* FORM */}
         <form onSubmit={handleSubmit} className="mt-12 space-y-4">
+
           <input
             name="name"
             value={form.name}
@@ -158,37 +165,15 @@ Boleh dibantu info detail paketnya ya 🙏`;
             className={fieldStyle}
           />
 
-          {/* DATE FIX */}
-          <div
-            className="
-              flex
-              h-[54px]
-              w-full
-              items-center
-              overflow-hidden
-              rounded-xl
-              border
-              border-white/10
-              bg-white/5
-              px-4
-            "
-          >
+          {/* DATE */}
+          <div className="flex h-[54px] w-full items-center overflow-hidden rounded-xl border border-white/10 bg-white/5 px-4">
             <input
               name="date"
               type="date"
               value={form.date}
               onChange={handleChange}
-              className="
-                date-input
-                w-full
-                bg-transparent
-                text-sm
-                text-white
-                outline-none
-              "
-              style={{
-                colorScheme: 'dark',
-              }}
+              className="date-input w-full bg-transparent text-sm text-white outline-none"
+              style={{ colorScheme: 'dark' }}
             />
           </div>
 
@@ -198,29 +183,12 @@ Boleh dibantu info detail paketnya ya 🙏`;
             onChange={handleChange}
             className={fieldStyle}
           >
-            <option value="" className="bg-black text-neutral-500">
-              Pilih Range Budget
-            </option>
-
-            <option value="200K - 300K" className="bg-black">
-              200K - 300K
-            </option>
-
-            <option value="300K - 400K" className="bg-black">
-              300K - 400K
-            </option>
-
-            <option value="400K - 500K" className="bg-black">
-              400K - 500K
-            </option>
-
-            <option value="500K - 600K" className="bg-black">
-              500K - 600K
-            </option>
-
-            <option value="600K - 800K" className="bg-black">
-              600K - 800K
-            </option>
+            <option value="">Pilih Range Budget</option>
+            <option value="200K - 300K">200K - 300K</option>
+            <option value="300K - 400K">300K - 400K</option>
+            <option value="400K - 500K">400K - 500K</option>
+            <option value="500K - 600K">500K - 600K</option>
+            <option value="600K - 800K">600K - 800K</option>
           </select>
 
           <input
@@ -260,6 +228,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
           >
             {loading ? 'Mengirim...' : 'Kirim & Konsultasi Sekarang →'}
           </button>
+
         </form>
 
         {/* FOOTER */}
@@ -267,6 +236,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
           <span>🔒</span>
           <p>Data kamu aman & tidak akan dibagikan ke pihak lain</p>
         </div>
+
       </div>
     </section>
   );
