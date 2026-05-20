@@ -32,6 +32,24 @@ const LeadForm = () => {
     });
   };
 
+  const fireLeadEvent = () => {
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq(
+        'track',
+        'Lead',
+        {
+          content_name: 'Graduation Lead',
+          status: 'form_submit',
+          campus: form.campus,
+          budget: form.budget,
+        },
+        {
+          eventID: 'lead_' + Date.now(),
+        },
+      );
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -60,21 +78,11 @@ const LeadForm = () => {
 
       if (!data.success) {
         alert('❌ Gagal mengirim data ke Notion');
-        setLoading(false);
         return;
       }
 
-      // =========================
-      // META PIXEL - LEAD EVENT
-      // =========================
-      if (typeof window !== 'undefined' && (window as any).fbq) {
-        (window as any).fbq('track', 'Lead', {
-          content_name: 'Graduation Lead',
-          status: 'form_submit',
-          campus: campus,
-          budget: form.budget,
-        });
-      }
+      // FIRE META PIXEL LEAD
+      fireLeadEvent();
 
       const message = `Halo admin 👋
 
