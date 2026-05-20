@@ -13,6 +13,7 @@ const Footer = () => {
             <h3 className="text-xl font-semibold tracking-wide">
               Radeya Graduation
             </h3>
+
             <p className="mt-2 text-sm text-neutral-400">
               Capturing your final chapter in a cinematic way.
             </p>
@@ -28,6 +29,10 @@ const Footer = () => {
           {/* WA */}
           <Link
             href="https://wa.me/628211251570"
+            onClick={() => {
+              // @ts-ignore
+              fbq('track', 'Lead');
+            }}
             className="rounded-full border border-white/20 px-5 py-2 text-xs tracking-[0.2em] transition hover:bg-white hover:text-black"
           >
             KONSULTASI
