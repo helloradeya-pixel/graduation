@@ -66,6 +66,10 @@ const LeadForm = () => {
         return;
       }
 
+      // META PIXEL LEAD EVENT
+      // @ts-ignore
+      fbq('track', 'Lead');
+
       const message = `Halo admin 👋
 
 Saya mau tanya info paket & pricelist graduation photoshoot.
@@ -187,7 +191,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
               }}
             />
           </div>
-          
+
           <select
             name="budget"
             value={form.budget}
