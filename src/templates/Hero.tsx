@@ -8,7 +8,13 @@ const Hero = () => (
 
     {/* NAVBAR */}
     <div className="fixed left-0 top-0 z-50 flex w-full justify-end px-5 py-5 md:px-16 md:py-8">
-      <Link href="https://wa.me/628211251570">
+      <Link
+        href="https://wa.me/628211251570"
+        onClick={() => {
+          // @ts-ignore
+          fbq('track', 'Lead');
+        }}
+      >
         <button
           className="
             rounded-full
@@ -32,6 +38,10 @@ const Hero = () => (
     {/* FLOATING WHATSAPP BUTTON */}
     <Link
       href="https://wa.me/628211251570"
+      onClick={() => {
+        // @ts-ignore
+        fbq('track', 'Lead');
+      }}
       className="fixed bottom-5 right-5 z-50 md:bottom-6 md:right-6"
     >
       <div
