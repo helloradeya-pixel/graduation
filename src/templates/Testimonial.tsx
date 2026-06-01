@@ -21,7 +21,7 @@ const testimonials = [
   {
     name: 'Ghazy Rasyid',
     image: '/assets/images/client-1.jpg',
-    text: 'KERENNNNN!!!! bnrn bagus banget jujurrrr, kek apa ya. Awalnya ekspektasi yang fotografer biasa aja (awal liat di TikTok), tapi pas sesi foto sama mas nya, terus liat hasil nya, kacau brok bagus banget GILA. Admin nya ramah pula 😇😇😇. Sukses terus Radeyaaaa!!!! keren!!!.',
+    text: 'KERENNNNN!!!! bnrn bagus banget jujurrrr, awalnya ekspektasi biasa aja, tapi hasilnya GILA bagus banget. Admin ramah 👍 sukses terus Radeya!!!',
   },
 ];
 
@@ -55,7 +55,6 @@ const Testimonial = () => {
 
     const frame = requestAnimationFrame(animate);
 
-    // pause saat user touch / drag
     const stop = () => (paused.current = true);
     const start = () => (paused.current = false);
 
@@ -87,14 +86,27 @@ const Testimonial = () => {
             Trusted Moments, Captured Forever
           </h2>
 
+          {/* STATS */}
           <div className="mt-6 flex items-center gap-3 text-sm text-neutral-300">
             <div className="flex">
               <Star /><Star /><Star /><Star /><Star />
             </div>
 
             <span className="text-yellow-400 font-medium">4.9/5</span>
-
             <span className="text-neutral-400">• 1,200+ Reviews</span>
+          </div>
+
+          {/* CTA BUTTON */}
+          <div className="mt-6 flex flex-wrap gap-3">
+            <a
+              href="https://www.google.com/maps/place/Radeya+Photography/@-6.1958796,106.4616684,17z?hl=en&entry=ttu#reviews"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-white text-black px-5 py-2 text-sm font-medium transition hover:bg-neutral-200"
+            >
+              Lihat Google Reviews
+              <span className="text-lg">↗</span>
+            </a>
           </div>
         </div>
 
@@ -140,4 +152,3 @@ const Testimonial = () => {
 };
 
 export { Testimonial };
-
