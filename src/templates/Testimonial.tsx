@@ -11,7 +11,7 @@ const testimonials = [
   {
     name: 'Niken ayu wulandari',
     image: '/assets/images/client-2.jpg',
-    text: 'rekomendedd untuk foto wisuda dan acara kalian lainnya,jujur puass bangett sama hasilnyaa,yang gbisa gaya kaya akuu pasti sukaa karna kakaknya sabar dan mau mengarahkan posenyaa gaissss, jangan sampai nyesell karna ga pake radeya photography yaaaaa!!.',
+    text: 'rekomendedd untuk foto wisuda dan acara kalian lainnya,jujur puass bangett sama hasilnyaa,yang gbisa gaya kaya akuu pasti sukaa karna kakaknya sabar dan mau mengarahkan posenyaa gaissss.',
   },
   {
     name: 'Maritza Salwa Nabila',
@@ -21,7 +21,7 @@ const testimonials = [
   {
     name: 'Ghazy Rasyid',
     image: '/assets/images/client-1.jpg',
-    text: 'KERENNNNN!!!! bnrn bagus banget jujurrrr, awalnya ekspektasi biasa aja, tapi hasilnya GILA bagus banget. Admin ramah 👍 sukses terus Radeya!!!',
+    text: 'KERENNNNN!!!! awalnya ekspektasi biasa aja, tapi hasilnya GILA bagus banget. Admin ramah 👍 sukses terus Radeya!!!',
   },
 ];
 
@@ -86,7 +86,6 @@ const Testimonial = () => {
             Trusted Moments, Captured Forever
           </h2>
 
-          {/* STATS */}
           <div className="mt-6 flex items-center gap-3 text-sm text-neutral-300">
             <div className="flex">
               <Star /><Star /><Star /><Star /><Star />
@@ -94,19 +93,6 @@ const Testimonial = () => {
 
             <span className="text-yellow-400 font-medium">4.9/5</span>
             <span className="text-neutral-400">• 1,200+ Reviews</span>
-          </div>
-
-          {/* CTA BUTTON */}
-          <div className="mt-6 flex flex-wrap gap-3">
-            <a
-  href="https://www.google.com/maps?cid=0x2e4201b650f556b9:0x5dea0077ac2e825a"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="inline-flex items-center gap-2 rounded-full bg-white text-black px-5 py-2 text-sm font-medium transition hover:bg-neutral-200"
->
-  Lihat Google Reviews
-  <span className="text-lg">↗</span>
-</a>
           </div>
         </div>
 
@@ -144,6 +130,19 @@ const Testimonial = () => {
               </p>
             </div>
           ))}
+        </div>
+
+        {/* CTA BUTTON (BELOW SLIDER) */}
+        <div className="mt-10 flex justify-center">
+          <a
+            href="https://www.google.com/maps?cid=0x2e4201b650f556b9:0x5dea0077ac2e825a"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-white text-black px-6 py-3 text-sm font-medium transition hover:bg-neutral-200"
+          >
+            Lihat Google Reviews
+            <span className="text-lg">↗</span>
+          </a>
         </div>
 
       </div>
