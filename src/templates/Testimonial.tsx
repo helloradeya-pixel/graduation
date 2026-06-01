@@ -99,14 +99,14 @@ const Testimonial = () => {
           {/* CTA BUTTON */}
           <div className="mt-6 flex flex-wrap gap-3">
             <a
-              href="https://www.google.com/maps/place/Radeya+Photography/@-6.1958796,106.4616684,17z?hl=en&entry=ttu#reviews"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-white text-black px-5 py-2 text-sm font-medium transition hover:bg-neutral-200"
-            >
-              Lihat Google Reviews
-              <span className="text-lg">↗</span>
-            </a>
+  href="https://www.google.com/maps?cid=0x2e4201b650f556b9:0x5dea0077ac2e825a"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex items-center gap-2 rounded-full bg-white text-black px-5 py-2 text-sm font-medium transition hover:bg-neutral-200"
+>
+  Lihat Google Reviews
+  <span className="text-lg">↗</span>
+</a>
           </div>
         </div>
 
