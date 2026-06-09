@@ -155,9 +155,11 @@ const Hero = () => (
                 md:text-xl
               "
             >
-              From everyday moments to once-in-a-lifetime milestones,
+              From the quiet everyday moments
               <br />
-              we turn your story into something timeless.
+              to the milestones you only live once,
+              <br />
+              we turn your story into timeless memories.
             </p>
           </div>
 
@@ -200,7 +202,7 @@ const Hero = () => (
                 md:text-sm
               "
             >
-              Trusted by graduates across campuses
+                  Trusted by couples across journeys
             </p>
 
           </div>
