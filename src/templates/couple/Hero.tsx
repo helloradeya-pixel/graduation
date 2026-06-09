@@ -1,8 +1,7 @@
 import Link from 'next/link';
 
-import { Background } from '../background/Background';
-import { Button } from '../button/Button';
-
+import { Background } from './Background';
+import { Button } from './Button';
 const Hero = () => (
   <Background color="bg-black">
 
