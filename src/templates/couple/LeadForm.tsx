@@ -74,12 +74,12 @@ const LeadForm = () => {
 
       const message = `Halo admin 👋
 
-Saya ingin konsultasi fotografi:
+Saya mau tanya info paket & pricelist Photoshoot:
 
 Nama: ${name}
 Instagram: ${form.instagram || '-'}
 Domisili: ${form.domisili || '-'}
-Layanan: ${form.service || '-'}
+Pricelist: ${form.service || '-'}
 
 Mohon info detail paketnya ya 🙏`;
 
