@@ -1,4 +1,4 @@
-import { Couple } from '../templates/Couple';
+import { Couple } from '../templates/couple/couple';
 
 const CouplePage = () => <Couple />;
 
