@@ -14,7 +14,7 @@ export default function RadeyaphotoPage() {
           className="profile-img"
         />
 
-        <h1>Imagenic</h1>
+        <h1>Radeyaphoto</h1>
         <p>Photography & Videography</p>
 
         <div className="buttons">
