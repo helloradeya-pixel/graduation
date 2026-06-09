@@ -38,7 +38,7 @@ const Gallery = () => {
   }, []);
 
   return (
-    <section className="bg-black px-4 py-24 md:px-10">
+    <section className="bg-black px-4 py-20 md:px-10">
       <div className="mx-auto max-w-5xl">
 
         {/* HEADER */}
@@ -52,12 +52,12 @@ const Gallery = () => {
           </h2>
 
           <p className="mt-6 text-sm leading-relaxed text-neutral-400 md:text-base">
-            Love stories, captured in cinematic frames—timeless moments from engagement to wedding day.
+            Love stories captured in cinematic frames—timeless memories from engagement to wedding day.
           </p>
         </div>
 
-        {/* GRID 3x3 DI MOBILE */}
-        <div className="mt-16 grid grid-cols-3 gap-2 sm:grid-cols-3 md:grid-cols-3">
+        {/* GRID IG STYLE */}
+        <div className="mt-14 grid grid-cols-3 gap-2 sm:grid-cols-3 md:grid-cols-3">
           {images.map((img, i) => (
             <div
               key={img}
@@ -65,14 +65,14 @@ const Gallery = () => {
                 refs.current[i] = el;
               }}
               onClick={() => setActiveImage(img)}
-              className="item aspect-square overflow-hidden rounded-xl bg-neutral-900 cursor-pointer"
+              className="item aspect-[4/5] overflow-hidden rounded-xl bg-neutral-900 cursor-pointer"
               style={{ transitionDelay: `${i * 80}ms` }}
             >
               <img
                 src={img}
                 alt={`Gallery ${i + 1}`}
                 loading="lazy"
-                className="h-full w-full object-cover transition duration-700 ease-out hover:scale-110"
+                className="h-full w-full object-cover transition duration-700 ease-out hover:scale-110 hover:brightness-110"
               />
             </div>
           ))}
@@ -82,22 +82,23 @@ const Gallery = () => {
       {/* MODAL / LIGHTBOX */}
       {activeImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
           onClick={() => setActiveImage(null)}
         >
           <img
             src={activeImage}
             alt="Preview"
-            className="max-h-full max-w-full rounded-xl"
+            className="max-h-full max-w-full rounded-xl shadow-2xl"
           />
         </div>
       )}
 
+      {/* ANIMATION STYLE */}
       <style jsx>{`
         .item {
           opacity: 0;
           transform: translateY(30px);
-          transition: opacity 0.6s ease, transform 0.6s ease;
+          transition: opacity 0.7s ease, transform 0.7s ease;
         }
 
         .item.show {
