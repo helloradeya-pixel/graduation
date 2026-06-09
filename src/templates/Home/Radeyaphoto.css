@@ -28,6 +28,7 @@ body{
   border-radius:999px;
   border:6px solid #f5f3ef;
   object-fit:cover;
+  object-posisiont:center;
 }
 
 h1{
