@@ -28,7 +28,7 @@ export default function RadeyaphotoPage() {
         <div className="buttons">
 
           <a
-            href="https://wa.me/628211521570"
+            href="https://wa.me/628211251570"
             target="_blank"
             className="link-btn"
           >
