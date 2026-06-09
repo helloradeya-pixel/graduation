@@ -14,7 +14,7 @@ export default function RadeyaphotoPage() {
           className="profile-img"
         />
 
-        <h1>Radeyaphoto</h1>
+        <h1>radeyaphoto</h1>
         <p>
   Some memories live in soft light and silent smiles.
   <br />
