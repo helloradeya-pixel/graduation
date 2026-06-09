@@ -13,7 +13,7 @@ const Footer = () => {
           {/* BRAND */}
           <div>
             <h3 className="text-xl font-semibold tracking-wide">
-              Radeya Graduation
+              Radeya Photography
             </h3>
 
             <p className="mt-2 text-sm text-neutral-400">
@@ -43,7 +43,7 @@ const Footer = () => {
 
         {/* BOTTOM */}
         <div className="mt-12 border-t border-white/10 pt-6 text-center text-xs text-neutral-500">
-          © {new Date().getFullYear()} Radeya Graduation. All rights reserved.
+          © {new Date().getFullYear()} Radeya Photography. All rights reserved.
         </div>
 
       </div>
