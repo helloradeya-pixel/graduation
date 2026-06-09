@@ -58,7 +58,7 @@ export default function RadeyaphotoPage() {
       <Testimonial />
 
       {/* BOTTOM */}
-        <div className="mt-12 border-t border-white/10 pt-6 text-center text-xs text-neutral-500">
+        <div className="mt-12 border-t border-white/5 pt-6 text-center text-xs text-neutral-500">
           © {new Date().getFullYear()} Radeya Photography. All rights reserved.
         </div>
 
