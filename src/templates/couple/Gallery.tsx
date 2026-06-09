@@ -4,12 +4,12 @@ import { useEffect, useRef } from 'react';
 
 const Gallery = () => {
   const images: string[] = [
-    '/assets/images/ADS00529.jpg',
-    '/assets/images/ADS00598.jpg',
-    '/assets/images/ADS00467.jpg',
-    '/assets/images/ADS00008.jpg',
-    '/assets/images/ADS00119.jpg',
-    '/assets/images/ADS00128.jpg',
+    '/assets/images/images1.jpg',
+    '/assets/images/images2.jpg',
+    '/assets/images/images3.jpg',
+    '/assets/images/images4.jpg',
+    '/assets/images/images5.jpg',
+    '/assets/images/images6.jpg',
   ];
 
   const refs = useRef<(HTMLDivElement | null)[]>([]);
@@ -50,8 +50,7 @@ const Gallery = () => {
           </h2>
 
           <p className="mt-6 text-sm leading-relaxed text-neutral-400 md:text-base">
-            Kami mengabadikan momen graduation dengan pendekatan cinematic dan
-            timeless untuk setiap cerita yang kamu punya.
+            Love stories, captured in cinematic frames—timeless moments from engagement to wedding day.
           </p>
         </div>
 
