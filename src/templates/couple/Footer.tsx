@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+declare const fbq: any;
+
 const Footer = () => {
   return (
     <footer className="bg-black py-16 text-white">
