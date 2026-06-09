@@ -55,7 +55,7 @@ const LeadForm = () => {
     try {
       setLoading(true);
 
-      const res = await fetch('/api/lead', {
+      const res = await fetch('/api/wedding-lead', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
