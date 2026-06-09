@@ -26,7 +26,7 @@ const Button = (props: IButtonProps) => {
         }
 
         .btn-xl {
-          @apply font-extrabold text-xl py-2 px-4;
+          @apply font-semibold text-xl py-2 px-5;
         }
 
         .btn-primary {
