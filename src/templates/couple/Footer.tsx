@@ -17,7 +17,8 @@ const Footer = () => {
             </h3>
 
             <p className="mt-2 text-sm text-neutral-400">
-              Capturing your final chapter in a cinematic way.
+              A visual story
+of two hearts.
             </p>
           </div>
 
