@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const Gallery = () => {
   const images: string[] = [
@@ -16,6 +16,7 @@ const Gallery = () => {
   ];
 
   const refs = useRef<(HTMLDivElement | null)[]>([]);
+  const [activeImage, setActiveImage] = useState<string | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -26,9 +27,7 @@ const Gallery = () => {
           }
         });
       },
-      {
-        threshold: 0.15,
-      }
+      { threshold: 0.15 }
     );
 
     refs.current.forEach((el) => {
@@ -57,33 +56,48 @@ const Gallery = () => {
           </p>
         </div>
 
-        {/* GALLERY GRID (3x3 DESKTOP) */}
-        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+        {/* GRID 3x3 DI MOBILE */}
+        <div className="mt-16 grid grid-cols-3 gap-2 sm:grid-cols-3 md:grid-cols-3">
           {images.map((img, i) => (
             <div
               key={img}
               ref={(el) => {
                 refs.current[i] = el;
               }}
-              className="item aspect-[4/5] overflow-hidden rounded-2xl bg-neutral-900"
-              style={{ transitionDelay: `${i * 100}ms` }}
+              onClick={() => setActiveImage(img)}
+              className="item aspect-square overflow-hidden rounded-xl bg-neutral-900 cursor-pointer"
+              style={{ transitionDelay: `${i * 80}ms` }}
             >
               <img
                 src={img}
                 alt={`Gallery ${i + 1}`}
                 loading="lazy"
-                className="h-full w-full object-cover transition duration-700 ease-out hover:scale-105 hover:brightness-110"
+                className="h-full w-full object-cover transition duration-700 ease-out hover:scale-110"
               />
             </div>
           ))}
         </div>
       </div>
 
+      {/* MODAL / LIGHTBOX */}
+      {activeImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setActiveImage(null)}
+        >
+          <img
+            src={activeImage}
+            alt="Preview"
+            className="max-h-full max-w-full rounded-xl"
+          />
+        </div>
+      )}
+
       <style jsx>{`
         .item {
           opacity: 0;
-          transform: translateY(40px);
-          transition: opacity 0.8s ease, transform 0.8s ease;
+          transform: translateY(30px);
+          transition: opacity 0.6s ease, transform 0.6s ease;
         }
 
         .item.show {
