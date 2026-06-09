@@ -1,13 +1,13 @@
-import { Client } from '@notionhq/client';
-
-const notion = new Client({
-  auth: process.env.NOTION_TOKEN,
-});
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
+    // 👇 TEST CONNECTION DULU
+    await notion.databases.retrieve({
+      database_id: process.env.NOTION_WEDDING_DATABASE_ID!,
+    });
+
+    // kalau lolos, baru create page
     await notion.pages.create({
       parent: {
         database_id: process.env.NOTION_WEDDING_DATABASE_ID!,
@@ -17,9 +17,7 @@ export async function POST(req: Request) {
         Name: {
           title: [
             {
-              text: {
-                content: body.name || '',
-              },
+              text: { content: body.name || '' },
             },
           ],
         },
@@ -27,9 +25,7 @@ export async function POST(req: Request) {
         Instagram: {
           rich_text: [
             {
-              text: {
-                content: body.instagram || '',
-              },
+              text: { content: body.instagram || '' },
             },
           ],
         },
@@ -37,9 +33,7 @@ export async function POST(req: Request) {
         Domisili: {
           rich_text: [
             {
-              text: {
-                content: body.domisili || '',
-              },
+              text: { content: body.domisili || '' },
             },
           ],
         },
@@ -47,9 +41,7 @@ export async function POST(req: Request) {
         Service: {
           rich_text: [
             {
-              text: {
-                content: body.service || '',
-              },
+              text: { content: body.service || '' },
             },
           ],
         },
@@ -57,9 +49,7 @@ export async function POST(req: Request) {
         WhatsApp: {
           rich_text: [
             {
-              text: {
-                content: body.wa || '',
-              },
+              text: { content: body.wa || '' },
             },
           ],
         },
@@ -68,7 +58,7 @@ export async function POST(req: Request) {
 
     return Response.json({ success: true });
   } catch (error) {
-    console.error(error);
+    console.log('NOTION ERROR:', error);
 
     return Response.json(
       { success: false },
