@@ -57,7 +57,9 @@ const Banner = () => (
             md:text-xl
           "
         >
-        We capture your moments with intention, sensitivity, and timeless beauty. Tell your story with us.
+        We capture your moments with intention, sensitivity, and timeless beauty. 
+      <br />
+          Tell your story with us.
         </p>
 
         <div className="mt-10">
