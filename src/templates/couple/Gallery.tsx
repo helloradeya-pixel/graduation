@@ -10,6 +10,9 @@ const Gallery = () => {
     '/assets/images/images4.jpg',
     '/assets/images/images5.jpg',
     '/assets/images/images6.jpg',
+    '/assets/images/images7.jpg',
+    '/assets/images/images8.jpg',
+    '/assets/images/images9.jpg',
   ];
 
   const refs = useRef<(HTMLDivElement | null)[]>([]);
@@ -54,15 +57,15 @@ const Gallery = () => {
           </p>
         </div>
 
-        {/* GALLERY GRID */}
-        <div className="mt-16 grid gap-6 md:grid-cols-2">
+        {/* GALLERY GRID (3x3 DESKTOP) */}
+        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
           {images.map((img, i) => (
             <div
               key={img}
               ref={(el) => {
                 refs.current[i] = el;
               }}
-              className="item overflow-hidden rounded-2xl bg-neutral-900"
+              className="item aspect-[4/5] overflow-hidden rounded-2xl bg-neutral-900"
               style={{ transitionDelay: `${i * 100}ms` }}
             >
               <img
