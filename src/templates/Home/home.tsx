@@ -15,15 +15,16 @@ export default function RadeyaphotoPage() {
         />
 
         <h1>Radeyaphoto</h1>
+
         <p>
-  Some memories live in soft light and silent smiles.
-  <br />
-  I capture them so years from now,
-  <br />
-  you’ll remember not just how it looked,
-  <br />
-  but how it felt.
-</p>
+          Some memories live in soft light and silent smiles.
+          <br />
+          I capture them so years from now,
+          <br />
+          you’ll remember not just how it looked,
+          <br />
+          but how it felt.
+        </p>
 
         <div className="buttons">
 
@@ -55,6 +56,11 @@ export default function RadeyaphotoPage() {
       </div>
 
       <Testimonial />
+
+      {/* FOOTER TEXT */}
+      <div className="footer-text">
+        © {new Date().getFullYear()} Radeya Photography. All rights reserved.
+      </div>
 
     </div>
   );
