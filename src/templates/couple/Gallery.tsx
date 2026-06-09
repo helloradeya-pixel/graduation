@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 
 const Gallery = () => {
-  const images = [
+  const images: string[] = [
     '/assets/images/ADS00529.jpg',
     '/assets/images/ADS00598.jpg',
     '/assets/images/ADS00467.jpg',
@@ -19,27 +19,26 @@ const Gallery = () => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('show-gallery');
+            entry.target.classList.add('show');
           }
         });
       },
       {
         threshold: 0.15,
-      },
+      }
     );
 
     refs.current.forEach((el) => {
       if (el) observer.observe(el);
     });
 
-    return () => {
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, []);
 
   return (
     <section className="bg-black px-4 py-24 md:px-10">
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto max-w-5xl">
+
         {/* HEADER */}
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-xs uppercase tracking-[0.4em] text-neutral-500">
@@ -51,30 +50,27 @@ const Gallery = () => {
           </h2>
 
           <p className="mt-6 text-sm leading-relaxed text-neutral-400 md:text-base">
-            Kami percaya setiap perjalanan memiliki detail yang layak dihormati.
-            Dari momen paling sederhana hingga hari paling penting, kami
-            menerjemahkannya menjadi visual yang tenang, elegan, dan abadi.
+            Kami mengabadikan momen graduation dengan pendekatan cinematic dan
+            timeless untuk setiap cerita yang kamu punya.
           </p>
         </div>
 
-        {/* GALLERY */}
-        <div className="mt-16 space-y-6">
+        {/* GALLERY GRID */}
+        <div className="mt-16 grid gap-6 md:grid-cols-2">
           {images.map((img, i) => (
             <div
-              key={i}
+              key={img}
               ref={(el) => {
                 refs.current[i] = el;
               }}
-              className="gallery-item group overflow-hidden rounded-2xl bg-neutral-900"
-              style={{
-                transitionDelay: `${i * 120}ms`,
-              }}
+              className="item overflow-hidden rounded-2xl bg-neutral-900"
+              style={{ transitionDelay: `${i * 100}ms` }}
             >
               <img
                 src={img}
                 alt={`Gallery ${i + 1}`}
                 loading="lazy"
-                className="w-full object-cover transition-all duration-700 ease-out group-hover:scale-[1.03] group-hover:brightness-110"
+                className="h-full w-full object-cover transition duration-700 ease-out hover:scale-105 hover:brightness-110"
               />
             </div>
           ))}
@@ -82,17 +78,15 @@ const Gallery = () => {
       </div>
 
       <style jsx>{`
-        .gallery-item {
+        .item {
           opacity: 0;
-          transform: translateY(80px) scale(0.96);
-          transition:
-            opacity 1s ease,
-            transform 1s ease;
+          transform: translateY(40px);
+          transition: opacity 0.8s ease, transform 0.8s ease;
         }
 
-        .gallery-item.show-gallery {
+        .item.show {
           opacity: 1;
-          transform: translateY(0) scale(1);
+          transform: translateY(0);
         }
       `}</style>
     </section>
