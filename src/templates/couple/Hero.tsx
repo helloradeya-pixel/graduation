@@ -100,7 +100,7 @@ const Hero = () => (
               md:text-sm
             "
           >
-            More than portraits.
+            More than just memories.
           </p>
 
           {/* HEADING */}
@@ -117,7 +117,7 @@ const Hero = () => (
           >
             A visual story
             {'\n'}
-            of your final chapter.
+            of two hearts.
           </h1>
 
           {/* DESCRIPTION */}
@@ -133,8 +133,7 @@ const Hero = () => (
               md:text-xl
             "
           >
-            Crafted for graduates who want their memories
-            to feel timeless, emotional, and cinematic.
+            We capture love in its most honest and timeless form.
           </p>
 
           {/* BUTTON */}
@@ -156,11 +155,9 @@ const Hero = () => (
                 md:text-xl
               "
             >
-              Dari perjalanan panjang menuju hari kelulusan
+              From everyday moments to once-in-a-lifetime milestones,
               <br />
-              hingga momen kecil yang tak sempat diulang
-              <br />
-              setiap cerita layak dikenang dengan indah.
+              we turn your story into something timeless.
             </p>
           </div>
 
