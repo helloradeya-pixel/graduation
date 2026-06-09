@@ -17,7 +17,7 @@ export default function RadeyaphotoPage() {
         <h1>Radeyaphoto</h1>
         <p>
   Some memories live in soft light and silent smiles.
-  <br /><br />
+  <br />
   I capture them so years from now,
   <br />
   you’ll remember not just how it looked,
