@@ -6,7 +6,7 @@ const Banner = () => (
   <section className="relative h-screen w-full overflow-hidden">
     {/* BACKGROUND IMAGE */}
     <Image
-      src="/assets/images/ADS00060.jpg"
+      src="/assets/images/BannerWed.jpg"
       alt="Graduation Banner"
       fill
       priority
@@ -57,8 +57,7 @@ const Banner = () => (
             md:text-xl
           "
         >
-          Setiap cerita punya akhir yang layak dikenang dengan indah. Booking
-          sekarang dan dapatkan konsep cinematic untuk graduation kamu.
+        Tell your story with us.
         </p>
 
         <div className="mt-10">
