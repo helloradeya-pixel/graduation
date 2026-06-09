@@ -4,49 +4,40 @@ import { useState } from 'react';
 
 type FormState = {
   name: string;
-  campus: string;
-  date: string;
-  budget: string;
   instagram: string;
+  domisili: string;
+  service: string;
   wa: string;
 };
 
 const LeadForm = () => {
   const [form, setForm] = useState<FormState>({
     name: '',
-    campus: '',
-    date: '',
-    budget: '',
     instagram: '',
+    domisili: '',
+    service: '',
     wa: '',
   });
 
   const [loading, setLoading] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const fireLeadEvent = () => {
     if (typeof window !== 'undefined' && (window as any).fbq) {
-      (window as any).fbq(
-        'track',
-        'Lead',
-        {
-          content_name: 'Graduation Lead',
-          status: 'form_submit',
-          campus: form.campus,
-          budget: form.budget,
-        },
-        {
-          eventID: 'lead_' + Date.now(),
-        },
-      );
+      (window as any).fbq('track', 'Lead', {
+        content_name: 'Wedding Inquiry',
+        service: form.service,
+      });
     }
   };
 
@@ -54,12 +45,10 @@ const LeadForm = () => {
     e.preventDefault();
 
     const name = form.name.trim();
-    const campus = form.campus.trim();
-    const date = form.date.trim();
     const wa = form.wa.trim();
 
-    if (!name || !campus || !date || !wa) {
-      alert('⚠️ Mohon isi Nama, Kampus, Tanggal, dan WhatsApp terlebih dahulu');
+    if (!name || !wa) {
+      alert('⚠️ Nama dan WhatsApp wajib diisi');
       return;
     }
 
@@ -76,64 +65,49 @@ const LeadForm = () => {
 
       const data = await res.json();
 
-      if (!data.success) {
-        alert('❌ Gagal mengirim data ke Notion');
+      if (!res.ok || !data.success) {
+        alert('❌ Gagal mengirim data');
         return;
       }
 
-      // FIRE META PIXEL LEAD
       fireLeadEvent();
 
       const message = `Halo admin 👋
 
-Saya mau tanya info paket & pricelist graduation photoshoot.
+Saya ingin konsultasi fotografi:
 
 Nama: ${name}
-Kampus: ${campus}
+Instagram: ${form.instagram || '-'}
+Domisili: ${form.domisili || '-'}
+Layanan: ${form.service || '-'}
 
-Boleh dibantu info detail paketnya ya 🙏`;
+Mohon info detail paketnya ya 🙏`;
 
       const url = `https://wa.me/628211251570?text=${encodeURIComponent(
-        message,
+        message
       )}`;
 
       window.open(url, '_blank');
 
       setForm({
         name: '',
-        campus: '',
-        date: '',
-        budget: '',
         instagram: '',
+        domisili: '',
+        service: '',
         wa: '',
       });
     } catch (error) {
-      console.log(error);
-      alert('❌ Terjadi error');
+      console.error(error);
+      alert('❌ Terjadi kesalahan');
     } finally {
       setLoading(false);
     }
   };
 
-  const isDisabled =
-    !form.name.trim() ||
-    !form.campus.trim() ||
-    !form.date.trim() ||
-    !form.wa.trim();
+  const isDisabled = !form.name.trim() || !form.wa.trim();
 
-  const fieldStyle = `
-    h-[54px]
-    w-full
-    rounded-xl
-    border
-    border-white/10
-    bg-white/5
-    px-4
-    text-sm
-    text-white
-    outline-none
-    placeholder:text-neutral-500
-  `;
+  const fieldStyle =
+    'h-[54px] w-full rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white outline-none placeholder:text-neutral-500';
 
   return (
     <section id="leadform" className="scroll-mt-32 bg-black py-28 text-white">
@@ -142,15 +116,15 @@ Boleh dibantu info detail paketnya ya 🙏`;
         {/* HEADER */}
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.4em] text-neutral-500">
-            Graduation Booking
+            Photography Inquiry
           </p>
 
           <h2 className="mt-4 text-3xl font-semibold md:text-5xl">
-            Book Your Graduation Story
+            Book Your Session
           </h2>
 
           <p className="mt-6 text-sm text-neutral-400 md:text-base">
-            Isi data kamu, pilih tanggal, lalu kirim untuk konsultasi WhatsApp.
+            Isi data kamu untuk konsultasi langsung via WhatsApp.
           </p>
         </div>
 
@@ -166,46 +140,32 @@ Boleh dibantu info detail paketnya ya 🙏`;
           />
 
           <input
-            name="campus"
-            value={form.campus}
-            placeholder="Universitas *"
-            onChange={handleChange}
-            className={fieldStyle}
-          />
-
-          {/* DATE */}
-          <div className="flex h-[54px] w-full items-center overflow-hidden rounded-xl border border-white/10 bg-white/5 px-4">
-            <input
-              name="date"
-              type="date"
-              value={form.date}
-              onChange={handleChange}
-              className="date-input w-full bg-transparent text-sm text-white outline-none"
-              style={{ colorScheme: 'dark' }}
-            />
-          </div>
-
-          <select
-            name="budget"
-            value={form.budget}
-            onChange={handleChange}
-            className={fieldStyle}
-          >
-            <option value="">Pilih Range Budget</option>
-            <option value="200K - 300K">200K - 300K</option>
-            <option value="300K - 400K">300K - 400K</option>
-            <option value="400K - 500K">400K - 500K</option>
-            <option value="500K - 600K">500K - 600K</option>
-            <option value="600K - 800K">600K - 800K</option>
-          </select>
-
-          <input
             name="instagram"
             value={form.instagram}
             placeholder="Instagram"
             onChange={handleChange}
             className={fieldStyle}
           />
+
+          <input
+            name="domisili"
+            value={form.domisili}
+            placeholder="Domisili"
+            onChange={handleChange}
+            className={fieldStyle}
+          />
+
+          <select
+            name="service"
+            value={form.service}
+            onChange={handleChange}
+            className={fieldStyle}
+          >
+            <option value="">Pilih Paket</option>
+            <option value="Prewedding">Prewedding</option>
+            <option value="Engagement">Engagement</option>
+            <option value="Wedding">Wedding</option>
+          </select>
 
           <input
             name="wa"
@@ -215,7 +175,6 @@ Boleh dibantu info detail paketnya ya 🙏`;
             className={fieldStyle}
           />
 
-          {/* BUTTON */}
           <button
             type="submit"
             disabled={isDisabled || loading}
@@ -234,12 +193,11 @@ Boleh dibantu info detail paketnya ya 🙏`;
               disabled:opacity-40
             "
           >
-            {loading ? 'Mengirim...' : 'Kirim & Konsultasi Sekarang →'}
+            {loading ? 'Mengirim...' : 'Konsultasi Sekarang →'}
           </button>
 
         </form>
 
-        {/* FOOTER */}
         <div className="mt-8 flex items-center justify-center gap-2 text-xs text-neutral-500">
           <span>🔒</span>
           <p>Data kamu aman & tidak akan dibagikan ke pihak lain</p>
