@@ -10,7 +10,7 @@ export async function POST(req: Request) {
 
     await notion.pages.create({
       parent: {
-        database_id: process.env.NOTION_DATABASE_ID!,
+        database_id: process.env.NOTION_WEDDING_DATABASE_ID!,
       },
 
       properties: {
