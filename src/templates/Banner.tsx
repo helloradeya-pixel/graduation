@@ -7,7 +7,7 @@ const Banner = () => (
   <section className="relative h-screen w-full overflow-hidden">
     {/* BACKGROUND IMAGE */}
     <Image
-      src="/assets/images/ADS00060.jpg"
+      src="/assets/images/Bannercouple.jpg"
       alt="Graduation Banner"
       fill
       priority
