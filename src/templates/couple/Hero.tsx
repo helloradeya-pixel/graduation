@@ -1,5 +1,4 @@
 import Link from 'next/link';
-
 import { Background } from './Background';
 import { Button } from './Button';
 const Hero = () => (
