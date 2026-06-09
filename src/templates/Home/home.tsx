@@ -9,7 +9,7 @@ export default function RadeyaphotoPage() {
 
       <div className="profile-section">
         <img
-          src="/profile.jpg"
+          src="/assets/images/profile.jpg"
           alt="profile"
           className="profile-img"
         />
