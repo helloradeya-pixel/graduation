@@ -67,7 +67,7 @@ const Hero = () => (
 
       {/* BACKGROUND IMAGE */}
       <img
-        src="/assets/images/Bromo.jpg"
+        src="/assets/images/Hero1.jpg"
         alt="Graduation"
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
