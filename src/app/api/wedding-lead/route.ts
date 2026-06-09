@@ -19,19 +19,49 @@ export async function POST(req: Request) {
       },
       properties: {
         Name: {
-          title: [{ text: { content: body.name || '' } }],
+          title: [
+            {
+              text: {
+                content: body.name || '',
+              },
+            },
+          ],
         },
+
         Instagram: {
-          rich_text: [{ text: { content: body.instagram || '' } }],
+          rich_text: [
+            {
+              text: {
+                content: body.instagram || '',
+              },
+            },
+          ],
         },
+
         Domisili: {
-          rich_text: [{ text: { content: body.domisili || '' } }],
+          rich_text: [
+            {
+              text: {
+                content: body.domisili || '',
+              },
+            },
+          ],
         },
+
         Service: {
-          rich_text: [{ text: { content: body.service || '' } }],
+          select: {
+            name: body.service || '',
+          },
         },
+
         WhatsApp: {
-          rich_text: [{ text: { content: body.wa || '' } }],
+          rich_text: [
+            {
+              text: {
+                content: body.wa || '',
+              },
+            },
+          ],
         },
       },
     });
