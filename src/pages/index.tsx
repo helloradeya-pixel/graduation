@@ -1,5 +1,6 @@
-import { Base } from '../templates/Base';
 
-const Index = () => <Base />;
+import Links from './links';
 
-export default Index;
+export default function Index() {
+  return <Links />;
+}
