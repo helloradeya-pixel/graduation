@@ -25,7 +25,7 @@ I capture them so years from now, you’ll remember not just how it looked, but 
             target="_blank"
             className="link-btn"
           >
-            WHATSAPP
+            WHATSAPP ADMIN
           </a>
 
           <a
@@ -33,7 +33,7 @@ I capture them so years from now, you’ll remember not just how it looked, but 
             target="_blank"
             className="link-btn"
           >
-            IG WEDDING
+            INSTAGRAM WEDDING
           </a>
 
           <a
@@ -41,7 +41,7 @@ I capture them so years from now, you’ll remember not just how it looked, but 
             target="_blank"
             className="link-btn"
           >
-            IG WISUDA
+            INSTAGRAM WISUDA
           </a>
 
         </div>
