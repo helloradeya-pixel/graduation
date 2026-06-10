@@ -22,7 +22,7 @@ const LeadForm = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const segment = getSegment(); // 👈 graduation / couple / general
+  const segment = getSegment();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -35,9 +35,7 @@ const LeadForm = () => {
     }));
   };
 
-  // =========================
-  // META PIXEL LEAD
-  // =========================
+  // META PIXEL
   const fireLeadEvent = () => {
     if (typeof window === 'undefined') return;
 
@@ -48,9 +46,7 @@ const LeadForm = () => {
     });
   };
 
-  // =========================
-  // GA4 LEAD
-  // =========================
+  // GA4
   const fireGAEvent = () => {
     if (typeof window === 'undefined') return;
 
@@ -74,13 +70,12 @@ const LeadForm = () => {
     try {
       setLoading(true);
 
-      // SAVE DATA
       const res = await fetch('/api/wedding-lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
-          segment, // 👈 penting buat segmentation backend
+          segment,
         }),
       });
 
@@ -91,11 +86,10 @@ const LeadForm = () => {
         return;
       }
 
-      // FIRE TRACKING
+      // TRACKING
       fireLeadEvent();
       fireGAEvent();
 
-      // WHATSAPP MESSAGE
       const message = `Halo admin 👋
 
 Saya mau tanya info paket & pricelist:
@@ -104,15 +98,12 @@ Segment: ${segment}
 Nama: ${name}
 Instagram: ${form.instagram || '-'}
 Domisili: ${form.domisili || '-'}
-Paket: ${form.service || '-'}
-
-Mohon info detail ya 🙏`;
+Paket: ${form.service || '-'}`;
 
       const url = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
       window.open(url, '_blank');
 
-      // RESET
       setForm({
         name: '',
         instagram: '',
@@ -137,7 +128,6 @@ Mohon info detail ya 🙏`;
     <section id="leadform" className="scroll-mt-32 bg-black py-28 text-white">
       <div className="mx-auto max-w-3xl px-8 md:px-16">
 
-        {/* HEADER */}
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.4em] text-neutral-500">
             {segment === 'couple'
@@ -156,39 +146,13 @@ Mohon info detail ya 🙏`;
           </p>
         </div>
 
-        {/* FORM */}
         <form onSubmit={handleSubmit} className="mt-12 space-y-4">
 
-          <input
-            name="name"
-            value={form.name}
-            placeholder="Nama Lengkap *"
-            onChange={handleChange}
-            className={fieldStyle}
-          />
+          <input name="name" value={form.name} onChange={handleChange} placeholder="Nama Lengkap *" className={fieldStyle} />
+          <input name="instagram" value={form.instagram} onChange={handleChange} placeholder="Instagram" className={fieldStyle} />
+          <input name="domisili" value={form.domisili} onChange={handleChange} placeholder="Domisili" className={fieldStyle} />
 
-          <input
-            name="instagram"
-            value={form.instagram}
-            placeholder="Instagram"
-            onChange={handleChange}
-            className={fieldStyle}
-          />
-
-          <input
-            name="domisili"
-            value={form.domisili}
-            placeholder="Domisili"
-            onChange={handleChange}
-            className={fieldStyle}
-          />
-
-          <select
-            name="service"
-            value={form.service}
-            onChange={handleChange}
-            className={fieldStyle}
-          >
+          <select name="service" value={form.service} onChange={handleChange} className={fieldStyle}>
             <option value="">Pilih Paket</option>
             <option value="Prewedding">Prewedding</option>
             <option value="Engagement">Engagement</option>
@@ -196,15 +160,8 @@ Mohon info detail ya 🙏`;
             <option value="Graduation">Graduation</option>
           </select>
 
-          <input
-            name="wa"
-            value={form.wa}
-            placeholder="WhatsApp aktif *"
-            onChange={handleChange}
-            className={fieldStyle}
-          />
+          <input name="wa" value={form.wa} onChange={handleChange} placeholder="WhatsApp aktif *" className={fieldStyle} />
 
-          {/* BUTTON */}
           <button
             type="submit"
             disabled={isDisabled || loading}
@@ -214,7 +171,6 @@ Mohon info detail ya 🙏`;
           </button>
         </form>
 
-        {/* FOOTER */}
         <div className="mt-8 flex items-center justify-center gap-2 text-xs text-neutral-500">
           <span>🔒</span>
           <p>Data kamu aman & tidak akan dibagikan ke pihak lain</p>
