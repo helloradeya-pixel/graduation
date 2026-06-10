@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Background } from './Background';
 import { Button } from './Button';
 
-import { trackWA, trackPricelist } from '../utils/tracking';
+import { trackWA, trackPricelist } from '../../utils/tracking';
 
 const Hero = () => {
 
