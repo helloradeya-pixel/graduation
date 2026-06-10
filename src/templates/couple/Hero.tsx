@@ -1,8 +1,7 @@
-import Link from 'next/link';
 import { Background } from './Background';
 import { Button } from './Button';
 
-import { trackWA, trackPricelist } from '../../utils/tracking';
+import { trackWA, trackPricelist } from '@/utils/tracking';
 
 const Hero = () => {
 
@@ -24,6 +23,11 @@ const Hero = () => {
 
   const handleCTA = () => {
     trackPricelist('hero_cta');
+
+    // optional tambahan (lebih kuat untuk ads)
+    window.fbq?.('track', 'ViewContent', {
+      content_name: 'couple_pricelist_hero',
+    });
   };
 
   return (
@@ -81,9 +85,9 @@ const Hero = () => {
             {/* CTA */}
             <div className="mt-6 md:mt-12 scale-75 origin-left md:scale-100">
               <div onClick={handleCTA}>
-                <Link href="#leadform">
+                <a href="#leadform">
                   <Button>Get Pricelist →</Button>
-                </Link>
+                </a>
               </div>
             </div>
 
