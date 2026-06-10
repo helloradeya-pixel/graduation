@@ -1,18 +1,18 @@
 import { Background } from '../background/Background';
 import { Button } from '../button/Button';
 
-declare const fbq: any;
-
 const Hero = () => {
 
   // =========================
-  // OPEN WA (SAFE + TRACKING)
+  // OPEN WA + TRACKING (SAFE)
   // =========================
   const openWA = () => {
     if (typeof window !== 'undefined') {
-      // META PIXEL
+
+      // META PIXEL (STANDARDIZED)
       window.fbq?.('track', 'Contact', {
-        content_name: 'Graduation WA Click',
+        content_name: 'graduation_hero_wa',
+        content_category: 'graduation',
       });
 
       // GA4
@@ -22,10 +22,8 @@ const Hero = () => {
       });
     }
 
-    // delay kecil biar tracking ke-push dulu
-    setTimeout(() => {
-      window.open('https://wa.me/628211251570', '_blank');
-    }, 150);
+    // lebih aman langsung buka (tanpa delay yang bikin miss di mobile)
+    window.open('https://wa.me/628211251570', '_blank');
   };
 
   // =========================
@@ -35,6 +33,11 @@ const Hero = () => {
     window.gtag?.('event', 'click_pricelist', {
       event_category: 'graduation',
       event_label: 'hero_pricelist',
+    });
+
+    window.fbq?.('track', 'ViewContent', {
+      content_name: 'graduation_pricelist',
+      content_category: 'graduation',
     });
   };
 
@@ -112,11 +115,11 @@ const Hero = () => {
 
             {/* CTA */}
             <div className="mt-6 md:mt-12 scale-75 origin-left md:scale-100">
-              <button onClick={firePricelistEvent}>
+              <div onClick={firePricelistEvent}>
                 <a href="#leadform">
                   <Button>Get Pricelist →</Button>
                 </a>
-              </button>
+              </div>
             </div>
 
             <div className="mt-7 md:mt-14">
