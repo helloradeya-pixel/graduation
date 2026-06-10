@@ -8,5 +8,5 @@ export const getSegment = () => {
   if (path.includes('graduation')) return 'graduation';
   if (path.includes('couple')) return 'couple';
 
-  return 'general';
+  return 'home';
 };
