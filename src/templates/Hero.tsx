@@ -3,13 +3,10 @@ import { Button } from '../button/Button';
 
 const Hero = () => {
 
-  // =========================
-  // OPEN WA + TRACKING (SAFE)
-  // =========================
   const openWA = () => {
     if (typeof window !== 'undefined') {
 
-      // META PIXEL (STANDARDIZED)
+      // META PIXEL (GRADUATION SEGMENT)
       window.fbq?.('track', 'Contact', {
         content_name: 'graduation_hero_wa',
         content_category: 'graduation',
@@ -22,23 +19,24 @@ const Hero = () => {
       });
     }
 
-    // lebih aman langsung buka (tanpa delay yang bikin miss di mobile)
-    window.open('https://wa.me/628211251570', '_blank');
+    // delay biar tracking sempat ke-send
+    setTimeout(() => {
+      window.open('https://wa.me/628211251570', '_blank');
+    }, 150);
   };
 
-  // =========================
-  // PRICELIST TRACKING
-  // =========================
   const firePricelistEvent = () => {
-    window.gtag?.('event', 'click_pricelist', {
-      event_category: 'graduation',
-      event_label: 'hero_pricelist',
-    });
+    if (typeof window !== 'undefined') {
+      window.fbq?.('track', 'ViewContent', {
+        content_name: 'graduation_pricelist',
+        content_category: 'graduation',
+      });
 
-    window.fbq?.('track', 'ViewContent', {
-      content_name: 'graduation_pricelist',
-      content_category: 'graduation',
-    });
+      window.gtag?.('event', 'click_pricelist', {
+        event_category: 'graduation',
+        event_label: 'hero_pricelist',
+      });
+    }
   };
 
   return (
@@ -48,19 +46,7 @@ const Hero = () => {
       <div className="fixed left-0 top-0 z-50 flex w-full justify-end px-5 py-5 md:px-16 md:py-8">
         <button
           onClick={openWA}
-          className="
-            rounded-full
-            border border-white/20
-            px-4 py-2
-            text-[9px]
-            tracking-[0.22em]
-            text-white
-            transition
-            hover:bg-white
-            hover:text-black
-            md:px-5
-            md:text-[11px]
-          "
+          className="rounded-full border border-white/20 px-4 py-2 text-[9px] tracking-[0.22em] text-white transition hover:bg-white hover:text-black md:px-5 md:text-[11px]"
         >
           KONSULTASI GRATIS →
         </button>
@@ -69,13 +55,7 @@ const Hero = () => {
       {/* FLOATING WA */}
       <button
         onClick={openWA}
-        className="
-          fixed bottom-5 right-5 z-50
-          flex h-11 w-11 items-center justify-center
-          rounded-full bg-white shadow-lg
-          transition hover:scale-110
-          md:bottom-6 md:right-6 md:h-14 md:w-14
-        "
+        className="fixed bottom-5 right-5 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-lg transition hover:scale-110 md:bottom-6 md:right-6 md:h-14 md:w-14"
       >
         <img
           src="/assets/images/Whatsapp.png"
@@ -103,9 +83,8 @@ const Hero = () => {
               More than portraits.
             </p>
 
-            <h1 className="whitespace-pre-line text-[1.6rem] font-semibold leading-[1] text-white md:text-6xl">
-              A visual story{"\n"}
-              of your final chapter.
+            <h1 className="text-[1.6rem] font-semibold leading-[1] text-white md:text-6xl whitespace-pre-line">
+              A visual story{"\n"}of your final chapter.
             </h1>
 
             <p className="mt-4 max-w-[260px] text-[12px] text-neutral-300 md:mt-8 md:max-w-xl md:text-xl">
@@ -120,14 +99,6 @@ const Hero = () => {
                   <Button>Get Pricelist →</Button>
                 </a>
               </div>
-            </div>
-
-            <div className="mt-7 md:mt-14">
-              <p className="max-w-[260px] text-[12px] text-neutral-300 md:max-w-2xl md:text-xl">
-                Dari perjalanan panjang menuju hari kelulusan
-                <br />
-                hingga momen kecil yang tak sempat diulang
-              </p>
             </div>
 
           </div>
