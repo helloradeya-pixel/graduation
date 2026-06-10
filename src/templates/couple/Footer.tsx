@@ -1,27 +1,26 @@
 import Link from 'next/link';
 
-declare const fbq: any;
-
 const Footer = () => {
 
   const fireWAEvent = () => {
-    if (typeof window !== 'undefined') {
+    if (typeof window === 'undefined') return;
 
-      // META PIXEL
-      if ((window as any).fbq) {
-        (window as any).fbq('track', 'Contact', {
-          content_name: 'Couple Footer WhatsApp',
-        });
-      }
+    // =========================
+    // META PIXEL (COUPLE SEGMENT)
+    // =========================
+    window.fbq?.('track', 'Contact', {
+      content_name: 'wa_click',
+      content_category: 'couple',
+      content_location: 'footer',
+    });
 
-      // GA4
-      if ((window as any).gtag) {
-        (window as any).gtag('event', 'click_whatsapp', {
-          event_category: 'whatsapp',
-          event_label: 'couple_footer',
-        });
-      }
-    }
+    // =========================
+    // GA4
+    // =========================
+    window.gtag?.('event', 'click_whatsapp', {
+      event_category: 'couple',
+      event_label: 'footer',
+    });
   };
 
   return (
