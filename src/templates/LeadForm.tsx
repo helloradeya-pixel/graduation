@@ -32,7 +32,7 @@ const LeadForm = () => {
     });
   };
 
-  // META PIXEL EVENT
+  // META PIXEL - LEAD
   const fireLeadEvent = () => {
     if (typeof window !== 'undefined' && (window as any).fbq) {
       (window as any).fbq('track', 'Lead', {
@@ -43,13 +43,33 @@ const LeadForm = () => {
     }
   };
 
-  // GOOGLE ANALYTICS EVENT
+  // GOOGLE ANALYTICS - LEAD
   const fireGAEvent = () => {
     if (typeof window !== 'undefined' && (window as any).gtag) {
       (window as any).gtag('event', 'generate_lead', {
         event_category: 'lead_form',
         event_label: 'graduation_pricelist',
       });
+    }
+  };
+
+  // META PIXEL + GA - WHATSAPP CLICK
+  const fireWAEvent = () => {
+    if (typeof window !== 'undefined') {
+      // META PIXEL
+      if ((window as any).fbq) {
+        (window as any).fbq('track', 'Contact', {
+          content_name: 'WhatsApp Click',
+        });
+      }
+
+      // GA4
+      if ((window as any).gtag) {
+        (window as any).gtag('event', 'click_whatsapp', {
+          event_category: 'whatsapp',
+          event_label: 'graduation_pricelist',
+        });
+      }
     }
   };
 
@@ -85,11 +105,11 @@ const LeadForm = () => {
         return;
       }
 
-      // 2. FIRE TRACKING (IMPORTANT)
+      // 2. FIRE LEAD TRACKING
       fireLeadEvent();
       fireGAEvent();
 
-      // 3. REDIRECT WHATSAPP
+      // 3. WHATSAPP MESSAGE
       const message = `Halo admin 👋
 
 Saya mau tanya info paket & pricelist graduation photoshoot.
@@ -103,9 +123,13 @@ Boleh dibantu info detail paketnya ya 🙏`;
         message,
       )}`;
 
+      // 4. FIRE WHATSAPP TRACKING
+      fireWAEvent();
+
+      // 5. OPEN WHATSAPP
       window.open(url, '_blank');
 
-      // 4. RESET FORM
+      // 6. RESET FORM
       setForm({
         name: '',
         campus: '',
