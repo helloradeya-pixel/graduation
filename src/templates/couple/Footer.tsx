@@ -3,6 +3,27 @@ import Link from 'next/link';
 declare const fbq: any;
 
 const Footer = () => {
+
+  const fireWAEvent = () => {
+    if (typeof window !== 'undefined') {
+
+      // META PIXEL
+      if ((window as any).fbq) {
+        (window as any).fbq('track', 'Contact', {
+          content_name: 'Couple Footer WhatsApp',
+        });
+      }
+
+      // GA4
+      if ((window as any).gtag) {
+        (window as any).gtag('event', 'click_whatsapp', {
+          event_category: 'whatsapp',
+          event_label: 'couple_footer',
+        });
+      }
+    }
+  };
+
   return (
     <footer className="bg-black py-16 text-white">
       <div className="mx-auto max-w-6xl px-8 md:px-16">
@@ -17,8 +38,7 @@ const Footer = () => {
             </h3>
 
             <p className="mt-2 text-sm text-neutral-400">
-              A visual story
-of two hearts.
+              A visual story of two hearts.
             </p>
           </div>
 
@@ -29,17 +49,14 @@ of two hearts.
             <Link href="#leadform">Booking</Link>
           </div>
 
-          {/* WA */}
-          <Link
-            href="https://wa.me/628211251570"
-            onClick={() => {
-              // @ts-ignore
-              fbq('track', 'Lead');
-            }}
+          {/* WA BUTTON */}
+          <button
+            onClick={fireWAEvent}
             className="rounded-full border border-white/20 px-5 py-2 text-xs tracking-[0.2em] transition hover:bg-white hover:text-black"
           >
             KONSULTASI
-          </Link>
+          </button>
+
         </div>
 
         {/* BOTTOM */}
