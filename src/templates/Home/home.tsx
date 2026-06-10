@@ -1,15 +1,13 @@
 import "./Radeyaphoto.css";
 import { Testimonial } from "../Testimonial";
 
-declare const fbq: any;
-
 export default function RadeyaphotoPage() {
 
   const fireWAEvent = () => {
     if (typeof window !== 'undefined') {
       if ((window as any).fbq) {
         (window as any).fbq('track', 'Contact', {
-          content_name: 'Bio Page WhatsApp',
+          source: 'bio_page',
         });
       }
 
@@ -23,7 +21,7 @@ export default function RadeyaphotoPage() {
   };
 
   const fireIGWedding = () => {
-    if ((window as any).gtag) {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
       (window as any).gtag('event', 'click_instagram', {
         event_category: 'outbound',
         event_label: 'ig_wedding',
@@ -32,7 +30,7 @@ export default function RadeyaphotoPage() {
   };
 
   const fireIGWisuda = () => {
-    if ((window as any).gtag) {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
       (window as any).gtag('event', 'click_instagram', {
         event_category: 'outbound',
         event_label: 'ig_wisuda',
@@ -103,7 +101,7 @@ export default function RadeyaphotoPage() {
       <Testimonial />
 
       <div className="mt-12 border-t border-white/5 pt-6 text-center text-xs text-neutral-500">
-        © {new Date().getFullYear()} Radeya Photography. All rights reserved.
+        © {new Date().getFullYear()} Radeyaphoto. All rights reserved.
       </div>
 
     </div>
