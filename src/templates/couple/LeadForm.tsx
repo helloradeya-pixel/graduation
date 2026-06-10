@@ -32,11 +32,22 @@ const LeadForm = () => {
     }));
   };
 
+  // META PIXEL - LEAD
   const fireLeadEvent = () => {
     if (typeof window !== 'undefined' && (window as any).fbq) {
       (window as any).fbq('track', 'Lead', {
         content_name: 'Wedding Inquiry',
         service: form.service,
+      });
+    }
+  };
+
+  // GOOGLE ANALYTICS - LEAD
+  const fireGAEvent = () => {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'generate_lead', {
+        event_category: 'lead_form',
+        event_label: 'wedding_pricelist',
       });
     }
   };
@@ -55,6 +66,7 @@ const LeadForm = () => {
     try {
       setLoading(true);
 
+      // 1. SAVE KE API / NOTION
       const res = await fetch('/api/wedding-lead', {
         method: 'POST',
         headers: {
@@ -70,8 +82,11 @@ const LeadForm = () => {
         return;
       }
 
+      // 2. FIRE LEAD EVENTS
       fireLeadEvent();
+      fireGAEvent();
 
+      // 3. WHATSAPP MESSAGE
       const message = `Halo admin 👋
 
 Saya mau tanya info paket & pricelist Photoshoot:
@@ -79,7 +94,7 @@ Saya mau tanya info paket & pricelist Photoshoot:
 Nama: ${name}
 Instagram: ${form.instagram || '-'}
 Domisili: ${form.domisili || '-'}
-Pricelist: ${form.service || '-'}
+Paket: ${form.service || '-'}
 
 Mohon info detail paketnya ya 🙏`;
 
@@ -87,8 +102,10 @@ Mohon info detail paketnya ya 🙏`;
         message
       )}`;
 
+      // 4. OPEN WHATSAPP
       window.open(url, '_blank');
 
+      // 5. RESET FORM
       setForm({
         name: '',
         instagram: '',
@@ -175,6 +192,7 @@ Mohon info detail paketnya ya 🙏`;
             className={fieldStyle}
           />
 
+          {/* BUTTON */}
           <button
             type="submit"
             disabled={isDisabled || loading}
@@ -198,6 +216,7 @@ Mohon info detail paketnya ya 🙏`;
 
         </form>
 
+        {/* FOOTER */}
         <div className="mt-8 flex items-center justify-center gap-2 text-xs text-neutral-500">
           <span>🔒</span>
           <p>Data kamu aman & tidak akan dibagikan ke pihak lain</p>
