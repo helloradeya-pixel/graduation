@@ -4,20 +4,18 @@ const Footer = () => {
 
   const fireWAEvent = () => {
     if (typeof window !== 'undefined') {
-      // META PIXEL
-      if ((window as any).fbq) {
-        (window as any).fbq('track', 'Contact', {
-          content_name: 'Footer WhatsApp Click',
-        });
-      }
+
+      // META PIXEL (GRADUATION SEGMENT)
+      window.fbq?.('track', 'Contact', {
+        content_name: 'graduation_footer_wa',
+        content_category: 'graduation',
+      });
 
       // GA4
-      if ((window as any).gtag) {
-        (window as any).gtag('event', 'click_whatsapp', {
-          event_category: 'whatsapp',
-          event_label: 'footer',
-        });
-      }
+      window.gtag?.('event', 'click_whatsapp', {
+        event_category: 'graduation',
+        event_label: 'footer_wa',
+      });
     }
   };
 
