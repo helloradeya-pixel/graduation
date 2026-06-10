@@ -1,11 +1,16 @@
 import { Background } from '../background/Background';
 import { Button } from '../button/Button';
-import { trackWA, trackPricelist } from '../utils/tracking';
+import { trackWA, trackPricelist } from '@/utils/tracking';
 
 const Hero = () => {
 
   const openWA = () => {
     trackWA('hero_wa');
+
+    // optional tambahan Meta biar lebih kuat di Ads Manager
+    window.fbq?.('track', 'Contact', {
+      content_name: 'graduation_hero_wa',
+    });
 
     setTimeout(() => {
       window.open('https://wa.me/628211251570', '_blank');
@@ -14,6 +19,11 @@ const Hero = () => {
 
   const firePricelistEvent = () => {
     trackPricelist('hero_cta');
+
+    // tambahan untuk Meta optimization (recommended)
+    window.fbq?.('track', 'ViewContent', {
+      content_name: 'graduation_pricelist_hero',
+    });
   };
 
   return (
@@ -60,7 +70,7 @@ const Hero = () => {
               More than portraits.
             </p>
 
-            <h1 className="text-[1.6rem] font-semibold leading-[1] text-white md:text-6xl whitespace-pre-line">
+            <h1 className="whitespace-pre-line text-[1.6rem] font-semibold leading-[1] text-white md:text-6xl">
               A visual story{"\n"}of your final chapter.
             </h1>
 
