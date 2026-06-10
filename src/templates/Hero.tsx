@@ -5,19 +5,23 @@ import { Button } from '../button/Button';
 const Hero = () => {
 
   // =========================
-  // WA TRACKING
+  // OPEN WA + TRACKING (FIXED)
   // =========================
-  const fireWAEvent = () => {
+  const openWA = () => {
     if (typeof window !== 'undefined') {
+      // META PIXEL
       (window as any).fbq?.('track', 'Contact', {
         content_name: 'Graduation WA Click',
       });
 
+      // GA4
       (window as any).gtag?.('event', 'click_whatsapp', {
         event_category: 'graduation',
         event_label: 'hero_wa',
       });
     }
+
+    window.open('https://wa.me/628211251570', '_blank');
   };
 
   // =========================
@@ -35,11 +39,12 @@ const Hero = () => {
   return (
     <Background color="bg-black">
 
-      {/* NAVBAR */}
+      {/* NAVBAR WA */}
       <div className="fixed left-0 top-0 z-50 flex w-full justify-end px-5 py-5 md:px-16 md:py-8">
         <button
-          onClick={fireWAEvent}
+          onClick={openWA}
           className="
+            relative z-50
             rounded-full
             border border-white/20
             px-4 py-2
@@ -57,10 +62,17 @@ const Hero = () => {
         </button>
       </div>
 
-      {/* FLOATING WA */}
+      {/* FLOATING WA BUTTON */}
       <div
-        onClick={fireWAEvent}
-        className="fixed bottom-5 right-5 z-50 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-white shadow-lg transition hover:scale-110 md:bottom-6 md:right-6 md:h-14 md:w-14"
+        onClick={openWA}
+        className="
+          fixed bottom-5 right-5 z-50
+          flex h-11 w-11 cursor-pointer
+          items-center justify-center
+          rounded-full bg-white
+          shadow-lg transition hover:scale-110
+          md:bottom-6 md:right-6 md:h-14 md:w-14
+        "
       >
         <img
           src="/assets/images/Whatsapp.png"
@@ -69,17 +81,20 @@ const Hero = () => {
         />
       </div>
 
-      {/* HERO */}
+      {/* HERO SECTION */}
       <section className="relative min-h-screen overflow-hidden">
 
+        {/* BACKGROUND IMAGE */}
         <img
           src="/assets/images/ADS00680.jpg"
           alt="Graduation"
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
 
+        {/* OVERLAY */}
         <div className="absolute inset-0 bg-black/50" />
 
+        {/* CONTENT */}
         <div className="relative z-10 flex min-h-screen items-center px-5 pt-10 md:px-20">
 
           <div className="max-w-[320px] md:max-w-[500px]">
@@ -99,16 +114,14 @@ const Hero = () => {
               to feel timeless, emotional, and cinematic.
             </p>
 
-            {/* CTA CLEAN */}
+            {/* CTA BUTTON */}
             <div className="mt-6 md:mt-12 scale-75 origin-left md:scale-100">
-              <Link
-                href="#leadform"
-                onClick={firePricelistEvent}
-              >
+              <Link href="#leadform" onClick={firePricelistEvent}>
                 <Button>Get Pricelist →</Button>
               </Link>
             </div>
 
+            {/* STORY TEXT */}
             <div className="mt-7 md:mt-14">
               <p className="max-w-[260px] text-[12px] leading-[1.6] text-neutral-300 md:max-w-2xl md:text-xl">
                 Dari perjalanan panjang menuju hari kelulusan
