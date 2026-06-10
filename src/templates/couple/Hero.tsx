@@ -2,29 +2,12 @@ import Link from 'next/link';
 import { Background } from './Background';
 import { Button } from './Button';
 
+import { trackWA, trackPricelist } from '../utils/tracking';
+
 const Hero = () => {
 
-  const fireGA = (event: string, label: string) => {
-    if (typeof window !== 'undefined') {
-      window.gtag?.('event', event, {
-        event_category: 'couple',
-        event_label: label,
-      });
-    }
-  };
-
-  const fireMeta = (source: string) => {
-    if (typeof window !== 'undefined') {
-      window.fbq?.('track', 'Contact', {
-        content_name: `couple_${source}`,
-        content_category: 'couple',
-      });
-    }
-  };
-
   const handleWA = () => {
-    fireGA('click_whatsapp', 'navbar');
-    fireMeta('navbar');
+    trackWA('hero_wa');
 
     setTimeout(() => {
       window.open('https://wa.me/628211251570', '_blank');
@@ -32,8 +15,7 @@ const Hero = () => {
   };
 
   const handleFloatingWA = () => {
-    fireGA('click_whatsapp', 'floating');
-    fireMeta('floating');
+    trackWA('floating_wa');
 
     setTimeout(() => {
       window.open('https://wa.me/628211251570', '_blank');
@@ -41,8 +23,7 @@ const Hero = () => {
   };
 
   const handleCTA = () => {
-    fireGA('click_pricelist', 'hero_cta');
-    fireMeta('cta');
+    trackPricelist('hero_cta');
   };
 
   return (
