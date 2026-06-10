@@ -1,57 +1,58 @@
-import Link from 'next/link';
 import { Background } from '../background/Background';
 import { Button } from '../button/Button';
+
+declare const fbq: any;
 
 const Hero = () => {
 
   // =========================
-  // OPEN WA + TRACKING (FIXED)
+  // OPEN WA (SAFE + TRACKING)
   // =========================
   const openWA = () => {
     if (typeof window !== 'undefined') {
       // META PIXEL
-      (window as any).fbq?.('track', 'Contact', {
+      window.fbq?.('track', 'Contact', {
         content_name: 'Graduation WA Click',
       });
 
       // GA4
-      (window as any).gtag?.('event', 'click_whatsapp', {
+      window.gtag?.('event', 'click_whatsapp', {
         event_category: 'graduation',
         event_label: 'hero_wa',
       });
     }
 
-    window.open('https://wa.me/628211251570', '_blank');
+    // delay kecil biar tracking ke-push dulu
+    setTimeout(() => {
+      window.open('https://wa.me/628211251570', '_blank');
+    }, 150);
   };
 
   // =========================
   // PRICELIST TRACKING
   // =========================
   const firePricelistEvent = () => {
-    if (typeof window !== 'undefined') {
-      (window as any).gtag?.('event', 'click_pricelist', {
-        event_category: 'graduation',
-        event_label: 'hero_pricelist',
-      });
-    }
+    window.gtag?.('event', 'click_pricelist', {
+      event_category: 'graduation',
+      event_label: 'hero_pricelist',
+    });
   };
 
   return (
     <Background color="bg-black">
 
-      {/* NAVBAR WA */}
+      {/* NAVBAR */}
       <div className="fixed left-0 top-0 z-50 flex w-full justify-end px-5 py-5 md:px-16 md:py-8">
         <button
           onClick={openWA}
           className="
-            relative z-50
             rounded-full
             border border-white/20
             px-4 py-2
             text-[9px]
             tracking-[0.22em]
             text-white
-            transition duration-300
+            transition
             hover:bg-white
             hover:text-black
             md:px-5
@@ -62,15 +63,14 @@ const Hero = () => {
         </button>
       </div>
 
-      {/* FLOATING WA BUTTON */}
-      <div
+      {/* FLOATING WA */}
+      <button
         onClick={openWA}
         className="
           fixed bottom-5 right-5 z-50
-          flex h-11 w-11 cursor-pointer
-          items-center justify-center
-          rounded-full bg-white
-          shadow-lg transition hover:scale-110
+          flex h-11 w-11 items-center justify-center
+          rounded-full bg-white shadow-lg
+          transition hover:scale-110
           md:bottom-6 md:right-6 md:h-14 md:w-14
         "
       >
@@ -79,22 +79,19 @@ const Hero = () => {
           alt="WhatsApp"
           className="h-5 w-5 md:h-7 md:w-7"
         />
-      </div>
+      </button>
 
-      {/* HERO SECTION */}
+      {/* HERO */}
       <section className="relative min-h-screen overflow-hidden">
 
-        {/* BACKGROUND IMAGE */}
         <img
           src="/assets/images/ADS00680.jpg"
           alt="Graduation"
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
 
-        {/* OVERLAY */}
         <div className="absolute inset-0 bg-black/50" />
 
-        {/* CONTENT */}
         <div className="relative z-10 flex min-h-screen items-center px-5 pt-10 md:px-20">
 
           <div className="max-w-[320px] md:max-w-[500px]">
@@ -103,32 +100,30 @@ const Hero = () => {
               More than portraits.
             </p>
 
-            <h1 className="whitespace-pre-line text-[1.6rem] font-semibold leading-[1] tracking-[-0.03em] text-white md:text-6xl">
-              A visual story
-              {'\n'}
+            <h1 className="whitespace-pre-line text-[1.6rem] font-semibold leading-[1] text-white md:text-6xl">
+              A visual story{"\n"}
               of your final chapter.
             </h1>
 
-            <p className="mt-4 max-w-[260px] text-[12px] leading-[1.5] text-neutral-300 md:mt-8 md:max-w-xl md:text-xl">
+            <p className="mt-4 max-w-[260px] text-[12px] text-neutral-300 md:mt-8 md:max-w-xl md:text-xl">
               Crafted for graduates who want their memories
               to feel timeless, emotional, and cinematic.
             </p>
 
-            {/* CTA BUTTON */}
+            {/* CTA */}
             <div className="mt-6 md:mt-12 scale-75 origin-left md:scale-100">
-              <Link href="#leadform" onClick={firePricelistEvent}>
-                <Button>Get Pricelist →</Button>
-              </Link>
+              <button onClick={firePricelistEvent}>
+                <a href="#leadform">
+                  <Button>Get Pricelist →</Button>
+                </a>
+              </button>
             </div>
 
-            {/* STORY TEXT */}
             <div className="mt-7 md:mt-14">
-              <p className="max-w-[260px] text-[12px] leading-[1.6] text-neutral-300 md:max-w-2xl md:text-xl">
+              <p className="max-w-[260px] text-[12px] text-neutral-300 md:max-w-2xl md:text-xl">
                 Dari perjalanan panjang menuju hari kelulusan
                 <br />
                 hingga momen kecil yang tak sempat diulang
-                <br />
-                setiap cerita layak dikenang dengan indah.
               </p>
             </div>
 
