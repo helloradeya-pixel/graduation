@@ -1,42 +1,19 @@
 import { Background } from '../background/Background';
 import { Button } from '../button/Button';
+import { trackWA, trackPricelist } from '../utils/tracking';
 
 const Hero = () => {
 
   const openWA = () => {
-    if (typeof window !== 'undefined') {
+    trackWA('hero_wa');
 
-      // META PIXEL (GRADUATION SEGMENT)
-      window.fbq?.('track', 'Contact', {
-        content_name: 'graduation_hero_wa',
-        content_category: 'graduation',
-      });
-
-      // GA4
-      window.gtag?.('event', 'click_whatsapp', {
-        event_category: 'graduation',
-        event_label: 'hero_wa',
-      });
-    }
-
-    // delay biar tracking sempat ke-send
     setTimeout(() => {
       window.open('https://wa.me/628211251570', '_blank');
     }, 150);
   };
 
   const firePricelistEvent = () => {
-    if (typeof window !== 'undefined') {
-      window.fbq?.('track', 'ViewContent', {
-        content_name: 'graduation_pricelist',
-        content_category: 'graduation',
-      });
-
-      window.gtag?.('event', 'click_pricelist', {
-        event_category: 'graduation',
-        event_label: 'hero_pricelist',
-      });
-    }
+    trackPricelist('hero_cta');
   };
 
   return (
