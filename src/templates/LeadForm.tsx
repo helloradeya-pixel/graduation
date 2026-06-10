@@ -32,21 +32,24 @@ const LeadForm = () => {
     });
   };
 
+  // META PIXEL EVENT
   const fireLeadEvent = () => {
     if (typeof window !== 'undefined' && (window as any).fbq) {
-      (window as any).fbq(
-        'track',
-        'Lead',
-        {
-          content_name: 'Graduation Lead',
-          status: 'form_submit',
-          campus: form.campus,
-          budget: form.budget,
-        },
-        {
-          eventID: 'lead_' + Date.now(),
-        },
-      );
+      (window as any).fbq('track', 'Lead', {
+        content_name: 'Graduation Pricelist',
+        campus: form.campus,
+        budget: form.budget,
+      });
+    }
+  };
+
+  // GOOGLE ANALYTICS EVENT
+  const fireGAEvent = () => {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'generate_lead', {
+        event_category: 'lead_form',
+        event_label: 'graduation_pricelist',
+      });
     }
   };
 
@@ -66,6 +69,7 @@ const LeadForm = () => {
     try {
       setLoading(true);
 
+      // 1. SAVE KE NOTION / API
       const res = await fetch('/api/lead', {
         method: 'POST',
         headers: {
@@ -77,13 +81,15 @@ const LeadForm = () => {
       const data = await res.json();
 
       if (!data.success) {
-        alert('❌ Gagal mengirim data ke Notion');
+        alert('❌ Gagal mengirim data');
         return;
       }
 
-      // FIRE META PIXEL LEAD
+      // 2. FIRE TRACKING (IMPORTANT)
       fireLeadEvent();
+      fireGAEvent();
 
+      // 3. REDIRECT WHATSAPP
       const message = `Halo admin 👋
 
 Saya mau tanya info paket & pricelist graduation photoshoot.
@@ -99,6 +105,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
 
       window.open(url, '_blank');
 
+      // 4. RESET FORM
       setForm({
         name: '',
         campus: '',
@@ -173,14 +180,13 @@ Boleh dibantu info detail paketnya ya 🙏`;
             className={fieldStyle}
           />
 
-          {/* DATE */}
           <div className="flex h-[54px] w-full items-center overflow-hidden rounded-xl border border-white/10 bg-white/5 px-4">
             <input
               name="date"
               type="date"
               value={form.date}
               onChange={handleChange}
-              className="date-input w-full bg-transparent text-sm text-white outline-none"
+              className="w-full bg-transparent text-sm text-white outline-none"
               style={{ colorScheme: 'dark' }}
             />
           </div>
