@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getSegment } from '@/utils/getSegment';
 
 type FormState = {
   name: string;
@@ -21,6 +22,8 @@ const LeadForm = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const segment = getSegment(); // 👈 graduation / couple / general
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -32,24 +35,29 @@ const LeadForm = () => {
     }));
   };
 
-  // META PIXEL - LEAD
+  // =========================
+  // META PIXEL LEAD
+  // =========================
   const fireLeadEvent = () => {
-    if (typeof window !== 'undefined' && (window as any).fbq) {
-      (window as any).fbq('track', 'Lead', {
-        content_name: 'Wedding Inquiry',
-        service: form.service,
-      });
-    }
+    if (typeof window === 'undefined') return;
+
+    window.fbq?.('track', 'Lead', {
+      content_name: `${segment}_lead_form`,
+      content_category: segment,
+      service: form.service || 'unknown',
+    });
   };
 
-  // GOOGLE ANALYTICS - LEAD
+  // =========================
+  // GA4 LEAD
+  // =========================
   const fireGAEvent = () => {
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'generate_lead', {
-        event_category: 'lead_form',
-        event_label: 'wedding_pricelist',
-      });
-    }
+    if (typeof window === 'undefined') return;
+
+    window.gtag?.('event', 'generate_lead', {
+      event_category: segment,
+      event_label: 'lead_form_submit',
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -66,13 +74,14 @@ const LeadForm = () => {
     try {
       setLoading(true);
 
-      // 1. SAVE KE API / NOTION
+      // SAVE DATA
       const res = await fetch('/api/wedding-lead', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(form),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          segment, // 👈 penting buat segmentation backend
+        }),
       });
 
       const data = await res.json();
@@ -82,30 +91,28 @@ const LeadForm = () => {
         return;
       }
 
-      // 2. FIRE LEAD EVENTS
+      // FIRE TRACKING
       fireLeadEvent();
       fireGAEvent();
 
-      // 3. WHATSAPP MESSAGE
+      // WHATSAPP MESSAGE
       const message = `Halo admin 👋
 
-Saya mau tanya info paket & pricelist Photoshoot:
+Saya mau tanya info paket & pricelist:
 
+Segment: ${segment}
 Nama: ${name}
 Instagram: ${form.instagram || '-'}
 Domisili: ${form.domisili || '-'}
 Paket: ${form.service || '-'}
 
-Mohon info detail paketnya ya 🙏`;
+Mohon info detail ya 🙏`;
 
-      const url = `https://wa.me/628211251570?text=${encodeURIComponent(
-        message
-      )}`;
+      const url = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
-      // 4. OPEN WHATSAPP
       window.open(url, '_blank');
 
-      // 5. RESET FORM
+      // RESET
       setForm({
         name: '',
         instagram: '',
@@ -133,7 +140,11 @@ Mohon info detail paketnya ya 🙏`;
         {/* HEADER */}
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.4em] text-neutral-500">
-            Photography Inquiry
+            {segment === 'couple'
+              ? 'Couple Inquiry'
+              : segment === 'graduation'
+              ? 'Graduation Inquiry'
+              : 'Photography Inquiry'}
           </p>
 
           <h2 className="mt-4 text-3xl font-semibold md:text-5xl">
@@ -182,6 +193,7 @@ Mohon info detail paketnya ya 🙏`;
             <option value="Prewedding">Prewedding</option>
             <option value="Engagement">Engagement</option>
             <option value="Wedding">Wedding</option>
+            <option value="Graduation">Graduation</option>
           </select>
 
           <input
@@ -196,24 +208,10 @@ Mohon info detail paketnya ya 🙏`;
           <button
             type="submit"
             disabled={isDisabled || loading}
-            className="
-              h-[54px]
-              w-full
-              rounded-xl
-              bg-white
-              px-4
-              text-sm
-              font-medium
-              text-black
-              transition
-              hover:bg-neutral-200
-              disabled:cursor-not-allowed
-              disabled:opacity-40
-            "
+            className="h-[54px] w-full rounded-xl bg-white px-4 text-sm font-medium text-black transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {loading ? 'Mengirim...' : 'Konsultasi Sekarang →'}
           </button>
-
         </form>
 
         {/* FOOTER */}
