@@ -1,68 +1,74 @@
-// src/utils/tracking.ts
 import { getSegment } from './getSegment';
 
-const safeWindow = () => typeof window !== 'undefined';
+type TrackLabel = string;
 
-export const trackWA = (label = 'unknown') => {
-  if (!safeWindow()) return;
+const isBrowser = () => typeof window !== 'undefined';
 
+const getBasePayload = () => {
   const segment = getSegment();
+  return { segment };
+};
 
-  window.fbq?.('track', 'Contact', {
-    content_name: `WA Click - ${label}`,
-    content_category: segment,
+// =========================
+// META PIXEL WRAPPER
+// =========================
+const metaTrack = (event: string, params?: any) => {
+  if (!isBrowser()) return;
+
+  window.fbq?.('track', event, {
+    ...getBasePayload(),
+    ...params,
+  });
+};
+
+// =========================
+// GA4 WRAPPER
+// =========================
+const gaTrack = (event: string, params?: any) => {
+  if (!isBrowser()) return;
+
+  window.gtag?.('event', event, {
+    event_category: getSegment(),
+    ...params,
+  });
+};
+
+// =========================
+// WHATSAPP CLICK
+// =========================
+export const trackWA = (label: TrackLabel = 'unknown') => {
+  metaTrack('Contact', {
+    content_name: `WA_${label}`,
   });
 
-  window.gtag?.('event', 'click_whatsapp', {
-    event_category: segment,
+  gaTrack('click_whatsapp', {
     event_label: label,
   });
 };
 
-export const trackPricelist = (label = 'unknown') => {
-  if (!safeWindow()) return;
-
-  const segment = getSegment();
-
-  window.fbq?.('track', 'ViewContent', {
-    content_name: `Pricelist - ${label}`,
-    content_category: segment,
+// =========================
+// PRICELIST CLICK
+// =========================
+export const trackPricelist = (label: TrackLabel = 'unknown') => {
+  metaTrack('ViewContent', {
+    content_name: `Pricelist_${label}`,
   });
 
-  window.gtag?.('event', 'click_pricelist', {
-    event_category: segment,
+  gaTrack('click_pricelist', {
     event_label: label,
   });
 };
 
-export const trackLead = (label = 'form') => {
-  if (!safeWindow()) return;
-
-  const segment = getSegment();
-
-  window.fbq?.('track', 'Lead', {
-    content_name: label,
-    content_category: segment,
+// =========================
+// LEAD FORM SUBMIT
+// =========================
+export const trackLead = (label: TrackLabel = 'form_submit', extra?: any) => {
+  metaTrack('Lead', {
+    content_name: `Lead_${label}`,
+    ...extra,
   });
 
-  window.gtag?.('event', 'generate_lead', {
-    event_category: segment,
-    event_label: label,
-  });
-};
-
-export const trackPageView = (label = 'page') => {
-  if (!safeWindow()) return;
-
-  const segment = getSegment();
-
-  window.fbq?.('track', 'PageView', {
-    content_category: segment,
-    content_name: label,
-  });
-
-  window.gtag?.('event', 'page_view_custom', {
-    event_category: segment,
+  gaTrack('generate_lead', {
     event_label: label,
   });
 };
