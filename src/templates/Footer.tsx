@@ -1,22 +1,14 @@
 import Link from 'next/link';
+import { trackWA } from '@/utils/tracking';
 
 const Footer = () => {
 
-  const fireWAEvent = () => {
-    if (typeof window !== 'undefined') {
+  const handleWA = () => {
+    trackWA('footer_wa');
 
-      // META PIXEL (GRADUATION SEGMENT)
-      window.fbq?.('track', 'Contact', {
-        content_name: 'graduation_footer_wa',
-        content_category: 'graduation',
-      });
-
-      // GA4
-      window.gtag?.('event', 'click_whatsapp', {
-        event_category: 'graduation',
-        event_label: 'footer_wa',
-      });
-    }
+    setTimeout(() => {
+      window.open('https://wa.me/628211251570', '_blank');
+    }, 120);
   };
 
   return (
@@ -46,7 +38,7 @@ const Footer = () => {
 
           {/* WA BUTTON */}
           <button
-            onClick={fireWAEvent}
+            onClick={handleWA}
             className="rounded-full border border-white/20 px-5 py-2 text-xs tracking-[0.2em] transition hover:bg-white hover:text-black"
           >
             KONSULTASI
