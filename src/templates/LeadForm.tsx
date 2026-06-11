@@ -70,7 +70,9 @@ const LeadForm = () => {
         return;
       }
 
-      // META + GA4
+      // =========================
+      // TRACKING
+      // =========================
       trackLead('graduation_form', {
         campus: form.campus,
         date: form.date,
@@ -80,20 +82,23 @@ const LeadForm = () => {
         campus: form.campus,
       });
 
-      // WA MESSAGE (NO SEGMENT, NO BUDGET)
+      // =========================
+      // WHATSAPP MESSAGE (FINAL FORMAT)
+      // =========================
       const message = `Halo admin 👋
 
-Saya mau tanya info paket graduation photoshoot:
+Saya mau tanya info paket & pricelist graduation photoshoot.
 
 Nama: ${name}
 Kampus: ${campus}
-Tanggal: ${date}
-Instagram: ${form.instagram || '-'}`;
+
+Boleh dibantu info detail paketnya ya 🙏`;
 
       const url = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
       window.open(url, '_blank');
 
+      // reset form
       setForm({
         name: '',
         campus: '',
@@ -116,14 +121,14 @@ Instagram: ${form.instagram || '-'}`;
     !form.date.trim() ||
     !form.wa.trim();
 
-  const fieldStyle = `
-    h-[54px] w-full rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white outline-none placeholder:text-neutral-500
-  `;
+  const fieldStyle =
+    'h-[54px] w-full rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white outline-none placeholder:text-neutral-500';
 
   return (
     <section id="leadform" className="scroll-mt-32 bg-black py-28 text-white">
       <div className="mx-auto max-w-3xl px-8 md:px-16">
 
+        {/* HEADER */}
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.4em] text-neutral-500">
             Graduation Inquiry
@@ -138,14 +143,46 @@ Instagram: ${form.instagram || '-'}`;
           </p>
         </div>
 
+        {/* FORM */}
         <form onSubmit={handleSubmit} className="mt-12 space-y-4">
 
-          <input name="name" value={form.name} onChange={handleChange} placeholder="Nama Lengkap *" className={fieldStyle} />
-          <input name="campus" value={form.campus} onChange={handleChange} placeholder="Universitas *" className={fieldStyle} />
+          <input
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Nama Lengkap *"
+            className={fieldStyle}
+          />
 
-          <input type="date" name="date" value={form.date} onChange={handleChange} className={fieldStyle} />
+          <input
+            name="campus"
+            value={form.campus}
+            onChange={handleChange}
+            placeholder="Universitas *"
+            className={fieldStyle}
+          />
 
-          <select name="budget" value={form.budget} onChange={handleChange} className={fieldStyle}>
+          {/* DATE FIX (no center bug) */}
+          <div className="h-[54px] w-full rounded-xl border border-white/10 bg-white/5 px-4 flex items-center">
+            <input
+              type="date"
+              name="date"
+              value={form.date}
+              onChange={handleChange}
+              className="w-full bg-transparent text-sm text-white outline-none"
+              style={{
+                colorScheme: 'dark',
+                textAlign: 'left',
+              }}
+            />
+          </div>
+
+          <select
+            name="budget"
+            value={form.budget}
+            onChange={handleChange}
+            className={fieldStyle}
+          >
             <option value="">Pilih Budget</option>
             <option value="400K - 600K">400K - 600K</option>
             <option value="600K - 800K">600K - 800K</option>
@@ -153,9 +190,21 @@ Instagram: ${form.instagram || '-'}`;
             <option value="1 Juta+">1 Juta+</option>
           </select>
 
-          <input name="instagram" value={form.instagram} onChange={handleChange} placeholder="Instagram" className={fieldStyle} />
+          <input
+            name="instagram"
+            value={form.instagram}
+            onChange={handleChange}
+            placeholder="Instagram"
+            className={fieldStyle}
+          />
 
-          <input name="wa" value={form.wa} onChange={handleChange} placeholder="WhatsApp *" className={fieldStyle} />
+          <input
+            name="wa"
+            value={form.wa}
+            onChange={handleChange}
+            placeholder="WhatsApp *"
+            className={fieldStyle}
+          />
 
           <button
             type="submit"
@@ -164,6 +213,7 @@ Instagram: ${form.instagram || '-'}`;
           >
             {loading ? 'Mengirim...' : 'Kirim & Konsultasi'}
           </button>
+
         </form>
       </div>
     </section>
