@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { trackLead } from '@/utils/tracking';
+import { getSegment } from '@/utils/getSegment';
+import { trackLead, trackWA } from '@/utils/tracking';
 
 type FormState = {
   name: string;
@@ -24,6 +25,8 @@ const LeadForm = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const segment = getSegment();
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -44,24 +47,19 @@ const LeadForm = () => {
     const wa = form.wa.trim();
 
     if (!name || !campus || !date || !wa) {
-      alert('⚠️ Mohon isi Nama, Kampus, Tanggal, dan WhatsApp terlebih dahulu');
+      alert('⚠️ Mohon isi data wajib');
       return;
     }
 
     try {
       setLoading(true);
 
-      // =========================
-      // SAVE LEAD (INTERNAL)
-      // =========================
       const res = await fetch('/api/lead', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
-          segment: 'graduation',
+          segment,
         }),
       });
 
@@ -72,39 +70,30 @@ const LeadForm = () => {
         return;
       }
 
-      // =========================
-      // META + GA4 TRACKING
-      // =========================
+      // META + GA4
       trackLead('graduation_form', {
-        campus: form.campus || '-',
-        date: form.date || '-',
-        instagram: form.instagram || '-',
+        campus: form.campus,
+        date: form.date,
       });
 
-      // =========================
-      // WHATSAPP MESSAGE (NO BUDGET!)
-      // =========================
+      trackWA('graduation_pricelist', {
+        campus: form.campus,
+      });
+
+      // WA MESSAGE (NO SEGMENT, NO BUDGET)
       const message = `Halo admin 👋
 
-Saya mau tanya info paket & pricelist graduation photoshoot:
+Saya mau tanya info paket graduation photoshoot:
 
 Nama: ${name}
 Kampus: ${campus}
 Tanggal: ${date}
 Instagram: ${form.instagram || '-'}`;
 
-      const url = `https://wa.me/628211251570?text=${encodeURIComponent(
-        message,
-      )}`;
+      const url = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
-      // =========================
-      // OPEN WHATSAPP
-      // =========================
       window.open(url, '_blank');
 
-      // =========================
-      // RESET FORM
-      // =========================
       setForm({
         name: '',
         campus: '',
@@ -128,27 +117,16 @@ Instagram: ${form.instagram || '-'}`;
     !form.wa.trim();
 
   const fieldStyle = `
-    h-[54px]
-    w-full
-    rounded-xl
-    border
-    border-white/10
-    bg-white/5
-    px-4
-    text-sm
-    text-white
-    outline-none
-    placeholder:text-neutral-500
+    h-[54px] w-full rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white outline-none placeholder:text-neutral-500
   `;
 
   return (
     <section id="leadform" className="scroll-mt-32 bg-black py-28 text-white">
       <div className="mx-auto max-w-3xl px-8 md:px-16">
 
-        {/* HEADER */}
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.4em] text-neutral-500">
-            Graduation Booking
+            Graduation Inquiry
           </p>
 
           <h2 className="mt-4 text-3xl font-semibold md:text-5xl">
@@ -156,99 +134,37 @@ Instagram: ${form.instagram || '-'}`;
           </h2>
 
           <p className="mt-6 text-sm text-neutral-400 md:text-base">
-            Isi data kamu, pilih tanggal, lalu kirim untuk konsultasi WhatsApp.
+            Isi data kamu untuk konsultasi WhatsApp.
           </p>
         </div>
 
-        {/* FORM */}
         <form onSubmit={handleSubmit} className="mt-12 space-y-4">
 
-          <input
-            name="name"
-            value={form.name}
-            placeholder="Nama Lengkap *"
-            onChange={handleChange}
-            className={fieldStyle}
-          />
+          <input name="name" value={form.name} onChange={handleChange} placeholder="Nama Lengkap *" className={fieldStyle} />
+          <input name="campus" value={form.campus} onChange={handleChange} placeholder="Universitas *" className={fieldStyle} />
 
-          <input
-            name="campus"
-            value={form.campus}
-            placeholder="Universitas *"
-            onChange={handleChange}
-            className={fieldStyle}
-          />
+          <input type="date" name="date" value={form.date} onChange={handleChange} className={fieldStyle} />
 
-          <div className="flex h-[54px] w-full items-center overflow-hidden rounded-xl border border-white/10 bg-white/5 px-4">
-            <input
-              name="date"
-              type="date"
-              value={form.date}
-              onChange={handleChange}
-              className="w-full bg-transparent text-sm text-white outline-none"
-              style={{ colorScheme: 'dark' }}
-            />
-          </div>
-
-          <select
-            name="budget"
-            value={form.budget}
-            onChange={handleChange}
-            className={fieldStyle}
-          >
-            <option value="">Pilih Range Budget</option>
+          <select name="budget" value={form.budget} onChange={handleChange} className={fieldStyle}>
+            <option value="">Pilih Budget</option>
             <option value="400K - 600K">400K - 600K</option>
             <option value="600K - 800K">600K - 800K</option>
             <option value="800K - 1 Juta">800K - 1 Juta</option>
             <option value="1 Juta+">1 Juta+</option>
           </select>
 
-          <input
-            name="instagram"
-            value={form.instagram}
-            placeholder="Instagram"
-            onChange={handleChange}
-            className={fieldStyle}
-          />
+          <input name="instagram" value={form.instagram} onChange={handleChange} placeholder="Instagram" className={fieldStyle} />
 
-          <input
-            name="wa"
-            value={form.wa}
-            placeholder="WhatsApp aktif *"
-            onChange={handleChange}
-            className={fieldStyle}
-          />
+          <input name="wa" value={form.wa} onChange={handleChange} placeholder="WhatsApp *" className={fieldStyle} />
 
-          {/* BUTTON */}
           <button
             type="submit"
             disabled={isDisabled || loading}
-            className="
-              h-[54px]
-              w-full
-              rounded-xl
-              bg-white
-              px-4
-              text-sm
-              font-medium
-              text-black
-              transition
-              hover:bg-neutral-200
-              disabled:cursor-not-allowed
-              disabled:opacity-40
-            "
+            className="h-[54px] w-full rounded-xl bg-white text-black font-medium"
           >
-            {loading ? 'Mengirim...' : 'Kirim & Konsultasi Sekarang →'}
+            {loading ? 'Mengirim...' : 'Kirim & Konsultasi'}
           </button>
-
         </form>
-
-        {/* FOOTER */}
-        <div className="mt-8 flex items-center justify-center gap-2 text-xs text-neutral-500">
-          <span>🔒</span>
-          <p>Data kamu aman & tidak akan dibagikan ke pihak lain</p>
-        </div>
-
       </div>
     </section>
   );
