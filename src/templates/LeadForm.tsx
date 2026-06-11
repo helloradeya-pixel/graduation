@@ -7,7 +7,7 @@ import { trackLead, trackWA } from '@/utils/tracking';
 type FormState = {
   name: string;
   campus: string;
-  date: string;
+  month: string;
   budget: string;
   instagram: string;
   wa: string;
@@ -17,7 +17,7 @@ const LeadForm = () => {
   const [form, setForm] = useState<FormState>({
     name: '',
     campus: '',
-    date: '',
+    month: '',
     budget: '',
     instagram: '',
     wa: '',
@@ -43,10 +43,10 @@ const LeadForm = () => {
 
     const name = form.name.trim();
     const campus = form.campus.trim();
-    const date = form.date.trim();
+    const month = form.month.trim();
     const wa = form.wa.trim();
 
-    if (!name || !campus || !date || !wa) {
+    if (!name || !campus || !month || !wa) {
       alert('⚠️ Mohon isi data wajib');
       return;
     }
@@ -70,23 +70,28 @@ const LeadForm = () => {
         return;
       }
 
-      // TRACKING
+      // =========================
+      // TRACKING META + GA4
+      // =========================
       trackLead('graduation_form', {
         campus: form.campus,
-        date: form.date,
+        month: form.month,
       });
 
       trackWA('graduation_pricelist', {
         campus: form.campus,
       });
 
-      // WHATSAPP MESSAGE
+      // =========================
+      // WHATSAPP MESSAGE (CLEAN)
+      // =========================
       const message = `Halo admin 👋
 
 Saya mau tanya info paket & pricelist graduation photoshoot.
 
 Nama: ${name}
 Kampus: ${campus}
+Perkiraan wisuda: ${month}
 
 Boleh dibantu info detail paketnya ya 🙏`;
 
@@ -94,10 +99,11 @@ Boleh dibantu info detail paketnya ya 🙏`;
 
       window.open(url, '_blank');
 
+      // RESET FORM
       setForm({
         name: '',
         campus: '',
-        date: '',
+        month: '',
         budget: '',
         instagram: '',
         wa: '',
@@ -113,7 +119,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
   const isDisabled =
     !form.name.trim() ||
     !form.campus.trim() ||
-    !form.date.trim() ||
+    !form.month.trim() ||
     !form.wa.trim();
 
   const fieldStyle =
@@ -157,28 +163,29 @@ Boleh dibantu info detail paketnya ya 🙏`;
             className={fieldStyle}
           />
 
-          {/* DATE FIX (SAFE + NO CENTER ISSUE) */}
-          <input
-            type="date"
-            name="date"
-            value={form.date}
+          {/* MONTH */}
+          <select
+            name="month"
+            value={form.month}
             onChange={handleChange}
-            className="
-              h-[54px]
-              w-full
-              rounded-xl
-              border
-              border-white/10
-              bg-white/5
-              px-4
-              text-sm
-              text-white
-              outline-none
-              text-left
-              [color-scheme:dark]
-            "
-          />
+            className={fieldStyle}
+          >
+            <option value="">Pilih Perkiraan Bulan Wisuda</option>
+            <option value="Januari">Januari</option>
+            <option value="Februari">Februari</option>
+            <option value="Maret">Maret</option>
+            <option value="April">April</option>
+            <option value="Mei">Mei</option>
+            <option value="Juni">Juni</option>
+            <option value="Juli">Juli</option>
+            <option value="Agustus">Agustus</option>
+            <option value="September">September</option>
+            <option value="Oktober">Oktober</option>
+            <option value="November">November</option>
+            <option value="Desember">Desember</option>
+          </select>
 
+          {/* BUDGET */}
           <select
             name="budget"
             value={form.budget}
