@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { trackLead, trackWA } from '@/utils/tracking';
 
 type FormState = {
   name: string;
@@ -33,7 +34,6 @@ const LeadForm = () => {
   };
 
   // META PIXEL - LEAD
-  const fireLeadEvent = () => {
     if (typeof window !== 'undefined' && (window as any).fbq) {
       (window as any).fbq('track', 'Lead', {
         content_name: 'Graduation Pricelist',
@@ -44,7 +44,6 @@ const LeadForm = () => {
   };
 
   // GOOGLE ANALYTICS - LEAD
-  const fireGAEvent = () => {
     if (typeof window !== 'undefined' && (window as any).gtag) {
       (window as any).gtag('event', 'generate_lead', {
         event_category: 'lead_form',
@@ -54,7 +53,6 @@ const LeadForm = () => {
   };
 
   // META PIXEL + GA - WHATSAPP CLICK
-  const fireWAEvent = () => {
     if (typeof window !== 'undefined') {
       // META PIXEL
       if ((window as any).fbq) {
@@ -106,9 +104,10 @@ const LeadForm = () => {
       }
 
       // 2. FIRE LEAD TRACKING
-      fireLeadEvent();
-      fireGAEvent();
-
+trackLead('graduation_form', {
+  campus: form.campus,
+  budget: form.budget,
+});
       // 3. WHATSAPP MESSAGE
       const message = `Halo admin 👋
 
@@ -123,8 +122,11 @@ Boleh dibantu info detail paketnya ya 🙏`;
         message,
       )}`;
 
-      // 4. FIRE WHATSAPP TRACKING
-      fireWAEvent();
+      /// 4. FIRE WHATSAPP TRACKING
+trackWA('graduation_pricelist', {
+  campus: form.campus,
+  budget: form.budget,
+});
 
       // 5. OPEN WHATSAPP
       window.open(url, '_blank');
@@ -222,11 +224,10 @@ Boleh dibantu info detail paketnya ya 🙏`;
             className={fieldStyle}
           >
             <option value="">Pilih Range Budget</option>
-            <option value="200K - 300K">200K - 300K</option>
-            <option value="300K - 400K">300K - 400K</option>
-            <option value="400K - 500K">400K - 500K</option>
-            <option value="500K - 600K">500K - 600K</option>
-            <option value="600K - 800K">600K - 800K</option>
+            <option value="400K - 600K">400K - 600K</option>
+<option value="600K - 800K">600K - 800K</option>
+<option value="800K - 1 Juta">800K - 1 Juta</option>
+<option value="1 Juta+">1 Juta+</option>
           </select>
 
           <input
