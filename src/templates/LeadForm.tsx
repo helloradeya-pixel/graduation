@@ -27,48 +27,10 @@ const LeadForm = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    setForm({
-      ...form,
+    setForm((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
-  };
-
-  // META PIXEL - LEAD
-    if (typeof window !== 'undefined' && (window as any).fbq) {
-      (window as any).fbq('track', 'Lead', {
-        content_name: 'Graduation Pricelist',
-        campus: form.campus,
-        budget: form.budget,
-      });
-    }
-  };
-
-  // GOOGLE ANALYTICS - LEAD
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'generate_lead', {
-        event_category: 'lead_form',
-        event_label: 'graduation_pricelist',
-      });
-    }
-  };
-
-  // META PIXEL + GA - WHATSAPP CLICK
-    if (typeof window !== 'undefined') {
-      // META PIXEL
-      if ((window as any).fbq) {
-        (window as any).fbq('track', 'Contact', {
-          content_name: 'WhatsApp Click',
-        });
-      }
-
-      // GA4
-      if ((window as any).gtag) {
-        (window as any).gtag('event', 'click_whatsapp', {
-          event_category: 'whatsapp',
-          event_label: 'graduation_pricelist',
-        });
-      }
-    }
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -103,11 +65,12 @@ const LeadForm = () => {
         return;
       }
 
-      // 2. FIRE LEAD TRACKING
-trackLead('graduation_form', {
-  campus: form.campus,
-  budget: form.budget,
-});
+      // 2. TRACK LEAD (META + GA4)
+      trackLead('graduation_form', {
+        campus: form.campus,
+        budget: form.budget,
+      });
+
       // 3. WHATSAPP MESSAGE
       const message = `Halo admin 👋
 
@@ -122,11 +85,11 @@ Boleh dibantu info detail paketnya ya 🙏`;
         message,
       )}`;
 
-      /// 4. FIRE WHATSAPP TRACKING
-trackWA('graduation_pricelist', {
-  campus: form.campus,
-  budget: form.budget,
-});
+      // 4. TRACK WHATSAPP CLICK (META + GA4)
+      trackWA('graduation_pricelist', {
+        campus: form.campus,
+        budget: form.budget,
+      });
 
       // 5. OPEN WHATSAPP
       window.open(url, '_blank');
@@ -225,9 +188,9 @@ trackWA('graduation_pricelist', {
           >
             <option value="">Pilih Range Budget</option>
             <option value="400K - 600K">400K - 600K</option>
-<option value="600K - 800K">600K - 800K</option>
-<option value="800K - 1 Juta">800K - 1 Juta</option>
-<option value="1 Juta+">1 Juta+</option>
+            <option value="600K - 800K">600K - 800K</option>
+            <option value="800K - 1 Juta">800K - 1 Juta</option>
+            <option value="1 Juta+">1 Juta+</option>
           </select>
 
           <input
