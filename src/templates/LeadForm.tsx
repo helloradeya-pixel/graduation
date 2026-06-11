@@ -70,6 +70,7 @@ const LeadForm = () => {
         return;
       }
 
+      // TRACKING
       trackLead('graduation_form', {
         campus: form.campus,
         date: form.date,
@@ -79,6 +80,7 @@ const LeadForm = () => {
         campus: form.campus,
       });
 
+      // WHATSAPP MESSAGE
       const message = `Halo admin 👋
 
 Saya mau tanya info paket & pricelist graduation photoshoot.
@@ -121,6 +123,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
     <section id="leadform" className="scroll-mt-32 bg-black py-28 text-white">
       <div className="mx-auto max-w-3xl px-8 md:px-16">
 
+        {/* HEADER */}
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.4em] text-neutral-500">
             Graduation Inquiry
@@ -135,6 +138,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
           </p>
         </div>
 
+        {/* FORM */}
         <form onSubmit={handleSubmit} className="mt-12 space-y-4">
 
           <input
@@ -153,7 +157,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
             className={fieldStyle}
           />
 
-          {/* 🔥 FIX DATE ALIGNMENT (FINAL SOLUTION) */}
+          {/* DATE FIX (SAFE + NO CENTER ISSUE) */}
           <input
             type="date"
             name="date"
@@ -172,7 +176,6 @@ Boleh dibantu info detail paketnya ya 🙏`;
               outline-none
               text-left
               [color-scheme:dark]
-              appearance-none
             "
           />
 
