@@ -6,7 +6,10 @@ const isBrowser = () => typeof window !== 'undefined';
 
 const getBasePayload = () => {
   const segment = getSegment();
-  return { segment };
+
+  return {
+    segment,
+  };
 };
 
 // =========================
@@ -36,33 +39,46 @@ const gaTrack = (event: string, params?: any) => {
 // =========================
 // WHATSAPP CLICK
 // =========================
-export const trackWA = (label: TrackLabel = 'unknown') => {
+export const trackWA = (
+  label: TrackLabel = 'unknown',
+  extra?: Record<string, any>,
+) => {
   metaTrack('Contact', {
     content_name: `WA_${label}`,
+    ...extra,
   });
 
   gaTrack('click_whatsapp', {
     event_label: label,
+    ...extra,
   });
 };
 
 // =========================
 // PRICELIST CLICK
 // =========================
-export const trackPricelist = (label: TrackLabel = 'unknown') => {
+export const trackPricelist = (
+  label: TrackLabel = 'unknown',
+  extra?: Record<string, any>,
+) => {
   metaTrack('ViewContent', {
     content_name: `Pricelist_${label}`,
+    ...extra,
   });
 
   gaTrack('click_pricelist', {
     event_label: label,
+    ...extra,
   });
 };
 
 // =========================
 // LEAD FORM SUBMIT
 // =========================
-export const trackLead = (label: TrackLabel = 'form_submit', extra?: any) => {
+export const trackLead = (
+  label: TrackLabel = 'form_submit',
+  extra?: Record<string, any>,
+) => {
   metaTrack('Lead', {
     content_name: `Lead_${label}`,
     ...extra,
@@ -70,5 +86,6 @@ export const trackLead = (label: TrackLabel = 'form_submit', extra?: any) => {
 
   gaTrack('generate_lead', {
     event_label: label,
+    ...extra,
   });
 };
