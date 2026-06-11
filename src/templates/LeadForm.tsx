@@ -70,9 +70,6 @@ const LeadForm = () => {
         return;
       }
 
-      // =========================
-      // TRACKING
-      // =========================
       trackLead('graduation_form', {
         campus: form.campus,
         date: form.date,
@@ -82,9 +79,6 @@ const LeadForm = () => {
         campus: form.campus,
       });
 
-      // =========================
-      // WHATSAPP MESSAGE (FINAL FORMAT)
-      // =========================
       const message = `Halo admin 👋
 
 Saya mau tanya info paket & pricelist graduation photoshoot.
@@ -98,7 +92,6 @@ Boleh dibantu info detail paketnya ya 🙏`;
 
       window.open(url, '_blank');
 
-      // reset form
       setForm({
         name: '',
         campus: '',
@@ -128,7 +121,6 @@ Boleh dibantu info detail paketnya ya 🙏`;
     <section id="leadform" className="scroll-mt-32 bg-black py-28 text-white">
       <div className="mx-auto max-w-3xl px-8 md:px-16">
 
-        {/* HEADER */}
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.4em] text-neutral-500">
             Graduation Inquiry
@@ -143,7 +135,6 @@ Boleh dibantu info detail paketnya ya 🙏`;
           </p>
         </div>
 
-        {/* FORM */}
         <form onSubmit={handleSubmit} className="mt-12 space-y-4">
 
           <input
@@ -162,17 +153,24 @@ Boleh dibantu info detail paketnya ya 🙏`;
             className={fieldStyle}
           />
 
-          {/* DATE FIX (no center bug) */}
+          {/* FIXED DATE INPUT (ANTI CENTER + iOS FIX) */}
           <div className="h-[54px] w-full rounded-xl border border-white/10 bg-white/5 px-4 flex items-center">
             <input
               type="date"
               name="date"
               value={form.date}
               onChange={handleChange}
-              className="w-full bg-transparent text-sm text-white outline-none"
+              className="
+                w-full
+                bg-transparent
+                text-sm text-white
+                outline-none
+                appearance-none
+                [-webkit-appearance:none]
+                text-left
+              "
               style={{
                 colorScheme: 'dark',
-                textAlign: 'left',
               }}
             />
           </div>
