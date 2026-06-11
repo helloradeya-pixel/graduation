@@ -192,7 +192,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
             onChange={handleChange}
             className={fieldStyle}
           >
-            <option value="">Pilih Budget</option>
+            <option value="">Range Budget</option>
             <option value="400K - 600K">400K - 600K</option>
             <option value="600K - 800K">600K - 800K</option>
             <option value="800K - 1 Juta">800K - 1 Juta</option>
