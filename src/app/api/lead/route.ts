@@ -34,15 +34,11 @@ export async function POST(req: Request) {
           ],
         },
 
-        Date: {
-          rich_text: [
-            {
-              text: {
-                content: body.date || '',
-              },
-            },
-          ],
-        },
+        Month: {
+  select: {
+    name: body.month || '',
+  },
+},
 
         Budget: {
           rich_text: [
