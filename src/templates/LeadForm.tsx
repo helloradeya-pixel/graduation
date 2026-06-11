@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { trackLead, trackWA } from '@/utils/tracking';
+import { trackLead } from '@/utils/tracking';
 
 type FormState = {
   name: string;
@@ -27,9 +27,11 @@ const LeadForm = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
+    const { name, value } = e.target;
+
     setForm((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
   };
 
@@ -49,52 +51,60 @@ const LeadForm = () => {
     try {
       setLoading(true);
 
-      // 1. SAVE KE NOTION / API
+      // =========================
+      // SAVE LEAD (INTERNAL)
+      // =========================
       const res = await fetch('/api/lead', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          segment: 'graduation',
+        }),
       });
 
       const data = await res.json();
 
-      if (!data.success) {
+      if (!res.ok || !data.success) {
         alert('❌ Gagal mengirim data');
         return;
       }
 
-      // 2. TRACK LEAD (META + GA4)
+      // =========================
+      // META + GA4 TRACKING
+      // =========================
       trackLead('graduation_form', {
-        campus: form.campus,
-        budget: form.budget,
+        campus: form.campus || '-',
+        date: form.date || '-',
+        instagram: form.instagram || '-',
       });
 
-      // 3. WHATSAPP MESSAGE
+      // =========================
+      // WHATSAPP MESSAGE (NO BUDGET!)
+      // =========================
       const message = `Halo admin 👋
 
-Saya mau tanya info paket & pricelist graduation photoshoot.
+Saya mau tanya info paket & pricelist graduation photoshoot:
 
 Nama: ${name}
 Kampus: ${campus}
-
-Boleh dibantu info detail paketnya ya 🙏`;
+Tanggal: ${date}
+Instagram: ${form.instagram || '-'}`;
 
       const url = `https://wa.me/628211251570?text=${encodeURIComponent(
         message,
       )}`;
 
-      // 4. TRACK WHATSAPP CLICK (META + GA4)
-      trackWA('graduation_pricelist', {
-        campus: form.campus,
-        budget: form.budget,
-      });
-
-      // 5. OPEN WHATSAPP
+      // =========================
+      // OPEN WHATSAPP
+      // =========================
       window.open(url, '_blank');
 
-      // 6. RESET FORM
+      // =========================
+      // RESET FORM
+      // =========================
       setForm({
         name: '',
         campus: '',
