@@ -24,17 +24,14 @@ const LeadForm = () => {
   });
 
   const [loading, setLoading] = useState(false);
-
   const segment = getSegment();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name, value } = e.target;
-
     setForm((prev) => ({
       ...prev,
-      [name]: value,
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -70,9 +67,7 @@ const LeadForm = () => {
         return;
       }
 
-      // =========================
-      // TRACKING META + GA4
-      // =========================
+      // TRACKING
       trackLead('graduation_form', {
         campus: form.campus,
         month: form.month,
@@ -82,24 +77,22 @@ const LeadForm = () => {
         campus: form.campus,
       });
 
-      // =========================
-      // WHATSAPP MESSAGE (CLEAN)
-      // =========================
+      // WHATSAPP MESSAGE (FINAL FORMAT FIXED)
       const message = `Halo admin 👋
 
 Saya mau tanya info paket & pricelist graduation photoshoot.
 
 Nama: ${name}
 Kampus: ${campus}
-Perkiraan wisuda: ${month}
+Perkiraan Wisuda: ${month}
 
 Boleh dibantu info detail paketnya ya 🙏`;
 
-      const url = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
+      window.open(
+        `https://wa.me/628211251570?text=${encodeURIComponent(message)}`,
+        '_blank'
+      );
 
-      window.open(url, '_blank');
-
-      // RESET FORM
       setForm({
         name: '',
         campus: '',
@@ -129,7 +122,6 @@ Boleh dibantu info detail paketnya ya 🙏`;
     <section id="leadform" className="scroll-mt-32 bg-black py-28 text-white">
       <div className="mx-auto max-w-3xl px-8 md:px-16">
 
-        {/* HEADER */}
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.4em] text-neutral-500">
             Graduation Inquiry
@@ -138,13 +130,8 @@ Boleh dibantu info detail paketnya ya 🙏`;
           <h2 className="mt-4 text-3xl font-semibold md:text-5xl">
             Book Your Graduation Story
           </h2>
-
-          <p className="mt-6 text-sm text-neutral-400 md:text-base">
-            Isi data kamu untuk konsultasi WhatsApp.
-          </p>
         </div>
 
-        {/* FORM */}
         <form onSubmit={handleSubmit} className="mt-12 space-y-4">
 
           <input
@@ -170,7 +157,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
             onChange={handleChange}
             className={fieldStyle}
           >
-            <option value="">Pilih Perkiraan Bulan Wisuda</option>
+            <option value="">Perkiraan Bulan Wisuda</option>
             <option value="Januari">Januari</option>
             <option value="Februari">Februari</option>
             <option value="Maret">Maret</option>
@@ -185,14 +172,13 @@ Boleh dibantu info detail paketnya ya 🙏`;
             <option value="Desember">Desember</option>
           </select>
 
-          {/* BUDGET */}
           <select
             name="budget"
             value={form.budget}
             onChange={handleChange}
             className={fieldStyle}
           >
-            <option value="">Range Budget</option>
+            <option value="">Pilih Budget</option>
             <option value="400K - 600K">400K - 600K</option>
             <option value="600K - 800K">600K - 800K</option>
             <option value="800K - 1 Juta">800K - 1 Juta</option>
