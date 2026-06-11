@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { getSegment } from '@/utils/getSegment';
+import { trackLead } from '@/utils/tracking';
 
 type FormState = {
   name: string;
@@ -22,7 +23,7 @@ const LeadForm = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const segment = getSegment();
+  const segment = getSegment(); // tetap dipakai untuk Meta tracking
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -33,27 +34,6 @@ const LeadForm = () => {
       ...prev,
       [name]: value,
     }));
-  };
-
-  // META PIXEL
-  const fireLeadEvent = () => {
-    if (typeof window === 'undefined') return;
-
-    window.fbq?.('track', 'Lead', {
-      content_name: `${segment}_lead_form`,
-      content_category: segment,
-      service: form.service || 'unknown',
-    });
-  };
-
-  // GA4
-  const fireGAEvent = () => {
-    if (typeof window === 'undefined') return;
-
-    window.gtag?.('event', 'generate_lead', {
-      event_category: segment,
-      event_label: 'lead_form_submit',
-    });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -70,6 +50,9 @@ const LeadForm = () => {
     try {
       setLoading(true);
 
+      // =========================
+      // SAVE LEAD
+      // =========================
       const res = await fetch('/api/wedding-lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -86,24 +69,36 @@ const LeadForm = () => {
         return;
       }
 
-      // TRACKING
-      fireLeadEvent();
-      fireGAEvent();
+      // =========================
+      // TRACK META + GA4
+      // =========================
+      trackLead('couple_form', {
+        service: form.service || 'unknown',
+        domisili: form.domisili || '-',
+        instagram: form.instagram || '-',
+      });
 
+      // =========================
+      // WHATSAPP MESSAGE (CLEAN - NO SEGMENT)
+      // =========================
       const message = `Halo admin 👋
 
-Saya mau tanya info paket & pricelist:
+Saya mau tanya info paket & pricelist couple photoshoot:
 
-Segment: ${segment}
 Nama: ${name}
 Instagram: ${form.instagram || '-'}
 Domisili: ${form.domisili || '-'}
 Paket: ${form.service || '-'}`;
 
-      const url = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
+      const url = `https://wa.me/628211251570?text=${encodeURIComponent(
+        message
+      )}`;
 
       window.open(url, '_blank');
 
+      // =========================
+      // RESET FORM
+      // =========================
       setForm({
         name: '',
         instagram: '',
@@ -128,13 +123,10 @@ Paket: ${form.service || '-'}`;
     <section id="leadform" className="scroll-mt-32 bg-black py-28 text-white">
       <div className="mx-auto max-w-3xl px-8 md:px-16">
 
+        {/* HEADER */}
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.4em] text-neutral-500">
-            {segment === 'couple'
-              ? 'Couple Inquiry'
-              : segment === 'graduation'
-              ? 'Graduation Inquiry'
-              : 'Photography Inquiry'}
+            Couple Inquiry
           </p>
 
           <h2 className="mt-4 text-3xl font-semibold md:text-5xl">
@@ -146,22 +138,54 @@ Paket: ${form.service || '-'}`;
           </p>
         </div>
 
+        {/* FORM */}
         <form onSubmit={handleSubmit} className="mt-12 space-y-4">
 
-          <input name="name" value={form.name} onChange={handleChange} placeholder="Nama Lengkap *" className={fieldStyle} />
-          <input name="instagram" value={form.instagram} onChange={handleChange} placeholder="Instagram" className={fieldStyle} />
-          <input name="domisili" value={form.domisili} onChange={handleChange} placeholder="Domisili" className={fieldStyle} />
+          <input
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Nama Lengkap *"
+            className={fieldStyle}
+          />
 
-          <select name="service" value={form.service} onChange={handleChange} className={fieldStyle}>
+          <input
+            name="instagram"
+            value={form.instagram}
+            onChange={handleChange}
+            placeholder="Instagram"
+            className={fieldStyle}
+          />
+
+          <input
+            name="domisili"
+            value={form.domisili}
+            onChange={handleChange}
+            placeholder="Domisili"
+            className={fieldStyle}
+          />
+
+          <select
+            name="service"
+            value={form.service}
+            onChange={handleChange}
+            className={fieldStyle}
+          >
             <option value="">Pilih Paket</option>
             <option value="Prewedding">Prewedding</option>
             <option value="Engagement">Engagement</option>
             <option value="Wedding">Wedding</option>
-            <option value="Graduation">Graduation</option>
           </select>
 
-          <input name="wa" value={form.wa} onChange={handleChange} placeholder="WhatsApp aktif *" className={fieldStyle} />
+          <input
+            name="wa"
+            value={form.wa}
+            onChange={handleChange}
+            placeholder="WhatsApp aktif *"
+            className={fieldStyle}
+          />
 
+          {/* BUTTON */}
           <button
             type="submit"
             disabled={isDisabled || loading}
@@ -171,6 +195,7 @@ Paket: ${form.service || '-'}`;
           </button>
         </form>
 
+        {/* FOOTER NOTE */}
         <div className="mt-8 flex items-center justify-center gap-2 text-xs text-neutral-500">
           <span>🔒</span>
           <p>Data kamu aman & tidak akan dibagikan ke pihak lain</p>
