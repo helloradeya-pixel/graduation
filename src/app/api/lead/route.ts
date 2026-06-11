@@ -35,7 +35,7 @@ export async function POST(req: Request) {
         },
 
         Month: {
-  select: {
+  rich_text: {
     name: body.month || '',
   },
 },
