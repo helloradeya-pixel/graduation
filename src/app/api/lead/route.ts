@@ -12,75 +12,36 @@ export async function POST(req: Request) {
       parent: {
         database_id: process.env.NOTION_DATABASE_ID!,
       },
-
       properties: {
         Name: {
-          title: [
-            {
-              text: {
-                content: body.name || '',
-              },
-            },
-          ],
+          title: [{ text: { content: body.name || '' } }],
         },
 
         Campus: {
-          rich_text: [
-            {
-              text: {
-                content: body.campus || '',
-              },
-            },
-          ],
+          rich_text: [{ text: { content: body.campus || '' } }],
         },
 
         Month: {
-  rich_text: {
-    name: body.month || '',
-  },
-},
+          rich_text: [{ text: { content: body.month || '' } }],
+        },
 
         Budget: {
-          rich_text: [
-            {
-              text: {
-                content: body.budget || '',
-              },
-            },
-          ],
+          rich_text: [{ text: { content: body.budget || '' } }],
         },
 
         Instagram: {
-          rich_text: [
-            {
-              text: {
-                content: body.instagram || '',
-              },
-            },
-          ],
+          rich_text: [{ text: { content: body.instagram || '' } }],
         },
 
         WhatsApp: {
-          rich_text: [
-            {
-              text: {
-                content: body.wa || '',
-              },
-            },
-          ],
+          rich_text: [{ text: { content: body.wa || '' } }],
         },
       },
     });
 
-    return Response.json({
-      success: true,
-    });
-
+    return Response.json({ success: true });
   } catch (error) {
     console.log(error);
-
-    return Response.json({
-      success: false,
-    });
+    return Response.json({ success: false });
   }
 }
