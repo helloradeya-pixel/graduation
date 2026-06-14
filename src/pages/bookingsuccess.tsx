@@ -17,12 +17,11 @@ export default function BookingSuccess() {
       const dp = params.get('dp') || '';
 
       message =
-        `Halo kak, sudah booking atas nama ${nama} ` +
-        `package ${paket} ` +
-        `di tanggal ${tanggal} ` +
-        `di jam ${jamMulai} ` +
-        `sampai jam ${jamSelesai} yah kak!\n` +
-        `( DP ): ${dp}`;
+`Halo kak, sudah booking atas nama ${nama}
+Package: ${paket}
+Tanggal: ${tanggal}
+Jam: ${jamMulai} - ${jamSelesai}
+( DP ): ${dp}`;
     }
 
     if (service === 'couple') {
@@ -30,8 +29,8 @@ export default function BookingSuccess() {
       const dp = params.get('dp') || '';
 
       message =
-        `Halo kak, sudah booking atas nama ${nama} yah kak!\n` +
-        `( DP ): ${dp}`;
+`Halo kak, sudah booking atas nama ${nama} yah kak!
+( DP ): ${dp}`;
     }
 
     setTimeout(() => {
