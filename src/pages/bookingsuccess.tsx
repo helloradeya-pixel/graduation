@@ -5,7 +5,6 @@ export default function BookingSuccess() {
     const params = new URLSearchParams(window.location.search);
 
     const service = params.get('service');
-
     const nama = params.get('nama') || '';
     const paket = params.get('package') || '';
     const tanggal = params.get('tanggal') || '';
@@ -13,44 +12,28 @@ export default function BookingSuccess() {
     const jamSelesai = params.get('jam_selesai') || '';
     const dp = params.get('dp') || '';
 
-    const value = Number(dp || 0);
-
     // =========================
-    // META PIXEL
+    // META PIXEL (CLEAN)
     // =========================
 
     window.fbq?.('track', 'Lead', {
       content_name: 'Booking Success',
       service,
+      value: Number(dp || 0),
     });
 
-    window.fbq?.('track', 'Purchase', {
-      value,
-      currency: 'IDR',
+    window.fbq?.('trackCustom', 'BookingSuccess', {
       service,
     });
 
-    if (service === 'graduation') {
-      window.fbq?.('trackCustom', 'BookingGraduation');
-    }
-
-    if (service === 'couple') {
-      window.fbq?.('trackCustom', 'BookingCouple');
-    }
-
     // =========================
-    // GA4 TRACKING
+    // GA4 (NO FAKE PURCHASE)
     // =========================
 
     window.gtag?.('event', 'generate_lead', {
       event_category: 'booking',
       event_label: service,
-    });
-
-    window.gtag?.('event', 'purchase', {
-      value,
-      currency: 'IDR',
-      item_category: service,
+      value: Number(dp || 0),
     });
 
     // =========================
@@ -60,8 +43,7 @@ export default function BookingSuccess() {
     let message = '';
 
     if (service === 'graduation') {
-      message =
-`Halo kak, sudah booking atas nama ${nama}
+      message = `Halo kak, sudah booking atas nama ${nama}
 Package: ${paket}
 Tanggal: ${tanggal}
 Jam: ${jamMulai} - ${jamSelesai}
@@ -69,19 +51,18 @@ Jam: ${jamMulai} - ${jamSelesai}
     }
 
     if (service === 'couple') {
-      message =
-`Halo kak, sudah booking atas nama ${nama} yah kak!
+      message = `Halo kak, sudah booking atas nama ${nama} yah kak!
 ( DP ): ${dp}`;
     }
 
     // =========================
-    // REDIRECT WHATSAPP
+    // REDIRECT WHATSAPP (SAFE DELAY)
     // =========================
 
     setTimeout(() => {
       window.location.href =
         `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
-    }, 1500);
+    }, 2000);
   }, []);
 
   return (
