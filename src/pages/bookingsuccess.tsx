@@ -2,15 +2,9 @@ import { useEffect } from 'react';
 
 export default function BookingSuccess() {
   useEffect(() => {
-    const service =
-      new URLSearchParams(window.location.search)
-        .get('service');
-
-    console.log('Booking Success:', service);
-
     setTimeout(() => {
       window.location.href =
-        'https://wa.me/628211251570';
+        'https://wa.me/628211251570?text=TEST%20BOOKING%20RADEYA';
     }, 1500);
   }, []);
 
