@@ -7,6 +7,11 @@ export default function BookingSuccess() {
         .get('service');
 
     console.log('Booking Success:', service);
+
+    setTimeout(() => {
+      window.location.href =
+        'https://wa.me/628211251570';
+    }, 1500);
   }, []);
 
   return (
