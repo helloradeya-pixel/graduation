@@ -12,28 +12,44 @@ export default function BookingSuccess() {
     const jamSelesai = params.get('jam_selesai') || '';
     const dp = params.get('dp') || '';
 
-    // =========================
-    // META PIXEL (CLEAN)
-    // =========================
-
-    window.fbq?.('track', 'Lead', {
-      content_name: 'Booking Success',
-      service,
-      value: Number(dp || 0),
-    });
-
-    window.fbq?.('trackCustom', 'BookingSuccess', {
-      service,
-    });
+    const value = Number(dp || 0);
 
     // =========================
-    // GA4 (NO FAKE PURCHASE)
+    // META PIXEL - BOOKING EVENT (SPLIT)
+    // =========================
+
+    if (service === 'graduation') {
+      window.fbq?.('trackCustom', 'CompleteRegistration_Graduation', {
+        service: 'graduation',
+        value,
+        currency: 'IDR',
+      });
+    }
+
+    if (service === 'couple') {
+      window.fbq?.('trackCustom', 'CompleteRegistration_Couple', {
+        service: 'couple',
+        value,
+        currency: 'IDR',
+      });
+    }
+
+    // fallback safety (kalau service kosong)
+    if (!service) {
+      window.fbq?.('trackCustom', 'CompleteRegistration', {
+        value,
+        currency: 'IDR',
+      });
+    }
+
+    // =========================
+    // GA4 EVENT (CLEAN)
     // =========================
 
     window.gtag?.('event', 'generate_lead', {
       event_category: 'booking',
       event_label: service,
-      value: Number(dp || 0),
+      value,
     });
 
     // =========================
@@ -43,26 +59,34 @@ export default function BookingSuccess() {
     let message = '';
 
     if (service === 'graduation') {
-      message = `Halo kak, sudah booking atas nama ${nama}
+      message = `Halo kak, sudah booking Graduation atas nama ${nama}
 Package: ${paket}
 Tanggal: ${tanggal}
 Jam: ${jamMulai} - ${jamSelesai}
-( DP ): ${dp}`;
+DP: ${dp}`;
     }
 
     if (service === 'couple') {
-      message = `Halo kak, sudah booking atas nama ${nama} yah kak!
-( DP ): ${dp}`;
+      message = `Halo kak, sudah booking Couple atas nama ${nama}
+DP: ${dp}`;
     }
 
     // =========================
-    // REDIRECT WHATSAPP (SAFE DELAY)
+    // REDIRECT WA (SAFE DELAY)
     // =========================
 
     setTimeout(() => {
       window.location.href =
         `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
-    }, 2000);
+    }, 3000);
+
+    // =========================
+    // OPTIONAL DEBUG
+    // =========================
+    console.log('Booking Success Fired:', {
+      service,
+      value,
+    });
   }, []);
 
   return (
