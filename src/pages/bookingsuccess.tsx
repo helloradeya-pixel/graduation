@@ -15,42 +15,51 @@ export default function BookingSuccess() {
     const value = Number(dp || 0);
 
     // =========================
-    // META PIXEL - BOOKING EVENT (SPLIT)
+    // META PIXEL - BOOKING EVENTS (SPLIT CLEAN)
     // =========================
 
-    if (service === 'graduation') {
-      window.fbq?.('trackCustom', 'CompleteRegistration_Graduation', {
-        service: 'graduation',
-        value,
-        currency: 'IDR',
-      });
-    }
+    const fireMetaEvent = () => {
+      if (service === 'graduation') {
+        window.fbq?.('trackCustom', 'CompleteRegistration_Graduation', {
+          service: 'graduation',
+          value,
+          currency: 'IDR',
+        });
+      }
 
-    if (service === 'couple') {
-      window.fbq?.('trackCustom', 'CompleteRegistration_Couple', {
-        service: 'couple',
-        value,
-        currency: 'IDR',
-      });
-    }
+      if (service === 'couple') {
+        window.fbq?.('trackCustom', 'CompleteRegistration_Couple', {
+          service: 'couple',
+          value,
+          currency: 'IDR',
+        });
+      }
 
-    // fallback safety (kalau service kosong)
-    if (!service) {
-      window.fbq?.('trackCustom', 'CompleteRegistration', {
+      // fallback safety
+      if (!service) {
+        window.fbq?.('trackCustom', 'CompleteRegistration', {
+          value,
+          currency: 'IDR',
+        });
+      }
+
+      console.log('META EVENT FIRED:', {
+        service,
         value,
-        currency: 'IDR',
       });
-    }
+    };
 
     // =========================
-    // GA4 EVENT (CLEAN)
+    // GA4 EVENT
     // =========================
 
-    window.gtag?.('event', 'generate_lead', {
-      event_category: 'booking',
-      event_label: service,
-      value,
-    });
+    const fireGA4 = () => {
+      window.gtag?.('event', 'generate_lead', {
+        event_category: 'booking',
+        event_label: service,
+        value,
+      });
+    };
 
     // =========================
     // WHATSAPP MESSAGE
@@ -71,22 +80,21 @@ DP: ${dp}`;
 DP: ${dp}`;
     }
 
-    // =========================
-    // REDIRECT WA (SAFE DELAY)
-    // =========================
-
-    setTimeout(() => {
-      window.location.href =
-        `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
-    }, 3000);
+    const waLink = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
     // =========================
-    // OPTIONAL DEBUG
+    // EXECUTION ORDER (IMPORTANT)
     // =========================
-    console.log('Booking Success Fired:', {
-      service,
-      value,
-    });
+
+    fireMetaEvent();
+    fireGA4();
+
+    // kasih waktu pixel terkirim sebelum redirect
+    const timer = setTimeout(() => {
+      window.location.href = waLink;
+    }, 4500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
