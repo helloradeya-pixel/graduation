@@ -13,7 +13,6 @@ export default function Graduation() {
     const alreadyClosed = localStorage.getItem("promoClosed");
 
     if (!promoActive) return;
-
     if (oneTimeOnly && alreadyClosed) return;
 
     const timer = setTimeout(() => {
@@ -42,21 +41,24 @@ export default function Graduation() {
           left: 0,
           width: "100%",
           height: "100%",
-          background: "rgba(0,0,0,0.6)",
+          background: "rgba(0,0,0,0.65)",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           zIndex: 9999,
-          padding: "20px"
+          padding: "20px",
+          backdropFilter: "blur(6px)"
         }}>
           <div style={{
-            background: "#fff",
+            background: "linear-gradient(145deg, #ffffff, #f7f7f7)",
             width: "100%",
-            maxWidth: "360px",
-            borderRadius: "14px",
-            padding: "20px",
+            maxWidth: "380px",
+            borderRadius: "18px",
+            padding: "22px",
             textAlign: "center",
             position: "relative",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
+            border: "1px solid rgba(0,0,0,0.05)",
             fontFamily: "Arial"
           }}>
 
@@ -65,58 +67,96 @@ export default function Graduation() {
               onClick={closePopup}
               style={{
                 position: "absolute",
-                top: 10,
-                right: 12,
+                top: 12,
+                right: 14,
                 fontSize: 18,
-                cursor: "pointer"
+                cursor: "pointer",
+                color: "#888"
               }}
             >
               ✕
             </div>
 
-            {/* CONTENT */}
-            <h2>🎓 Promo Wisuda Radeya</h2>
+            {/* BADGE */}
+            <div style={{
+              display: "inline-block",
+              background: "#111",
+              color: "#fff",
+              fontSize: "12px",
+              padding: "4px 10px",
+              borderRadius: "20px",
+              marginBottom: "10px"
+            }}>
+              LIMITED OFFER
+            </div>
 
-            <p>
-              Paket dokumentasi wisuda mulai <b>Rp375.000</b>
+            {/* TITLE */}
+            <h2 style={{
+              fontSize: "20px",
+              marginBottom: "10px",
+              fontWeight: 700
+            }}>
+              🎓 Promo Wisuda Radeya
+            </h2>
+
+            {/* PRICE */}
+            <p style={{
+              fontSize: "15px",
+              marginBottom: "8px",
+              color: "#333"
+            }}>
+              Paket mulai <b style={{ fontSize: "18px" }}>Rp375.000</b>
             </p>
 
-            <p>
+            {/* SLOT */}
+            <p style={{
+              fontSize: "13px",
+              color: "#666",
+              marginBottom: "12px"
+            }}>
               Khusus <b>5 slot selama bulan Juni</b>
             </p>
 
-            <p style={{ fontSize: "13px", color: "#555" }}>
-              Hasil foto estetik & natural + arahan pose
+            {/* DESC */}
+            <p style={{
+              fontSize: "13px",
+              color: "#777",
+              lineHeight: "1.4",
+              marginBottom: "18px"
+            }}>
+              Hasil foto estetik & natural<br />
+              + arahan pose profesional
             </p>
 
-            {/* CTA WA */}
+            {/* CTA */}
             <a
               href="https://wa.me/628211251570?text=Halo%20kak%20saya%20mau%20booking%20promo%20wisuda%20Rp375.000"
               style={{
                 display: "block",
-                background: "#25D366",
+                background: "linear-gradient(90deg, #25D366, #20b858)",
                 color: "#fff",
-                padding: "12px",
-                borderRadius: "10px",
+                padding: "14px",
+                borderRadius: "12px",
                 textDecoration: "none",
                 fontWeight: "bold",
-                marginTop: "10px"
+                fontSize: "14px",
+                boxShadow: "0 10px 20px rgba(37, 211, 102, 0.25)"
               }}
             >
-              Chat WhatsApp Sekarang
+              Chat & Booking Sekarang
             </a>
 
             {/* CLOSE TEXT */}
             <p
               onClick={closePopup}
               style={{
-                marginTop: "10px",
+                marginTop: "12px",
                 fontSize: "12px",
                 cursor: "pointer",
-                color: "#777"
+                color: "#888"
               }}
             >
-              Tutup
+              Nanti saja
             </p>
 
           </div>
