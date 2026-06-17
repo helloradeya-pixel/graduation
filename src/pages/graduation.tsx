@@ -33,22 +33,19 @@ export default function Graduation() {
     <>
       <Base />
 
-      {/* POPUP PROMO */}
+      {/* SOFT POPUP */}
       {showPromo && (
         <div style={{
           position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          background: "rgba(0,0,0,0.65)",
+          inset: 0,
+          background: "rgba(0,0,0,0.45)",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           zIndex: 9999,
-          padding: "20px",
-          backdropFilter: "blur(6px)"
+          padding: "20px"
         }}>
+
           <div style={{
             background: "linear-gradient(145deg, #ffffff, #f7f7f7)",
             width: "100%",
@@ -59,7 +56,9 @@ export default function Graduation() {
             position: "relative",
             boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
             border: "1px solid rgba(0,0,0,0.05)",
-            fontFamily: "Arial"
+            fontFamily: "Arial",
+            transform: "translateY(-10px)",
+            animation: "fadeIn 0.25s ease-in-out"
           }}>
 
             {/* CLOSE */}
@@ -162,6 +161,20 @@ export default function Graduation() {
           </div>
         </div>
       )}
+
+      {/* ANIMATION STYLE */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </>
   );
 }
