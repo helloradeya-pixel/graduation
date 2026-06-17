@@ -12,13 +12,17 @@ export default function Graduation() {
     const oneTimeOnly = true;
     const alreadyClosed = localStorage.getItem("promoClosed");
 
-    if (promoActive && (!oneTimeOnly || !alreadyClosed)) {
-      const timer = setTimeout(() => {
-        setShowPromo(true);
-      }, 3000);
+    if (!promoActive) return;
 
-      return () => clearTimeout(timer);
-    }
+    if (oneTimeOnly && alreadyClosed) return;
+
+    const timer = setTimeout(() => {
+      setShowPromo(true);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, []);
 
   const closePopup = () => {
@@ -30,7 +34,7 @@ export default function Graduation() {
     <>
       <Base />
 
-      {/* POPUP */}
+      {/* POPUP PROMO */}
       {showPromo && (
         <div style={{
           position: "fixed",
@@ -73,9 +77,13 @@ export default function Graduation() {
             {/* CONTENT */}
             <h2>🎓 Promo Wisuda Radeya</h2>
 
-            <p>Paket dokumentasi wisuda mulai <b>Rp375.000</b></p>
+            <p>
+              Paket dokumentasi wisuda mulai <b>Rp375.000</b>
+            </p>
 
-            <p>Khusus <b>5 slot selama bulan Juni</b></p>
+            <p>
+              Khusus <b>5 slot selama bulan Juni</b>
+            </p>
 
             <p style={{ fontSize: "13px", color: "#555" }}>
               Hasil foto estetik & natural + arahan pose
