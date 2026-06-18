@@ -42,7 +42,7 @@ const gaTrack = (event: string, params?: any) => {
 };
 
 // =========================
-// WHATSAPP CLICK (IMPORTANT)
+// WHATSAPP CLICK (UPGRADED)
 // =========================
 export const trackWA = (
   label: TrackLabel = 'unknown',
@@ -50,6 +50,7 @@ export const trackWA = (
 ) => {
   const segment = getSegment();
 
+  // 1. GLOBAL EVENT (TOTAL WA CLICKS)
   metaTrackCustom('ClickWhatsApp', {
     content_name: `WA_${segment}_${label}`,
     segment,
@@ -61,6 +62,22 @@ export const trackWA = (
     segment,
     ...extra,
   });
+
+  // 2. SEGMENTED EVENTS (FOR ADS OPTIMIZATION)
+
+  if (segment === 'graduation') {
+    metaTrackCustom('ClickWhatsApp_Graduation', {
+      content_name: `WA_graduation_${label}`,
+      ...extra,
+    });
+  }
+
+  if (segment === 'couple') {
+    metaTrackCustom('ClickWhatsApp_Couple', {
+      content_name: `WA_couple_${label}`,
+      ...extra,
+    });
+  }
 };
 
 // =========================
