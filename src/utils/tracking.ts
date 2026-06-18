@@ -42,7 +42,7 @@ const gaTrack = (event: string, params?: any) => {
 };
 
 // =========================
-// WHATSAPP CLICK (UPGRADED)
+// WHATSAPP CLICK (BOF EVENT)
 // =========================
 export const trackWA = (
   label: TrackLabel = 'unknown',
@@ -50,7 +50,7 @@ export const trackWA = (
 ) => {
   const segment = getSegment();
 
-  // 1. GLOBAL EVENT (TOTAL WA CLICKS)
+  // GLOBAL WA CLICK (ALL TRAFFIC)
   metaTrackCustom('ClickWhatsApp', {
     content_name: `WA_${segment}_${label}`,
     segment,
@@ -63,8 +63,7 @@ export const trackWA = (
     ...extra,
   });
 
-  // 2. SEGMENTED EVENTS (FOR ADS OPTIMIZATION)
-
+  // SEGMENTED EVENTS (FOR ADS OPTIMIZATION)
   if (segment === 'graduation') {
     metaTrackCustom('ClickWhatsApp_Graduation', {
       content_name: `WA_graduation_${label}`,
@@ -81,7 +80,7 @@ export const trackWA = (
 };
 
 // =========================
-// PRICELIST CLICK
+// PRICELIST CLICK (MOF EVENT)
 // =========================
 export const trackPricelist = (
   label: TrackLabel = 'unknown',
@@ -103,7 +102,7 @@ export const trackPricelist = (
 };
 
 // =========================
-// LEAD FORM SUBMIT
+// LEAD FORM (MOF EVENT)
 // =========================
 export const trackLead = (
   label: TrackLabel = 'form_submit',
@@ -111,6 +110,7 @@ export const trackLead = (
 ) => {
   const segment = getSegment();
 
+  // GLOBAL LEAD
   metaTrack('Lead', {
     content_name: `Lead_${segment}_${label}`,
     segment,
@@ -122,6 +122,21 @@ export const trackLead = (
     segment,
     ...extra,
   });
+
+  // SEGMENTED LEADS (FOR ADS OPTIMIZATION)
+  if (segment === 'graduation') {
+    metaTrackCustom('Lead_Graduation', {
+      content_name: `Lead_graduation_${label}`,
+      ...extra,
+    });
+  }
+
+  if (segment === 'couple') {
+    metaTrackCustom('Lead_Couple', {
+      content_name: `Lead_couple_${label}`,
+      ...extra,
+    });
+  }
 };
 
 // =========================
