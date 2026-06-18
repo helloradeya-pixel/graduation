@@ -15,36 +15,37 @@ export default function BookingSuccess() {
     const value = Number(dp || 0);
 
     // =========================
-    // META PIXEL - BOOKING EVENTS (SPLIT CLEAN)
+    // UNIQUE EVENT ID (DEDUP KEY)
     // =========================
+    const eventId = `${service}_${Date.now()}`;
 
+    // =========================
+    // META PIXEL
+    // =========================
     const fireMetaEvent = () => {
-      if (service === 'graduation') {
-        window.fbq?.('trackCustom', 'CompleteRegistration_Graduation', {
-          service: 'graduation',
+      const eventName =
+        service === 'graduation'
+          ? 'CompleteRegistration_Graduation'
+          : service === 'couple'
+          ? 'CompleteRegistration_Couple'
+          : 'CompleteRegistration';
+
+      window.fbq?.(
+        'trackCustom',
+        eventName,
+        {
+          service,
           value,
           currency: 'IDR',
-        });
-      }
+        },
+        {
+          eventID: eventId,
+        }
+      );
 
-      if (service === 'couple') {
-        window.fbq?.('trackCustom', 'CompleteRegistration_Couple', {
-          service: 'couple',
-          value,
-          currency: 'IDR',
-        });
-      }
-
-      // fallback safety
-      if (!service) {
-        window.fbq?.('trackCustom', 'CompleteRegistration', {
-          value,
-          currency: 'IDR',
-        });
-      }
-
-      console.log('META EVENT FIRED:', {
-        service,
+      console.log('PIXEL FIRED:', {
+        eventName,
+        eventId,
         value,
       });
     };
@@ -52,7 +53,6 @@ export default function BookingSuccess() {
     // =========================
     // GA4 EVENT
     // =========================
-
     const fireGA4 = () => {
       window.gtag?.('event', 'generate_lead', {
         event_category: 'booking',
@@ -62,9 +62,35 @@ export default function BookingSuccess() {
     };
 
     // =========================
+    // META CAPI (Vercel API)
+    // =========================
+    const fireCAPI = async () => {
+      try {
+        await fetch('/api/meta-capi', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            event_name:
+              service === 'graduation'
+                ? 'CompleteRegistration_Graduation'
+                : service === 'couple'
+                ? 'CompleteRegistration_Couple'
+                : 'CompleteRegistration',
+            event_id: eventId,
+            value,
+            service,
+          }),
+        });
+      } catch (err) {
+        console.log('CAPI ERROR:', err);
+      }
+    };
+
+    // =========================
     // WHATSAPP MESSAGE
     // =========================
-
     let message = '';
 
     if (service === 'graduation') {
@@ -83,13 +109,12 @@ DP: ${dp}`;
     const waLink = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
     // =========================
-    // EXECUTION ORDER (IMPORTANT)
+    // EXECUTION ORDER
     // =========================
-
     fireMetaEvent();
     fireGA4();
+    fireCAPI();
 
-    // kasih waktu pixel terkirim sebelum redirect
     const timer = setTimeout(() => {
       window.location.href = waLink;
     }, 4500);
