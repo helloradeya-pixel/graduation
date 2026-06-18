@@ -9,23 +9,41 @@ export default async function handler(
       return res.status(405).json({ message: "Method not allowed" });
     }
 
-    // 🔥 FORCE PARSE BODY (ANTI EMPTY BUG)
+    // =========================
+    // SAFE BODY PARSING (ANTI ERROR)
+    // =========================
     const body =
       typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 
-    const event_name = body?.event_name;
-    const event_id = body?.event_id;
-    const value = body?.value || 0;
-    const service = body?.service || "";
+    // =========================
+    // EXTRACT DATA (FORCE SAFE)
+    // =========================
+    const service = body?.service || "unknown";
+    const value = Number(body?.value || 0);
+    const event_id = body?.event_id || `${service}_${Date.now()}`;
 
-    // 🔥 DEBUG SAFETY
-    if (!event_name) {
-      return res.status(400).json({
-        error: "Missing event_name",
-        received_body: body,
-      });
-    }
+    // =========================
+    // FORCE VALID EVENT NAME
+    // =========================
+    const event_name =
+      service === "graduation"
+        ? "CompleteRegistration_Graduation"
+        : service === "couple"
+        ? "CompleteRegistration_Couple"
+        : "CompleteRegistration";
 
+    // =========================
+    // DEBUG LOG (WAJIB)
+    // =========================
+    console.log("🔥 META CAPI HIT");
+    console.log("BODY RAW:", req.body);
+    console.log("BODY PARSED:", body);
+    console.log("EVENT NAME:", event_name);
+    console.log("EVENT ID:", event_id);
+
+    // =========================
+    // FINAL PAYLOAD TO META
+    // =========================
     const payload = {
       data: [
         {
@@ -43,6 +61,9 @@ export default async function handler(
       access_token: process.env.META_TOKEN,
     };
 
+    // =========================
+    // SEND TO META
+    // =========================
     const response = await fetch(
       `https://graph.facebook.com/v19.0/${process.env.PIXEL_ID}/events`,
       {
@@ -56,12 +77,21 @@ export default async function handler(
 
     const result = await response.json();
 
+    console.log("META RESPONSE:", result);
+
     return res.status(200).json({
       success: true,
-      sent_payload: payload,
+      debug: {
+        event_name,
+        event_id,
+        value,
+        service,
+      },
       meta: result,
     });
   } catch (error: any) {
+    console.log("CAPI ERROR:", error);
+
     return res.status(500).json({
       success: false,
       error: error.message,
