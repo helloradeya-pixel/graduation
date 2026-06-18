@@ -1,4 +1,9 @@
-export default async function handler(req, res) {
+import type { NextApiRequest, NextApiResponse } from "next";
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
     const { event_name, event_id, value, service } = req.body;
 
@@ -35,7 +40,7 @@ export default async function handler(req, res) {
       meta: result
     });
 
-  } catch (error) {
+  } catch (error: any) {
     return res.status(500).json({
       success: false,
       error: error.message
