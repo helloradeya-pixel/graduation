@@ -1,29 +1,23 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     if (req.method !== "POST") {
       return res.status(405).json({ message: "Method not allowed" });
     }
 
     // =========================
-    // SAFE BODY PARSING (ANTI ERROR)
+    // SAFE BODY PARSE
     // =========================
     const body =
-      typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+      typeof req.body === "string" ? JSON.parse(req.body) : req.body || {};
+
+    const service = body.service || "unknown";
+    const value = Number(body.value || 0);
+    const event_id = body.event_id || `${service}_${Date.now()}`;
 
     // =========================
-    // EXTRACT DATA (FORCE SAFE)
-    // =========================
-    const service = body?.service || "unknown";
-    const value = Number(body?.value || 0);
-    const event_id = body?.event_id || `${service}_${Date.now()}`;
-
-    // =========================
-    // FORCE VALID EVENT NAME
+    // FORCE VALID EVENT NAME (ANTI ERROR 100%)
     // =========================
     const event_name =
       service === "graduation"
@@ -33,16 +27,15 @@ export default async function handler(
         : "CompleteRegistration";
 
     // =========================
-    // DEBUG LOG (WAJIB)
+    // DEBUG
     // =========================
-    console.log("🔥 META CAPI HIT");
-    console.log("BODY RAW:", req.body);
-    console.log("BODY PARSED:", body);
-    console.log("EVENT NAME:", event_name);
-    console.log("EVENT ID:", event_id);
+    console.log("🔥 CAPI HIT");
+    console.log("BODY:", body);
+    console.log("EVENT:", event_name);
+    console.log("EVENT_ID:", event_id);
 
     // =========================
-    // FINAL PAYLOAD TO META
+    // PAYLOAD (FIXED FORMAT META)
     // =========================
     const payload = {
       data: [
@@ -58,14 +51,13 @@ export default async function handler(
           },
         },
       ],
-      access_token: process.env.META_TOKEN,
     };
 
     // =========================
-    // SEND TO META
+    // SEND TO META (TOKEN IN URL ❗ FIXED)
     // =========================
     const response = await fetch(
-      `https://graph.facebook.com/v19.0/${process.env.PIXEL_ID}/events`,
+      `https://graph.facebook.com/v19.0/${process.env.PIXEL_ID}/events?access_token=${process.env.META_TOKEN}`,
       {
         method: "POST",
         headers: {
