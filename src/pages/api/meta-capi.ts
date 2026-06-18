@@ -9,12 +9,20 @@ export default async function handler(
       return res.status(405).json({ message: "Method not allowed" });
     }
 
-    const { event_name, event_id, value, service } = req.body || {};
+    // 🔥 FORCE PARSE BODY (ANTI EMPTY BUG)
+    const body =
+      typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 
+    const event_name = body?.event_name;
+    const event_id = body?.event_id;
+    const value = body?.value || 0;
+    const service = body?.service || "";
+
+    // 🔥 DEBUG SAFETY
     if (!event_name) {
       return res.status(400).json({
         error: "Missing event_name",
-        body: req.body,
+        received_body: body,
       });
     }
 
@@ -26,9 +34,9 @@ export default async function handler(
           event_id,
           action_source: "website",
           custom_data: {
-            value: value || 0,
+            value,
             currency: "IDR",
-            service: service || "",
+            service,
           },
         },
       ],
