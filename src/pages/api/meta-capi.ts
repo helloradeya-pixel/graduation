@@ -5,31 +5,44 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const { event_name, event_id, value, service } = req.body;
+    if (req.method !== "POST") {
+      return res.status(405).json({ message: "Method not allowed" });
+    }
+
+    const { event_name, event_id, value, service } = req.body || {};
+
+    if (!event_name) {
+      return res.status(400).json({
+        error: "Missing event_name",
+        body: req.body,
+      });
+    }
+
+    const payload = {
+      data: [
+        {
+          event_name,
+          event_time: Math.floor(Date.now() / 1000),
+          event_id,
+          action_source: "website",
+          custom_data: {
+            value: value || 0,
+            currency: "IDR",
+            service: service || "",
+          },
+        },
+      ],
+      access_token: process.env.META_TOKEN,
+    };
 
     const response = await fetch(
       `https://graph.facebook.com/v19.0/${process.env.PIXEL_ID}/events`,
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          data: [
-            {
-              event_name,
-              event_time: Math.floor(Date.now() / 1000),
-              event_id,
-              action_source: "website",
-              custom_data: {
-                value: value || 0,
-                currency: "IDR",
-                service: service || ""
-              }
-            }
-          ],
-          access_token: process.env.META_TOKEN
-        })
+        body: JSON.stringify(payload),
       }
     );
 
@@ -37,13 +50,13 @@ export default async function handler(
 
     return res.status(200).json({
       success: true,
-      meta: result
+      sent_payload: payload,
+      meta: result,
     });
-
   } catch (error: any) {
     return res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 }
