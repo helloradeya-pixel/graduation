@@ -1,112 +1,122 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 export default function BookingSuccess() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
-    const service = params.get('service');
-    const nama = params.get('nama') || '';
-    const paket = params.get('package') || '';
-    const tanggal = params.get('tanggal') || '';
-    const jamMulai = params.get('jam_mulai') || '';
-    const jamSelesai = params.get('jam_selesai') || '';
-    const dp = params.get('dp') || '';
+    // =========================
+    // INPUT DATA
+    // =========================
+    const service = params.get("service") || "";
+    const nama = params.get("nama") || "";
+    const paket = params.get("package") || "";
+    const tanggal = params.get("tanggal") || "";
+    const jamMulai = params.get("jam_mulai") || "";
+    const jamSelesai = params.get("jam_selesai") || "";
+    const dp = params.get("dp") || "0";
 
     const value = Number(dp || 0);
 
     // =========================
-    // UNIQUE EVENT ID (DEDUP KEY)
+    // DEDUP ID (PIXEL + CAPI MATCH)
     // =========================
     const eventId = `${service}_${Date.now()}`;
+
+    // =========================
+    // EVENT NAME MAPPING
+    // =========================
+    const getEventName = (service: string) => {
+      if (service === "graduation") return "CompleteRegistration_Graduation";
+      if (service === "couple") return "CompleteRegistration_Couple";
+      return "CompleteRegistration";
+    };
+
+    const eventName = getEventName(service);
 
     // =========================
     // META PIXEL
     // =========================
     const fireMetaEvent = () => {
-      const eventName =
-        service === 'graduation'
-          ? 'CompleteRegistration_Graduation'
-          : service === 'couple'
-          ? 'CompleteRegistration_Couple'
-          : 'CompleteRegistration';
-
       window.fbq?.(
-        'trackCustom',
+        "trackCustom",
         eventName,
         {
           service,
           value,
-          currency: 'IDR',
+          currency: "IDR",
         },
         {
           eventID: eventId,
         }
       );
 
-      console.log('PIXEL FIRED:', {
+      console.log("🔥 PIXEL FIRED:", {
         eventName,
         eventId,
+        service,
         value,
       });
     };
 
     // =========================
-    // GA4 EVENT
+    // GA4
     // =========================
     const fireGA4 = () => {
-      window.gtag?.('event', 'generate_lead', {
-        event_category: 'booking',
+      window.gtag?.("event", "generate_lead", {
+        event_category: "booking",
         event_label: service,
         value,
       });
     };
 
     // =========================
-    // META CAPI (Vercel API)
+    // CAPI (SERVER TRACKING)
     // =========================
     const fireCAPI = async () => {
       try {
-        await fetch('/api/meta-capi', {
-          method: 'POST',
+        await fetch("/api/meta-capi", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            event_name:
-              service === 'graduation'
-                ? 'CompleteRegistration_Graduation'
-                : service === 'couple'
-                ? 'CompleteRegistration_Couple'
-                : 'CompleteRegistration',
+            event_name: eventName,
             event_id: eventId,
             value,
             service,
           }),
         });
       } catch (err) {
-        console.log('CAPI ERROR:', err);
+        console.log("CAPI ERROR:", err);
       }
     };
 
     // =========================
     // WHATSAPP MESSAGE
     // =========================
-    let message = '';
+    let message = "";
 
-    if (service === 'graduation') {
+    if (service === "graduation") {
       message = `Halo kak, sudah booking Graduation atas nama ${nama}
 Package: ${paket}
 Tanggal: ${tanggal}
 Jam: ${jamMulai} - ${jamSelesai}
 DP: ${dp}`;
-    }
-
-    if (service === 'couple') {
+    } else if (service === "couple") {
       message = `Halo kak, sudah booking Couple atas nama ${nama}
+Package: ${paket}
+Tanggal: ${tanggal}
+DP: ${dp}`;
+    } else {
+      message = `Halo kak, sudah booking atas nama ${nama}
+Package: ${paket}
+Tanggal: ${tanggal}
 DP: ${dp}`;
     }
 
-    const waLink = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
+    const waLink = `https://wa.me/628211251570?text=${encodeURIComponent(
+      message
+    )}`;
 
     // =========================
     // EXECUTION ORDER
