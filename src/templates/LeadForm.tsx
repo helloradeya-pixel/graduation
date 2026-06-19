@@ -88,19 +88,18 @@ Perkiraan Wisuda: ${month}
 
 Boleh dibantu info detail paketnya ya 🙏`;
 
-      window.open(
-        `https://wa.me/628211251570?text=${encodeURIComponent(message)}`,
-        '_blank'
-      );
+      // RESET FORM (opsional tapi lebih clean)
+setForm({
+  name: '',
+  campus: '',
+  month: '',
+  budget: '',
+  instagram: '',
+  wa: '',
+});
 
-      setForm({
-        name: '',
-        campus: '',
-        month: '',
-        budget: '',
-        instagram: '',
-        wa: '',
-      });
+// REDIRECT WA
+window.location.href = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
     } catch (error) {
       console.log(error);
       alert('❌ Terjadi error');
