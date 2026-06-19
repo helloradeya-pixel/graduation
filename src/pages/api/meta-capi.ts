@@ -1,49 +1,82 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
     if (req.method !== "POST") {
-      return res.status(405).json({ message: "Method not allowed" });
+      return res.status(405).json({
+        message: "Method not allowed",
+      });
     }
 
     // =========================
     // SAFE BODY PARSE
     // =========================
     const body =
-      typeof req.body === "string" ? JSON.parse(req.body) : req.body || {};
+      typeof req.body === "string"
+        ? JSON.parse(req.body)
+        : req.body || {};
 
-    const service = body.service || "unknown";
-    const value = Number(body.value || 0);
-    const event_id = body.event_id || `${service}_${Date.now()}`;
-
-    // =========================
-    // FORCE VALID EVENT NAME (ANTI ERROR 100%)
-    // =========================
-    const event_name =
-      service === "graduation"
-        ? "CompleteRegistration_Graduation"
-        : service === "couple"
-        ? "CompleteRegistration_Couple"
-        : "CompleteRegistration";
-
-    // =========================
-    // DEBUG
-    // =========================
     console.log("🔥 CAPI HIT");
-    console.log("BODY:", body);
-    console.log("EVENT:", event_name);
-    console.log("EVENT_ID:", event_id);
+    console.log("RAW BODY:", body);
+
 
     // =========================
-    // PAYLOAD (FIXED FORMAT META)
+    // INPUT
+    // =========================
+    const service = body.service || "unknown";
+
+    const value = Number(body.value || 0);
+
+    const event_id =
+      body.event_id ||
+      `${service}_${Date.now()}`;
+
+
+    console.log("SERVICE RECEIVED:", service);
+    console.log("VALUE RECEIVED:", value);
+    console.log("EVENT ID RECEIVED:", event_id);
+
+
+    // =========================
+    // EVENT NAME
+    // =========================
+    let event_name = "";
+
+    if (service === "graduation") {
+      event_name = "CompleteRegistration_Graduation";
+    }
+
+    if (service === "couple") {
+      event_name = "CompleteRegistration_Couple";
+    }
+
+    if (!event_name) {
+      event_name = "CompleteRegistration";
+    }
+
+
+    console.log("FINAL EVENT NAME:", event_name);
+
+
+    // =========================
+    // META CAPI PAYLOAD
     // =========================
     const payload = {
       data: [
         {
           event_name,
-          event_time: Math.floor(Date.now() / 1000),
+
+          event_time: Math.floor(
+            Date.now() / 1000
+          ),
+
           event_id,
+
           action_source: "website",
+
           custom_data: {
             value,
             currency: "IDR",
@@ -53,40 +86,65 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ],
     };
 
+
+    console.log(
+      "FINAL META PAYLOAD:",
+      JSON.stringify(payload)
+    );
+
+
     // =========================
-    // SEND TO META (TOKEN IN URL ❗ FIXED)
+    // SEND TO META
     // =========================
     const response = await fetch(
       `https://graph.facebook.com/v19.0/${process.env.PIXEL_ID}/events?access_token=${process.env.META_TOKEN}`,
       {
         method: "POST",
+
         headers: {
           "Content-Type": "application/json",
         },
+
         body: JSON.stringify(payload),
       }
     );
 
+
     const result = await response.json();
 
-    console.log("META RESPONSE:", result);
+
+    console.log(
+      "META RESPONSE:",
+      result
+    );
+
 
     return res.status(200).json({
       success: true,
+
       debug: {
         event_name,
         event_id,
         value,
         service,
       },
+
       meta: result,
     });
+
+
   } catch (error: any) {
-    console.log("CAPI ERROR:", error);
+
+    console.log(
+      "🔥 CAPI ERROR:",
+      error
+    );
+
 
     return res.status(500).json({
       success: false,
       error: error.message,
     });
+
   }
 }
