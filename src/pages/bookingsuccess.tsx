@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect } from 'react';
 
 export default function BookingSuccess() {
@@ -5,7 +7,7 @@ export default function BookingSuccess() {
     const params = new URLSearchParams(window.location.search);
 
     // =========================
-    // INPUT DATA (SAFE)
+    // DATA INPUT
     // =========================
     const service = params.get('service') || 'unknown';
     const nama = params.get('nama') || '';
@@ -14,76 +16,42 @@ export default function BookingSuccess() {
     const jamMulai = params.get('jam_mulai') || '';
     const jamSelesai = params.get('jam_selesai') || '';
     const dp = params.get('dp') || '0';
-
-    const value = Number(dp || 0);
-
-    // =========================
-    // EVENT NAME MAPPING (SINGLE SOURCE OF TRUTH)
-    // =========================
-    const getEventName = (service: string) => {
-      if (service === 'graduation') return 'CompleteRegistration_Graduation';
-      if (service === 'couple') return 'CompleteRegistration_Couple';
-      return 'CompleteRegistration';
-    };
-
-    const eventName = getEventName(service);
+    const value = Number(dp);
 
     // =========================
-    // UNIQUE EVENT ID (DEDUP PIXEL + CAPI)
+    // UNIQUE EVENT ID (Kunci Deduplikasi)
     // =========================
-    const eventId = `${service}_${Date.now()}`;
+    // Dibuat sekali di sini agar sama antara Pixel dan CAPI
+    const eventId = `${service}_booking_${Date.now()}`;
 
     // =========================
-    // META PIXEL
+    // META PIXEL (Browser)
     // =========================
     const fireMetaEvent = () => {
-      window.fbq?.(
-        'trackCustom',
-        eventName,
-        {
-          service,
-          value,
-          currency: 'IDR',
-        },
-        {
-          eventID: eventId,
-        }
-      );
-
-      console.log('PIXEL FIRED:', {
-        eventName,
-        eventId,
+      // Kita gunakan event 'Purchase' standar Meta
+      window.fbq?.('track', 'Purchase', {
+        value,
+        currency: 'IDR',
+        content_name: `Booking_${service}`,
         service,
-        value,
-      });
+      }, { eventID: eventId });
+      
+      console.log('PIXEL FIRED (Purchase):', { eventId, service, value });
     };
 
     // =========================
-    // GA4
-    // =========================
-    const fireGA4 = () => {
-      window.gtag?.('event', 'generate_lead', {
-        event_category: 'booking',
-        event_label: service,
-        value,
-      });
-    };
-
-    // =========================
-    // CAPI (SERVER)
+    // CAPI (Server-side)
     // =========================
     const fireCAPI = async () => {
       try {
         await fetch('/api/meta-capi', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            event_name: eventName,
-            event_id: eventId,
-            value,
             service,
+            value,
+            event_id: eventId,
+            type: 'booking', // <--- Pemicu agar Meta mencatatnya sebagai 'Purchase'
           }),
         });
       } catch (err) {
@@ -92,45 +60,30 @@ export default function BookingSuccess() {
     };
 
     // =========================
-    // WHATSAPP MESSAGE
+    // EXECUTION
     // =========================
-    let message = '';
+    fireMetaEvent();
+    fireCAPI();
 
-    if (service === 'graduation') {
-      message = `Halo kak, sudah booking Graduation atas nama ${nama}
-Package: ${paket}
-Tanggal: ${tanggal}
-Jam: ${jamMulai} - ${jamSelesai}
-DP: ${dp}`;
-    } else if (service === 'couple') {
-      message = `Halo kak, sudah booking Couple atas nama ${nama}
-DP: ${dp}`;
-    } else {
-      message = `Halo kak, sudah booking atas nama ${nama}
-DP: ${dp}`;
-    }
+    // WHATSAPP REDIRECT
+    const message = service === 'graduation' 
+      ? `Halo kak, sudah booking Graduation atas nama ${nama}\nPackage: ${paket}\nTanggal: ${tanggal}\nJam: ${jamMulai} - ${jamSelesai}\nDP: ${dp}`
+      : `Halo kak, sudah booking ${service} atas nama ${nama}\nDP: ${dp}`;
 
     const waLink = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
-    // =========================
-    // EXECUTION ORDER
-    // =========================
-    fireMetaEvent();
-    fireGA4();
-    fireCAPI();
-
     const timer = setTimeout(() => {
       window.location.href = waLink;
-    }, 4500);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center bg-black text-white">
       <div className="text-center">
-        <h1>Booking Berhasil</h1>
-        <p>Sedang menghubungkan ke WhatsApp...</p>
+        <h1 className="text-2xl font-bold">Booking Berhasil</h1>
+        <p className="mt-2 text-neutral-400">Sedang menghubungkan ke WhatsApp...</p>
       </div>
     </div>
   );
