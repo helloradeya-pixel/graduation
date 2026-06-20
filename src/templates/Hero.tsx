@@ -1,16 +1,12 @@
 import { Background } from '../background/Background';
 import { Button } from '../button/Button';
-import { trackWA, trackPricelist } from '@/utils/tracking';
+import { trackWA, trackLead } from '@/utils/tracking'; // trackPricelist diganti trackLead
 
 const Hero = () => {
 
   const openWA = () => {
+    // Label menggunakan 'hero_wa'
     trackWA('hero_wa');
-
-    // optional tambahan Meta biar lebih kuat di Ads Manager
-    window.fbq?.('track', 'Contact', {
-      content_name: 'graduation_hero_wa',
-    });
 
     setTimeout(() => {
       window.open('https://wa.me/628211251570', '_blank');
@@ -18,12 +14,8 @@ const Hero = () => {
   };
 
   const firePricelistEvent = () => {
-    trackPricelist('hero_cta');
-
-    // tambahan untuk Meta optimization (recommended)
-    window.fbq?.('track', 'ViewContent', {
-      content_name: 'graduation_pricelist_hero',
-    });
+    // Sekarang menggunakan trackLead sesuai strategi 1 Keranjang
+    trackLead('hero_cta');
   };
 
   return (
