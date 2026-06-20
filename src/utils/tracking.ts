@@ -22,15 +22,7 @@ const metaTrack = (event: string, event_id: string, params?: any) => {
   window.fbq?.('track', event, {
     ...getBasePayload(),
     ...params,
-  }, { eventID: event_id }); // eventID di sini wajib untuk deduplikasi
-};
-
-const metaTrackCustom = (event: string, params?: any) => {
-  if (!isBrowser()) return;
-  window.fbq?.('trackCustom', event, {
-    ...getBasePayload(),
-    ...params,
-  });
+  }, { eventID: event_id });
 };
 
 // =========================
@@ -45,7 +37,7 @@ const gaTrack = (event: string, params?: any) => {
 };
 
 // =========================
-// WHATSAPP CLICK (1 KERANJANG)
+// WHATSAPP CLICK
 // =========================
 export const trackWA = (label: TrackLabel = 'unknown', extra?: Record<string, any>) => {
   const segment = getSegment();
@@ -61,7 +53,7 @@ export const trackWA = (label: TrackLabel = 'unknown', extra?: Record<string, an
 };
 
 // =========================
-// LEAD FORM (1 KERANJANG)
+// LEAD FORM
 // =========================
 export const trackLead = (label: TrackLabel = 'form_submit', extra?: Record<string, any>) => {
   const segment = getSegment();
@@ -75,20 +67,32 @@ export const trackLead = (label: TrackLabel = 'form_submit', extra?: Record<stri
 
   gaTrack('generate_lead', { event_label: label, segment, ...extra });
   
-  return event_id; // Return ID ini agar bisa dikirim ke API/CAPI
+  return event_id;
 };
 
 // =========================
-// PAGE VIEW
+// PAGE VIEW (UPDATED UNTUK MENGHILANGKAN ERROR)
 // =========================
 export const trackGraduationView = () => {
   if (!isBrowser()) return;
-  metaTrackCustom('ViewGraduationPage', { segment: 'graduation' });
+  const event_id = generateEventId();
+  
+  metaTrack('ViewContent', event_id, { 
+    content_name: 'Graduation Page',
+    segment: 'graduation' 
+  });
+  
   gaTrack('view_graduation_page', { segment: 'graduation' });
 };
 
 export const trackCoupleView = () => {
   if (!isBrowser()) return;
-  metaTrackCustom('ViewCouplePage', { segment: 'couple' });
+  const event_id = generateEventId();
+  
+  metaTrack('ViewContent', event_id, { 
+    content_name: 'Couple Page',
+    segment: 'couple' 
+  });
+  
   gaTrack('view_couple_page', { segment: 'couple' });
 };
