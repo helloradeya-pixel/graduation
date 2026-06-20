@@ -59,12 +59,13 @@ const LeadForm = () => {
         body: JSON.stringify({ ...form, segment }),
       });
 
-      // 3. Kirim ke Meta CAPI untuk deduplikasi server-side
+      // 3. Kirim ke Meta CAPI untuk deduplikasi (ditetapkan sebagai 'inquiry' -> Lead)
       await fetch('/api/meta-capi', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           service: 'couple',
+          type: 'inquiry', // <--- KUNCI: Agar Meta mencatat sebagai Lead
           segment,
           event_id, 
           value: 0,
@@ -77,8 +78,18 @@ const LeadForm = () => {
         return;
       }
 
-      // 4. Redirect WA
-      const message = `Halo admin 👋\n\nSaya mau tanya info paket & pricelist couple photoshoot:\n\nNama: ${name}\nInstagram: ${form.instagram || '-'}\nDomisili: ${form.domisili || '-'}\nPaket: ${form.service || '-'}`;
+      // 4. Redirect WA (Rapi dengan enter)
+      const message = `Halo Admin Radeya 👋
+
+Saya mau tanya info paket & pricelist couple photoshoot:
+
+Nama: ${name}
+Instagram: ${form.instagram || '-'}
+Domisili: ${form.domisili || '-'}
+Paket: ${form.service || '-'}
+
+Boleh dibantu info detail paketnya ya 🙏`;
+
       window.open(`https://wa.me/628211251570?text=${encodeURIComponent(message)}`, '_blank');
 
       // 5. Reset Form
