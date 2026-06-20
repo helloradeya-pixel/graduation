@@ -5,12 +5,7 @@ export default function RadeyaphotoPage() {
 
   const fireWAEvent = () => {
     if (typeof window !== 'undefined') {
-      if ((window as any).fbq) {
-        (window as any).fbq('track', 'Contact', {
-          source: 'bio_page',
-        });
-      }
-
+      // Meta tracking dihapus
       if ((window as any).gtag) {
         (window as any).gtag('event', 'click_whatsapp', {
           event_category: 'bio_page',
