@@ -1,7 +1,6 @@
 import { Background } from './Background';
 import { Button } from './Button';
-
-import { trackWA, trackPricelist } from '@/utils/tracking';
+import { trackWA, trackLead } from '@/utils/tracking'; // trackPricelist diganti trackLead
 
 const Hero = () => {
 
@@ -22,12 +21,8 @@ const Hero = () => {
   };
 
   const handleCTA = () => {
-    trackPricelist('hero_cta');
-
-    // optional tambahan (lebih kuat untuk ads)
-    window.fbq?.('track', 'ViewContent', {
-      content_name: 'couple_pricelist_hero',
-    });
+    // Diganti menjadi trackLead sesuai strategi 1 Keranjang
+    trackLead('hero_cta');
   };
 
   return (
