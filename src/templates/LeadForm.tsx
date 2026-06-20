@@ -67,12 +67,13 @@ const LeadForm = () => {
         }),
       });
 
-      // 3. Kirim data ke API CAPI untuk deduplikasi
+      // 3. Kirim data ke API CAPI untuk deduplikasi (ditetapkan sebagai 'inquiry' -> Lead)
       await fetch('/api/meta-capi', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           service: 'graduation',
+          type: 'inquiry', // <--- KUNCI: Agar Meta mencatat sebagai Lead
           segment,
           event_id, 
           value: 0,
@@ -86,8 +87,8 @@ const LeadForm = () => {
         return;
       }
 
-      // WHATSAPP MESSAGE
-      const message = `Halo admin 👋
+      // WHATSAPP MESSAGE (Rapi dengan enter)
+      const message = `Halo Admin Radeya 👋
 
 Saya mau tanya info paket & pricelist graduation photoshoot.
 
