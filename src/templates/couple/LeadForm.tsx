@@ -45,27 +45,27 @@ const LeadForm = () => {
     try {
       setLoading(true);
 
-      // 1. Jalankan tracking browser dan dapatkan ID unik (KUNCI DEDUPLIKASI)
+      // 1. Jalankan tracking browser
       const event_id = trackLead('couple_form', {
         service: form.service || 'unknown',
         domisili: form.domisili || '-',
         instagram: form.instagram || '-',
       });
 
-      // 2. Simpan Lead ke Database (API Notion)
+      // 2. Simpan Lead ke Database (Notion)
       const res = await fetch('/api/wedding-lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, segment }),
       });
 
-      // 3. Kirim ke Meta CAPI untuk deduplikasi (ditetapkan sebagai 'inquiry' -> Lead)
+      // 3. Kirim ke Meta CAPI
       await fetch('/api/meta-capi', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           service: 'couple',
-          type: 'inquiry', // <--- KUNCI: Agar Meta mencatat sebagai Lead
+          type: 'inquiry', // Agar tercatat sebagai Lead
           segment,
           event_id, 
           value: 0,
@@ -78,7 +78,7 @@ const LeadForm = () => {
         return;
       }
 
-      // 4. Redirect WA (Rapi dengan enter)
+      // 4. Redirect WA (Paling aman dari popup blocker)
       const message = `Halo Admin Radeya 👋
 
 Saya mau tanya info paket & pricelist couple photoshoot:
@@ -90,7 +90,7 @@ Paket: ${form.service || '-'}
 
 Boleh dibantu info detail paketnya ya 🙏`;
 
-      window.open(`https://wa.me/628211251570?text=${encodeURIComponent(message)}`, '_blank');
+      window.location.href = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
       // 5. Reset Form
       setForm({ name: '', instagram: '', domisili: '', service: '', wa: '' });
