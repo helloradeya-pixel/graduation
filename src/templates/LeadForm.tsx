@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { getSegment } from '@/utils/getSegment';
-import { trackLead, trackWA } from '@/utils/tracking';
+import { trackLead } from '@/utils/tracking';
 
 type FormState = {
   name: string;
@@ -51,12 +51,31 @@ const LeadForm = () => {
     try {
       setLoading(true);
 
+      // 1. Jalankan tracking browser dan ambil ID uniknya
+      const event_id = trackLead('graduation_form', {
+        campus: form.campus,
+        month: form.month,
+      });
+
+      // 2. Simpan data ke Notion
       const res = await fetch('/api/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
           segment,
+        }),
+      });
+
+      // 3. Kirim data ke API CAPI untuk deduplikasi
+      await fetch('/api/meta-capi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service: 'graduation',
+          segment,
+          event_id, 
+          value: 0,
         }),
       });
 
@@ -67,17 +86,7 @@ const LeadForm = () => {
         return;
       }
 
-      // TRACKING
-      trackLead('graduation_form', {
-        campus: form.campus,
-        month: form.month,
-      });
-
-      trackWA('graduation_pricelist', {
-        campus: form.campus,
-      });
-
-      // WHATSAPP MESSAGE (FINAL FORMAT FIXED)
+      // WHATSAPP MESSAGE
       const message = `Halo admin 👋
 
 Saya mau tanya info paket & pricelist graduation photoshoot.
@@ -88,18 +97,16 @@ Perkiraan Wisuda: ${month}
 
 Boleh dibantu info detail paketnya ya 🙏`;
 
-      // RESET FORM (opsional tapi lebih clean)
-setForm({
-  name: '',
-  campus: '',
-  month: '',
-  budget: '',
-  instagram: '',
-  wa: '',
-});
+      setForm({
+        name: '',
+        campus: '',
+        month: '',
+        budget: '',
+        instagram: '',
+        wa: '',
+      });
 
-// REDIRECT WA
-window.location.href = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
+      window.location.href = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
     } catch (error) {
       console.log(error);
       alert('❌ Terjadi error');
@@ -149,7 +156,6 @@ window.location.href = `https://wa.me/628211251570?text=${encodeURIComponent(mes
             className={fieldStyle}
           />
 
-          {/* MONTH */}
           <select
             name="month"
             value={form.month}
