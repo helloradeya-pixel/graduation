@@ -11,22 +11,19 @@ export default async function handler(
 
     const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body || {};
 
-    console.log("🔥 CAPI HIT");
-    
     // =========================
     // INPUT
     // =========================
-    const service = body.service || "unknown"; // ex: "graduation" atau "couple"
+    const service = body.service || "unknown";
     const value = Number(body.value || 0);
     const event_id = body.event_id || `${service}_${Date.now()}`;
     const segment = body.segment || service;
+    
+    // PEMISAH TYPE: Jika kirim 'booking' jadi Purchase, jika 'inquiry' jadi Lead
+    const event_type = body.type || 'inquiry'; 
+    const event_name = event_type === 'booking' ? 'Purchase' : 'Lead';
 
-    // =========================
-    // EVENT NAME (Standar Meta)
-    // =========================
-    // Gunakan 'Purchase' jika ini adalah event transaksi sukses, 
-    // atau 'Lead' jika ini event pengisian formulir.
-    const event_name = "Purchase"; 
+    console.log(`🔥 CAPI HIT [v20.0] | Event: ${event_name} | Service: ${service}`);
 
     const payload = {
       data: [
@@ -44,16 +41,17 @@ export default async function handler(
             content_name: `${event_name}_${segment}`,
             segment: segment,
             service,
+            type: event_type,
           },
         },
       ],
     };
 
     // =========================
-    // SEND TO META
+    // SEND TO META (v20.0)
     // =========================
     const response = await fetch(
-      `https://graph.facebook.com/v19.0/${process.env.PIXEL_ID}/events?access_token=${process.env.META_TOKEN}`,
+      `https://graph.facebook.com/v20.0/${process.env.PIXEL_ID}/events?access_token=${process.env.META_TOKEN}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -62,8 +60,6 @@ export default async function handler(
     );
 
     const result = await response.json();
-
-    console.log("META RESPONSE:", result);
 
     return res.status(200).json({
       success: true,
