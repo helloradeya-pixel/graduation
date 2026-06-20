@@ -4,6 +4,11 @@ type TrackLabel = string;
 
 const isBrowser = () => typeof window !== 'undefined';
 
+// Helper: Membuat ID unik untuk deduplikasi Meta
+export const generateEventId = () => {
+  return `${getSegment()}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+};
+
 const getBasePayload = () => ({
   segment: getSegment(),
 });
@@ -11,18 +16,17 @@ const getBasePayload = () => ({
 // =========================
 // META PIXEL WRAPPER
 // =========================
-const metaTrack = (event: string, params?: any) => {
+const metaTrack = (event: string, event_id: string, params?: any) => {
   if (!isBrowser()) return;
 
   window.fbq?.('track', event, {
     ...getBasePayload(),
     ...params,
-  });
+  }, { eventID: event_id }); // eventID di sini wajib untuk deduplikasi
 };
 
 const metaTrackCustom = (event: string, params?: any) => {
   if (!isBrowser()) return;
-
   window.fbq?.('trackCustom', event, {
     ...getBasePayload(),
     ...params,
@@ -34,7 +38,6 @@ const metaTrackCustom = (event: string, params?: any) => {
 // =========================
 const gaTrack = (event: string, params?: any) => {
   if (!isBrowser()) return;
-
   window.gtag?.('event', event, {
     event_category: getSegment(),
     ...params,
@@ -42,129 +45,50 @@ const gaTrack = (event: string, params?: any) => {
 };
 
 // =========================
-// WHATSAPP CLICK (BOF EVENT)
+// WHATSAPP CLICK (1 KERANJANG)
 // =========================
-export const trackWA = (
-  label: TrackLabel = 'unknown',
-  extra?: Record<string, any>,
-) => {
+export const trackWA = (label: TrackLabel = 'unknown', extra?: Record<string, any>) => {
   const segment = getSegment();
+  const event_id = generateEventId();
 
-  // GLOBAL WA CLICK (ALL TRAFFIC)
-  metaTrackCustom('ClickWhatsApp', {
+  metaTrack('Contact', event_id, {
     content_name: `WA_${segment}_${label}`,
     segment,
     ...extra,
   });
 
-  gaTrack('click_whatsapp', {
-    event_label: label,
-    segment,
-    ...extra,
-  });
-
-  // SEGMENTED EVENTS (FOR ADS OPTIMIZATION)
-  if (segment === 'graduation') {
-    metaTrackCustom('ClickWhatsApp_Graduation', {
-      content_name: `WA_graduation_${label}`,
-      ...extra,
-    });
-  }
-
-  if (segment === 'couple') {
-    metaTrackCustom('ClickWhatsApp_Couple', {
-      content_name: `WA_couple_${label}`,
-      ...extra,
-    });
-  }
+  gaTrack('click_whatsapp', { event_label: label, segment, ...extra });
 };
 
 // =========================
-// PRICELIST CLICK (MOF EVENT)
+// LEAD FORM (1 KERANJANG)
 // =========================
-export const trackPricelist = (
-  label: TrackLabel = 'unknown',
-  extra?: Record<string, any>,
-) => {
+export const trackLead = (label: TrackLabel = 'form_submit', extra?: Record<string, any>) => {
   const segment = getSegment();
+  const event_id = generateEventId();
 
-  metaTrack('ViewContent', {
-    content_name: `Pricelist_${segment}_${label}`,
-    segment,
-    ...extra,
-  });
-
-  gaTrack('click_pricelist', {
-    event_label: label,
-    segment,
-    ...extra,
-  });
-};
-
-// =========================
-// LEAD FORM (MOF EVENT)
-// =========================
-export const trackLead = (
-  label: TrackLabel = 'form_submit',
-  extra?: Record<string, any>,
-) => {
-  const segment = getSegment();
-
-  // GLOBAL LEAD
-  metaTrack('Lead', {
+  metaTrack('Lead', event_id, {
     content_name: `Lead_${segment}_${label}`,
     segment,
     ...extra,
   });
 
-  gaTrack('generate_lead', {
-    event_label: label,
-    segment,
-    ...extra,
-  });
-
-  // SEGMENTED LEADS (FOR ADS OPTIMIZATION)
-  if (segment === 'graduation') {
-    metaTrackCustom('Lead_Graduation', {
-      content_name: `Lead_graduation_${label}`,
-      ...extra,
-    });
-  }
-
-  if (segment === 'couple') {
-    metaTrackCustom('Lead_Couple', {
-      content_name: `Lead_couple_${label}`,
-      ...extra,
-    });
-  }
+  gaTrack('generate_lead', { event_label: label, segment, ...extra });
+  
+  return event_id; // Return ID ini agar bisa dikirim ke API/CAPI
 };
 
 // =========================
-// PAGE VIEW - GRADUATION
+// PAGE VIEW
 // =========================
 export const trackGraduationView = () => {
   if (!isBrowser()) return;
-
-  metaTrackCustom('ViewGraduationPage', {
-    segment: 'graduation',
-  });
-
-  gaTrack('view_graduation_page', {
-    segment: 'graduation',
-  });
+  metaTrackCustom('ViewGraduationPage', { segment: 'graduation' });
+  gaTrack('view_graduation_page', { segment: 'graduation' });
 };
 
-// =========================
-// PAGE VIEW - COUPLE
-// =========================
 export const trackCoupleView = () => {
   if (!isBrowser()) return;
-
-  metaTrackCustom('ViewCouplePage', {
-    segment: 'couple',
-  });
-
-  gaTrack('view_couple_page', {
-    segment: 'couple',
-  });
+  metaTrackCustom('ViewCouplePage', { segment: 'couple' });
+  gaTrack('view_couple_page', { segment: 'couple' });
 };
