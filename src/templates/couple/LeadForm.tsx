@@ -45,12 +45,12 @@ const LeadForm = () => {
     try {
       setLoading(true);
 
-      // 1. Jalankan tracking browser
+      // 1. Jalankan tracking browser (WA disisipkan di argumen ke-3)
       const event_id = trackLead('couple_form', {
         service: form.service || 'unknown',
         domisili: form.domisili || '-',
         instagram: form.instagram || '-',
-      });
+      }, wa);
 
       // 2. Simpan Lead ke Database (Notion)
       const res = await fetch('/api/wedding-lead', {
@@ -59,7 +59,7 @@ const LeadForm = () => {
         body: JSON.stringify({ ...form, segment }),
       });
 
-      // 3. Kirim ke Meta CAPI (DENGAN HASHING SUPPORT)
+      // 3. Kirim ke Meta CAPI
       await fetch('/api/meta-capi', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
