@@ -15,20 +15,23 @@ export default function BookingSuccess() {
     const tanggal = params.get('tanggal') || '';
     const jamMulai = params.get('jam_mulai') || '';
     const jamSelesai = params.get('jam_selesai') || '';
-    const dp = params.get('dp') || '0';
-    const value = Number(dp);
+    
+    // LOGIKA CERDAS:
+    // Jika input di bawah 5.000 (contoh: 200 atau 1000), maka dikali 1.000.
+    // Jika input di atas 5.000 (contoh: 200000 atau 1000000), maka tetap.
+    const dpRaw = params.get('dp') || '0';
+    const rawValue = Number(dpRaw);
+    const value = rawValue < 5000 ? rawValue * 1000 : rawValue;
 
     // =========================
     // UNIQUE EVENT ID (Kunci Deduplikasi)
     // =========================
-    // Dibuat sekali di sini agar sama antara Pixel dan CAPI
     const eventId = `${service}_booking_${Date.now()}`;
 
     // =========================
     // META PIXEL (Browser)
     // =========================
     const fireMetaEvent = () => {
-      // Kita gunakan event 'Purchase' standar Meta
       window.fbq?.('track', 'Purchase', {
         value,
         currency: 'IDR',
@@ -51,7 +54,7 @@ export default function BookingSuccess() {
             service,
             value,
             event_id: eventId,
-            type: 'booking', // <--- Pemicu agar Meta mencatatnya sebagai 'Purchase'
+            type: 'booking',
           }),
         });
       } catch (err) {
@@ -66,9 +69,10 @@ export default function BookingSuccess() {
     fireCAPI();
 
     // WHATSAPP REDIRECT
+    // Menggunakan value yang sudah dikoreksi agar angka di WA pun benar
     const message = service === 'graduation' 
-      ? `Halo kak, sudah booking Graduation atas nama ${nama}\nPackage: ${paket}\nTanggal: ${tanggal}\nJam: ${jamMulai} - ${jamSelesai}\nDP: ${dp}`
-      : `Halo kak, sudah booking ${service} atas nama ${nama}\nDP: ${dp}`;
+      ? `Halo kak, sudah booking Graduation atas nama ${nama}\nPackage: ${paket}\nTanggal: ${tanggal}\nJam: ${jamMulai} - ${jamSelesai}\nDP: Rp${value.toLocaleString('id-ID')}`
+      : `Halo kak, sudah booking ${service} atas nama ${nama}\nDP: Rp${value.toLocaleString('id-ID')}`;
 
     const waLink = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
