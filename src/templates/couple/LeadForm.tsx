@@ -59,16 +59,17 @@ const LeadForm = () => {
         body: JSON.stringify({ ...form, segment }),
       });
 
-      // 3. Kirim ke Meta CAPI
+      // 3. Kirim ke Meta CAPI (DENGAN HASHING SUPPORT)
       await fetch('/api/meta-capi', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           service: 'couple',
-          type: 'inquiry', // Agar tercatat sebagai Lead
+          type: 'inquiry', 
           segment,
           event_id, 
           value: 0,
+          user_data: { ph: wa } // Data ini akan di-hash di backend
         }),
       });
 
@@ -78,7 +79,6 @@ const LeadForm = () => {
         return;
       }
 
-      // 4. Redirect WA (Paling aman dari popup blocker)
       const message = `Halo Admin Radeya 👋
 
 Saya mau tanya info paket & pricelist couple photoshoot:
@@ -92,7 +92,6 @@ Boleh dibantu info detail paketnya ya 🙏`;
 
       window.location.href = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
-      // 5. Reset Form
       setForm({ name: '', instagram: '', domisili: '', service: '', wa: '' });
 
     } catch (error) {
