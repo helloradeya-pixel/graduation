@@ -51,7 +51,7 @@ const LeadForm = () => {
     try {
       setLoading(true);
 
-      // 1. Jalankan tracking browser dan ambil ID uniknya
+      // 1. Jalankan tracking browser
       const event_id = trackLead('graduation_form', {
         campus: form.campus,
         month: form.month,
@@ -67,16 +67,17 @@ const LeadForm = () => {
         }),
       });
 
-      // 3. Kirim data ke API CAPI untuk deduplikasi (ditetapkan sebagai 'inquiry' -> Lead)
+      // 3. Kirim data ke API CAPI dengan user_data (untuk Hashing/Advanced Matching)
       await fetch('/api/meta-capi', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           service: 'graduation',
-          type: 'inquiry', // <--- KUNCI: Agar Meta mencatat sebagai Lead
+          type: 'inquiry', // Mencatat sebagai 'Lead'
           segment,
           event_id, 
           value: 0,
+          user_data: { ph: wa } // Data ini akan di-hash di backend
         }),
       });
 
@@ -87,7 +88,7 @@ const LeadForm = () => {
         return;
       }
 
-      // WHATSAPP MESSAGE (Rapi dengan enter)
+      // WHATSAPP MESSAGE
       const message = `Halo Admin Radeya 👋
 
 Saya mau tanya info paket & pricelist graduation photoshoot.
@@ -128,19 +129,16 @@ Boleh dibantu info detail paketnya ya 🙏`;
   return (
     <section id="leadform" className="scroll-mt-32 bg-black py-28 text-white">
       <div className="mx-auto max-w-3xl px-8 md:px-16">
-
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.4em] text-neutral-500">
             Graduation Inquiry
           </p>
-
           <h2 className="mt-4 text-3xl font-semibold md:text-5xl">
             Book Your Graduation Story
           </h2>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-12 space-y-4">
-
           <input
             name="name"
             value={form.name}
@@ -148,7 +146,6 @@ Boleh dibantu info detail paketnya ya 🙏`;
             placeholder="Nama Lengkap *"
             className={fieldStyle}
           />
-
           <input
             name="campus"
             value={form.campus}
@@ -156,7 +153,6 @@ Boleh dibantu info detail paketnya ya 🙏`;
             placeholder="Universitas *"
             className={fieldStyle}
           />
-
           <select
             name="month"
             value={form.month}
@@ -164,20 +160,10 @@ Boleh dibantu info detail paketnya ya 🙏`;
             className={fieldStyle}
           >
             <option value="">Perkiraan Bulan Wisuda</option>
-            <option value="Januari">Januari</option>
-            <option value="Februari">Februari</option>
-            <option value="Maret">Maret</option>
-            <option value="April">April</option>
-            <option value="Mei">Mei</option>
-            <option value="Juni">Juni</option>
-            <option value="Juli">Juli</option>
-            <option value="Agustus">Agustus</option>
-            <option value="September">September</option>
-            <option value="Oktober">Oktober</option>
-            <option value="November">November</option>
-            <option value="Desember">Desember</option>
+            {['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'].map((m) => (
+              <option key={m} value={m}>{m}</option>
+            ))}
           </select>
-
           <select
             name="budget"
             value={form.budget}
@@ -190,7 +176,6 @@ Boleh dibantu info detail paketnya ya 🙏`;
             <option value="800K - 1 Juta">800K - 1 Juta</option>
             <option value="1 Juta+">1 Juta+</option>
           </select>
-
           <input
             name="instagram"
             value={form.instagram}
@@ -198,7 +183,6 @@ Boleh dibantu info detail paketnya ya 🙏`;
             placeholder="Instagram"
             className={fieldStyle}
           />
-
           <input
             name="wa"
             value={form.wa}
@@ -206,7 +190,6 @@ Boleh dibantu info detail paketnya ya 🙏`;
             placeholder="WhatsApp *"
             className={fieldStyle}
           />
-
           <button
             type="submit"
             disabled={isDisabled || loading}
@@ -214,7 +197,6 @@ Boleh dibantu info detail paketnya ya 🙏`;
           >
             {loading ? 'Mengirim...' : 'Kirim & Konsultasi'}
           </button>
-
         </form>
       </div>
     </section>
