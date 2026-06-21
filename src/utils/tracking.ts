@@ -14,15 +14,23 @@ const getBasePayload = () => ({
 });
 
 // =========================
-// META PIXEL WRAPPER
+// META PIXEL WRAPPER (UPDATED)
 // =========================
-const metaTrack = (event: string, event_id: string, params?: any) => {
+// Menambahkan parameter user_data untuk Advanced Matching (hashing otomatis oleh Meta Pixel)
+const metaTrack = (event: string, event_id: string, params?: any, userData?: any) => {
   if (!isBrowser()) return;
 
-  window.fbq?.('track', event, {
+  const payload = {
     ...getBasePayload(),
     ...params,
-  }, { eventID: event_id });
+  };
+
+  // Jika ada userData (nomor WA), tambahkan ke event
+  if (userData) {
+    payload.user_data = userData;
+  }
+
+  window.fbq?.('track', event, payload, { eventID: event_id });
 };
 
 // =========================
@@ -37,33 +45,20 @@ const gaTrack = (event: string, params?: any) => {
 };
 
 // =========================
-// WHATSAPP CLICK
+// LEAD FORM (UPDATED)
 // =========================
-export const trackWA = (label: TrackLabel = 'unknown', extra?: Record<string, any>) => {
+export const trackLead = (label: TrackLabel = 'form_submit', extra?: Record<string, any>, wa?: string) => {
   const segment = getSegment();
   const event_id = generateEventId();
-
-  metaTrack('Contact', event_id, {
-    content_name: `WA_${segment}_${label}`,
-    segment,
-    ...extra,
-  });
-
-  gaTrack('click_whatsapp', { event_label: label, segment, ...extra });
-};
-
-// =========================
-// LEAD FORM
-// =========================
-export const trackLead = (label: TrackLabel = 'form_submit', extra?: Record<string, any>) => {
-  const segment = getSegment();
-  const event_id = generateEventId();
+  
+  // Kirim nomor WA ke browser pixel untuk Advanced Matching
+  const userData = wa ? { ph: wa } : undefined;
 
   metaTrack('Lead', event_id, {
     content_name: `Lead_${segment}_${label}`,
     segment,
     ...extra,
-  });
+  }, userData);
 
   gaTrack('generate_lead', { event_label: label, segment, ...extra });
   
@@ -71,7 +66,7 @@ export const trackLead = (label: TrackLabel = 'form_submit', extra?: Record<stri
 };
 
 // =========================
-// PAGE VIEW (UPDATED UNTUK MENGHILANGKAN ERROR)
+// PAGE VIEW
 // =========================
 export const trackGraduationView = () => {
   if (!isBrowser()) return;
