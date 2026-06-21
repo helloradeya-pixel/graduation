@@ -14,9 +14,8 @@ const getBasePayload = () => ({
 });
 
 // =========================
-// META PIXEL WRAPPER (UPDATED)
+// META PIXEL WRAPPER
 // =========================
-// Menambahkan parameter user_data untuk Advanced Matching (hashing otomatis oleh Meta Pixel)
 const metaTrack = (event: string, event_id: string, params?: any, userData?: any) => {
   if (!isBrowser()) return;
 
@@ -25,7 +24,6 @@ const metaTrack = (event: string, event_id: string, params?: any, userData?: any
     ...params,
   };
 
-  // Jika ada userData (nomor WA), tambahkan ke event
   if (userData) {
     payload.user_data = userData;
   }
@@ -45,13 +43,28 @@ const gaTrack = (event: string, params?: any) => {
 };
 
 // =========================
-// LEAD FORM (UPDATED)
+// WHATSAPP CLICK (Fungsi yang hilang)
+// =========================
+export const trackWA = (label: TrackLabel = 'unknown', extra?: Record<string, any>, wa?: string) => {
+  const segment = getSegment();
+  const event_id = generateEventId();
+  const userData = wa ? { ph: wa } : undefined;
+
+  metaTrack('Contact', event_id, {
+    content_name: `WA_${segment}_${label}`,
+    segment,
+    ...extra,
+  }, userData);
+
+  gaTrack('click_whatsapp', { event_label: label, segment, ...extra });
+};
+
+// =========================
+// LEAD FORM
 // =========================
 export const trackLead = (label: TrackLabel = 'form_submit', extra?: Record<string, any>, wa?: string) => {
   const segment = getSegment();
   const event_id = generateEventId();
-  
-  // Kirim nomor WA ke browser pixel untuk Advanced Matching
   const userData = wa ? { ph: wa } : undefined;
 
   metaTrack('Lead', event_id, {
