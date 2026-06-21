@@ -1,20 +1,23 @@
 import { Background } from '../background/Background';
 import { Button } from '../button/Button';
-import { trackWA, trackLead } from '@/utils/tracking'; // trackPricelist diganti trackLead
+import { trackWA, trackLead } from '@/utils/tracking';
 
 const Hero = () => {
 
-  const openWA = () => {
-    // Label menggunakan 'hero_wa'
-    trackWA('hero_wa');
+  const openWA = (label) => {
+    // Label membedakan asal klik (navbar atau floating)
+    trackWA(label);
+
+    // Pesan otomatis yang akan muncul di WhatsApp klien
+    const message = "Halo Radeya, saya tertarik untuk Tanya tanya jasa foto wisuda.";
+    const url = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
     setTimeout(() => {
-      window.open('https://wa.me/628211251570', '_blank');
+      window.open(url, '_blank');
     }, 150);
   };
 
   const firePricelistEvent = () => {
-    // Sekarang menggunakan trackLead sesuai strategi 1 Keranjang
     trackLead('hero_cta');
   };
 
@@ -24,7 +27,7 @@ const Hero = () => {
       {/* NAVBAR */}
       <div className="fixed left-0 top-0 z-50 flex w-full justify-end px-5 py-5 md:px-16 md:py-8">
         <button
-          onClick={openWA}
+          onClick={() => openWA('hero_wa')}
           className="rounded-full border border-white/20 px-4 py-2 text-[9px] tracking-[0.22em] text-white transition hover:bg-white hover:text-black md:px-5 md:text-[11px]"
         >
           KONSULTASI GRATIS →
@@ -33,7 +36,7 @@ const Hero = () => {
 
       {/* FLOATING WA */}
       <button
-        onClick={openWA}
+        onClick={() => openWA('floating_wa')}
         className="fixed bottom-5 right-5 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-lg transition hover:scale-110 md:bottom-6 md:right-6 md:h-14 md:w-14"
       >
         <img
