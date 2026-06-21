@@ -7,19 +7,27 @@ export default function BookingSuccess() {
     const params = new URLSearchParams(window.location.search);
 
     // =========================
-    // DATA INPUT
+    // DATA INPUT & NORMALISASI
     // =========================
     const service = params.get('service') || 'unknown';
     const nama = params.get('nama') || '';
-    const wa = params.get('wa') || ''; // Nomor WA untuk Advanced Matching
+    const rawWa = params.get('wa') || '';
     const paket = params.get('package') || '';
     const tanggal = params.get('tanggal') || '';
     const jamMulai = params.get('jam_mulai') || '';
     const jamSelesai = params.get('jam_selesai') || '';
     
-    // Logika Koreksi Harga:
-    // Jika input < 5.000 (contoh: 200), dikali 1.000 menjadi 200.000.
-    // Jika input >= 5.000 (contoh: 200.000), maka tetap.
+    // Fungsi normalisasi WA ke format 62xxx (E.164) agar Match Quality bagus
+    const normalizePhone = (phone: string) => {
+      let cleaned = phone.replace(/\D/g, ''); 
+      if (cleaned.startsWith('0')) {
+        return '62' + cleaned.substring(1);
+      }
+      return cleaned;
+    };
+    const normalizedWA = normalizePhone(rawWa);
+
+    // Logika Koreksi Harga
     const dpRaw = params.get('dp') || '0';
     const rawValue = Number(dpRaw);
     const value = rawValue < 5000 ? rawValue * 1000 : rawValue;
@@ -39,7 +47,7 @@ export default function BookingSuccess() {
         content_name: `Booking_${service}`,
         service,
         user_data: {
-          ph: wa // Meta browser akan melakukan hashing otomatis
+          ph: normalizedWA 
         }
       }, { eventID: eventId });
       
@@ -59,7 +67,7 @@ export default function BookingSuccess() {
             value,
             event_id: eventId,
             type: 'booking',
-            user_data: { ph: wa } // Dikirim ke API untuk di-hash di backend
+            user_data: { ph: normalizedWA }
           }),
         });
       } catch (err) {
