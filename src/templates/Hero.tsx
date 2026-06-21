@@ -1,6 +1,8 @@
+'use client';
+
 import { Background } from '../background/Background';
 import { Button } from '../button/Button';
-import { trackWA, trackLead } from '@/utils/tracking';
+import { trackWA } from '@/utils/tracking';
 
 const Hero = () => {
 
@@ -16,7 +18,13 @@ const Hero = () => {
   };
 
   const firePricelistEvent = () => {
-    trackLead('hero_cta');
+    // Menggunakan ViewContent agar tidak terbaca sebagai Lead/Prospek palsu
+    if (typeof window !== 'undefined' && window.fbq) {
+      window.fbq('track', 'ViewContent', {
+        content_name: 'Hero_CTA_Pricelist_Click',
+        segment: 'graduation'
+      });
+    }
   };
 
   return (
