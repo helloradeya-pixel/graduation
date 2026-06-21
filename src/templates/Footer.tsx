@@ -6,8 +6,12 @@ const Footer = () => {
   const handleWA = () => {
     trackWA('footer_wa');
 
+    // Pesan otomatis yang disamakan dengan bagian Hero
+    const message = "Halo Radeya, saya tertarik untuk Tanya tanya jasa foto wisuda.";
+    const url = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
+
     setTimeout(() => {
-      window.open('https://wa.me/628211251570', '_blank');
+      window.open(url, '_blank');
     }, 120);
   };
 
