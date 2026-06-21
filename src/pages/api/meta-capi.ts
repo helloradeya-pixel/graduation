@@ -1,4 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import crypto from "crypto";
+
+// Fungsi untuk Hashing SHA-256 (Standar Meta Advanced Matching)
+const hashData = (data: string) => {
+  if (!data) return undefined;
+  const cleaned = data.replace(/\D/g, "");
+  return crypto.createHash("sha256").update(cleaned).digest("hex");
+};
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,18 +20,23 @@ export default async function handler(
     const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body || {};
 
     // =========================
-    // INPUT
+    // DATA & LOGIKA KOREKSI HARGA
     // =========================
     const service = body.service || "unknown";
-    const value = Number(body.value || 0);
+    const rawValue = Number(body.value || 0);
+    // Jika input di bawah 5000, anggap input singkat (misal 200 = 200rb)
+    const value = rawValue < 5000 ? rawValue * 1000 : rawValue;
+    
     const event_id = body.event_id || `${service}_${Date.now()}`;
     const segment = body.segment || service;
-    
-    // PEMISAH TYPE: Jika kirim 'booking' jadi Purchase, jika 'inquiry' jadi Lead
     const event_type = body.type || 'inquiry'; 
     const event_name = event_type === 'booking' ? 'Purchase' : 'Lead';
 
-    console.log(`🔥 CAPI HIT [v20.0] | Event: ${event_name} | Service: ${service}`);
+    // Hashing nomor WA untuk Advanced Matching
+    const phone = body.user_data?.ph || "";
+    const hashedPhone = phone ? hashData(phone) : undefined;
+
+    console.log(`🔥 CAPI HIT [v20.0] | Event: ${event_name} | Value: ${value}`);
 
     const payload = {
       data: [
@@ -34,6 +47,7 @@ export default async function handler(
           action_source: "website",
           user_data: {
             client_user_agent: req.headers["user-agent"] || "",
+            ph: hashedPhone, // Data yang sudah di-hash
           },
           custom_data: {
             value,
@@ -63,7 +77,7 @@ export default async function handler(
 
     return res.status(200).json({
       success: true,
-      debug: { event_name, event_id, service },
+      debug: { event_name, event_id, service, hashed: !!hashedPhone },
       meta: result,
     });
 
