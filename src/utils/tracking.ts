@@ -32,9 +32,9 @@ const metaTrack = (event: string, event_id: string, params?: any, userData?: any
 };
 
 // =========================
-// GA4 WRAPPER
+// GA4 WRAPPER (EXPORTED)
 // =========================
-const gaTrack = (event: string, params?: any) => {
+export const gaTrack = (event: string, params?: any) => {
   if (!isBrowser()) return;
   window.gtag?.('event', event, {
     event_category: getSegment(),
@@ -43,7 +43,7 @@ const gaTrack = (event: string, params?: any) => {
 };
 
 // =========================
-// WHATSAPP CLICK (Fungsi yang hilang)
+// WHATSAPP CLICK
 // =========================
 export const trackWA = (label: TrackLabel = 'unknown', extra?: Record<string, any>, wa?: string) => {
   const segment = getSegment();
