@@ -1,27 +1,22 @@
 import { Background } from './Background';
 import { Button } from './Button';
-import { trackWA, trackLead } from '@/utils/tracking'; // trackPricelist diganti trackLead
+import { trackWA, trackLead } from '@/utils/tracking';
 
 const Hero = () => {
 
-  const handleWA = () => {
-    trackWA('hero_wa');
+  // Fungsi terpusat untuk WA dengan pesan otomatis
+  const openWA = (label: string) => {
+    trackWA(label);
+
+    const message = "Halo Radeya, saya tertarik untuk Tanya tanya jasa fotonya.";
+    const url = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
     setTimeout(() => {
-      window.open('https://wa.me/628211251570', '_blank');
-    }, 120);
-  };
-
-  const handleFloatingWA = () => {
-    trackWA('floating_wa');
-
-    setTimeout(() => {
-      window.open('https://wa.me/628211251570', '_blank');
-    }, 120);
+      window.open(url, '_blank');
+    }, 150);
   };
 
   const handleCTA = () => {
-    // Diganti menjadi trackLead sesuai strategi 1 Keranjang
     trackLead('hero_cta');
   };
 
@@ -31,7 +26,7 @@ const Hero = () => {
       {/* NAVBAR */}
       <div className="fixed left-0 top-0 z-50 flex w-full justify-end px-5 py-5 md:px-16 md:py-8">
         <button
-          onClick={handleWA}
+          onClick={() => openWA('hero_wa')}
           className="rounded-full border border-white/20 px-4 py-2 text-[9px] tracking-[0.22em] text-white transition hover:bg-white hover:text-black md:px-5 md:text-[11px]"
         >
           KONSULTASI GRATIS →
@@ -40,7 +35,7 @@ const Hero = () => {
 
       {/* FLOATING WA */}
       <button
-        onClick={handleFloatingWA}
+        onClick={() => openWA('floating_wa')}
         className="fixed bottom-5 right-5 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-lg transition hover:scale-110 md:bottom-6 md:right-6 md:h-14 md:w-14"
       >
         <img
