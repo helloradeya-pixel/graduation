@@ -4,11 +4,9 @@ import { trackWA, trackLead } from '@/utils/tracking';
 
 const Hero = () => {
 
-  const openWA = (label) => {
-    // Label membedakan asal klik (navbar atau floating)
+  const openWA = (label: string) => {
     trackWA(label);
 
-    // Pesan otomatis yang akan muncul di WhatsApp klien
     const message = "Halo Radeya, saya tertarik untuk Tanya tanya jasa foto wisuda.";
     const url = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
