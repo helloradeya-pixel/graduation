@@ -51,11 +51,11 @@ const LeadForm = () => {
     try {
       setLoading(true);
 
-      // 1. Jalankan tracking browser
+      // 1. Jalankan tracking browser dengan menyertakan 'wa' untuk Advanced Matching
       const event_id = trackLead('graduation_form', {
         campus: form.campus,
         month: form.month,
-      });
+      }, wa);
 
       // 2. Simpan data ke Notion
       const res = await fetch('/api/lead', {
