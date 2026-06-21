@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { gaTrack } from '@/utils/tracking'; // Impor gaTrack dari file tracking Anda
 
 export default function BookingSuccess() {
   useEffect(() => {
@@ -17,7 +18,6 @@ export default function BookingSuccess() {
     const jamMulai = params.get('jam_mulai') || '';
     const jamSelesai = params.get('jam_selesai') || '';
     
-    // Fungsi normalisasi WA ke format 62xxx (E.164) agar Match Quality bagus
     const normalizePhone = (phone: string) => {
       let cleaned = phone.replace(/\D/g, ''); 
       if (cleaned.startsWith('0')) {
@@ -27,13 +27,12 @@ export default function BookingSuccess() {
     };
     const normalizedWA = normalizePhone(rawWa);
 
-    // Logika Koreksi Harga
     const dpRaw = params.get('dp') || '0';
     const rawValue = Number(dpRaw);
     const value = rawValue < 5000 ? rawValue * 1000 : rawValue;
 
     // =========================
-    // UNIQUE EVENT ID (Deduplikasi)
+    // UNIQUE EVENT ID
     // =========================
     const eventId = `${service}_booking_${Date.now()}`;
 
@@ -46,9 +45,7 @@ export default function BookingSuccess() {
         currency: 'IDR',
         content_name: `Booking_${service}`,
         service,
-        user_data: {
-          ph: normalizedWA 
-        }
+        user_data: { ph: normalizedWA }
       }, { eventID: eventId });
       
       console.log('PIXEL FIRED (Purchase):', { eventId, service, value });
@@ -76,10 +73,25 @@ export default function BookingSuccess() {
     };
 
     // =========================
+    // GA4 TRACKING
+    // =========================
+    const fireGA4 = () => {
+      gaTrack('purchase', {
+        transaction_id: eventId,
+        value,
+        currency: 'IDR',
+        content_name: `Booking_${service}`,
+        service,
+      });
+      console.log('GA4 FIRED (Purchase):', { eventId, service, value });
+    };
+
+    // =========================
     // EXECUTION
     // =========================
     fireMetaEvent();
     fireCAPI();
+    fireGA4();
 
     // WHATSAPP REDIRECT
     const message = service === 'graduation' 
