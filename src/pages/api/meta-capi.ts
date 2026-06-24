@@ -24,7 +24,6 @@ export default async function handler(
     // =========================
     const service = body.service || "unknown";
     const rawValue = Number(body.value || 0);
-    // Jika input di bawah 5000, anggap input singkat (misal 200 = 200rb)
     const value = rawValue < 5000 ? rawValue * 1000 : rawValue;
     
     const event_id = body.event_id || `${service}_${Date.now()}`;
@@ -32,11 +31,16 @@ export default async function handler(
     const event_type = body.type || 'inquiry'; 
     const event_name = event_type === 'booking' ? 'Purchase' : 'Lead';
 
-    // Hashing nomor WA untuk Advanced Matching
+    // Hashing & Parameter untuk Advanced Matching
     const phone = body.user_data?.ph || "";
+    const fbc = body.user_data?.fbc || undefined;
     const hashedPhone = phone ? hashData(phone) : undefined;
+    
+    // Mendapatkan IP Address pengunjung
+    const clientIp = (req.headers["x-forwarded-for"] as string)?.split(",")[0] || 
+                     req.socket.remoteAddress || "";
 
-    console.log(`🔥 CAPI HIT [v20.0] | Event: ${event_name} | Value: ${value}`);
+    console.log(`🔥 CAPI HIT [v20.0] | Event: ${event_name} | FBC Present: ${!!fbc}`);
 
     const payload = {
       data: [
@@ -47,7 +51,9 @@ export default async function handler(
           action_source: "website",
           user_data: {
             client_user_agent: req.headers["user-agent"] || "",
-            ph: hashedPhone, // Data yang sudah di-hash
+            client_ip_address: clientIp, // Penting untuk kualitas data
+            ph: hashedPhone,
+            fbc: fbc, // Penting untuk atribusi iklan
           },
           custom_data: {
             value,
@@ -77,7 +83,7 @@ export default async function handler(
 
     return res.status(200).json({
       success: true,
-      debug: { event_name, event_id, service, hashed: !!hashedPhone },
+      debug: { event_name, event_id, service, hashed: !!hashedPhone, fbc_sent: !!fbc },
       meta: result,
     });
 
