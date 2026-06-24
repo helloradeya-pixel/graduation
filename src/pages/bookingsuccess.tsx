@@ -1,11 +1,19 @@
 'use client';
 
 import { useEffect } from 'react';
-import { gaTrack } from '@/utils/tracking'; // Impor gaTrack dari file tracking Anda
+import { gaTrack } from '@/utils/tracking';
 
 export default function BookingSuccess() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+
+    // =========================
+    // HELPER: GET FBC COOKIE
+    // =========================
+    const getFbc = () => {
+      const match = document.cookie.match(/_fbc=([^;]+)/);
+      return match ? match[1] : undefined;
+    };
 
     // =========================
     // DATA INPUT & NORMALISASI
@@ -26,6 +34,7 @@ export default function BookingSuccess() {
       return cleaned;
     };
     const normalizedWA = normalizePhone(rawWa);
+    const fbc = getFbc(); // Ambil FBC
 
     const dpRaw = params.get('dp') || '0';
     const rawValue = Number(dpRaw);
@@ -45,10 +54,13 @@ export default function BookingSuccess() {
         currency: 'IDR',
         content_name: `Booking_${service}`,
         service,
-        user_data: { ph: normalizedWA }
+        user_data: { 
+          ph: normalizedWA,
+          fbc: fbc 
+        }
       }, { eventID: eventId });
       
-      console.log('PIXEL FIRED (Purchase):', { eventId, service, value });
+      console.log('PIXEL FIRED (Purchase):', { eventId, service, value, fbc });
     };
 
     // =========================
@@ -64,7 +76,10 @@ export default function BookingSuccess() {
             value,
             event_id: eventId,
             type: 'booking',
-            user_data: { ph: normalizedWA }
+            user_data: { 
+              ph: normalizedWA,
+              fbc: fbc // Kirim FBC ke CAPI
+            }
           }),
         });
       } catch (err) {
@@ -83,7 +98,6 @@ export default function BookingSuccess() {
         content_name: `Booking_${service}`,
         service,
       });
-      console.log('GA4 FIRED (Purchase):', { eventId, service, value });
     };
 
     // =========================
