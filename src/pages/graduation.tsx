@@ -8,7 +8,7 @@ export default function Graduation() {
   useEffect(() => {
     trackGraduationView();
 
-    const promoActive = true;
+    const promoActive = false;
     const oneTimeOnly = true;
     const alreadyClosed = localStorage.getItem("promoClosed");
 
