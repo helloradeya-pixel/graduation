@@ -1,11 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import crypto from "crypto";
 
-// Fungsi untuk Hashing SHA-256 (Standar Meta Advanced Matching)
+// Fungsi Hashing SHA-256 (Standar Meta Advanced Matching)
 const hashData = (data: string) => {
   if (!data) return undefined;
-  const cleaned = data.replace(/\D/g, "");
-  return crypto.createHash("sha256").update(cleaned).digest("hex");
+  return crypto.createHash("sha256").update(data).digest("hex");
+};
+
+// Fungsi Normalisasi
+const normalizePhone = (phone: string) => {
+  let cleaned = phone.replace(/\D/g, "");
+  if (cleaned.startsWith("08")) cleaned = "62" + cleaned.substring(1);
+  return cleaned;
 };
 
 export default async function handler(
@@ -20,7 +26,7 @@ export default async function handler(
     const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body || {};
 
     // =========================
-    // DATA & LOGIKA KOREKSI HARGA
+    // DATA & LOGIKA
     // =========================
     const service = body.service || "unknown";
     const rawValue = Number(body.value || 0);
@@ -31,16 +37,24 @@ export default async function handler(
     const event_type = body.type || 'inquiry'; 
     const event_name = event_type === 'booking' ? 'Purchase' : 'Lead';
 
-    // Hashing & Parameter untuk Advanced Matching
+    // Pengolahan Data Pelanggan (Advanced Matching)
     const phone = body.user_data?.ph || "";
+    const email = body.user_data?.em || "";
+    const firstName = body.user_data?.fn || "";
+    const lastName = body.user_data?.ln || "";
+    const zip = body.user_data?.zp || "";
     const fbc = body.user_data?.fbc || undefined;
-    const hashedPhone = phone ? hashData(phone) : undefined;
+
+    const hashedPhone = phone ? hashData(normalizePhone(phone)) : undefined;
+    const hashedEmail = email ? hashData(email.toLowerCase().trim()) : undefined;
+    const hashedFirstName = firstName ? hashData(firstName.toLowerCase().trim()) : undefined;
+    const hashedLastName = lastName ? hashData(lastName.toLowerCase().trim()) : undefined;
+    const hashedZip = zip ? hashData(zip.trim()) : undefined;
     
-    // Mendapatkan IP Address pengunjung
     const clientIp = (req.headers["x-forwarded-for"] as string)?.split(",")[0] || 
                      req.socket.remoteAddress || "";
 
-    console.log(`🔥 CAPI HIT [v20.0] | Event: ${event_name} | FBC Present: ${!!fbc}`);
+    console.log(`🔥 CAPI HIT [v20.0] | Event: ${event_name} | Phone: ${!!hashedPhone} | Email: ${!!hashedEmail}`);
 
     const payload = {
       data: [
@@ -51,9 +65,13 @@ export default async function handler(
           action_source: "website",
           user_data: {
             client_user_agent: req.headers["user-agent"] || "",
-            client_ip_address: clientIp, // Penting untuk kualitas data
+            client_ip_address: clientIp,
             ph: hashedPhone,
-            fbc: fbc, // Penting untuk atribusi iklan
+            em: hashedEmail,
+            fn: hashedFirstName,
+            ln: hashedLastName,
+            zp: hashedZip,
+            fbc: fbc,
           },
           custom_data: {
             value,
@@ -68,7 +86,7 @@ export default async function handler(
     };
 
     // =========================
-    // SEND TO META (v20.0)
+    // SEND TO META
     // =========================
     const response = await fetch(
       `https://graph.facebook.com/v20.0/${process.env.PIXEL_ID}/events?access_token=${process.env.META_TOKEN}`,
@@ -83,15 +101,12 @@ export default async function handler(
 
     return res.status(200).json({
       success: true,
-      debug: { event_name, event_id, service, hashed: !!hashedPhone, fbc_sent: !!fbc },
+      debug: { event_name, event_id, hashedPhone: !!hashedPhone, hashedEmail: !!hashedEmail, fbc: !!fbc },
       meta: result,
     });
 
   } catch (error: any) {
     console.log("🔥 CAPI ERROR:", error);
-    return res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    return res.status(500).json({ success: false, error: error.message });
   }
 }
