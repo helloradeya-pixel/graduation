@@ -15,11 +15,17 @@ export default function BookingSuccess() {
     const nama = params.get('nama') || '';
     const email = params.get('email') || '';
     const rawWa = params.get('wa') || '';
+    
+    // Data tambahan untuk Couple & Umum
     const paket = params.get('package') || '';
     const tanggal = params.get('tanggal') || '';
     const jamMulai = params.get('jam_mulai') || '';
     const jamSelesai = params.get('jam_selesai') || '';
-    
+    const pasangan = params.get('pasangan') || '';
+    const acara = params.get('acara') || '';
+    const lokasi = params.get('lokasi') || '';
+    const jam = params.get('jam') || '';
+
     // =========================
     // 2. HELPER FUNGSI
     // =========================
@@ -58,7 +64,7 @@ export default function BookingSuccess() {
     // =========================
     // 4. CAPI (Server-side)
     // =========================
-    fetch('/api/meta-capi', { // Pastikan file di folder api bernama meta-capi.ts
+    fetch('/api/meta-capi', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -68,9 +74,9 @@ export default function BookingSuccess() {
         type: 'booking',
         user_data: { 
           ph: normalizedWA,
-          em: email,    // PENTING
-          fn: nama,     // PENTING
-          fbc: fbc      // PENTING
+          em: email,
+          fn: nama,
+          fbc: fbc
         }
       }),
     }).catch(err => console.log('CAPI ERROR:', err));
@@ -87,9 +93,15 @@ export default function BookingSuccess() {
     });
 
     // =========================
-    // 6. WHATSAPP REDIRECT
+    // 6. WHATSAPP REDIRECT DINAMIS
     // =========================
-    const message = `Halo kak, saya ${nama} sudah booking ${service}\nPackage: ${paket}\nTanggal: ${tanggal}\nJam: ${jamMulai} - ${jamSelesai}\nDP: Rp${value.toLocaleString('id-ID')}`;
+    let message = "";
+    if (service === 'couple') {
+      message = `Halo kak, saya ${nama} ingin booking paket Couple.\n\n*Detail Booking:*\nPasangan: ${pasangan}\nAcara: ${acara}\nTanggal: ${tanggal}\nJam: ${jam}\nLokasi: ${lokasi}\nPaket: ${paket}\nDP: Rp${value.toLocaleString('id-ID')}`;
+    } else {
+      message = `Halo kak, saya ${nama} sudah booking ${service}\nPackage: ${paket}\nTanggal: ${tanggal}\nJam: ${jamMulai} - ${jamSelesai}\nDP: Rp${value.toLocaleString('id-ID')}`;
+    }
+
     const waLink = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
     const timer = setTimeout(() => { window.location.href = waLink; }, 3000);
