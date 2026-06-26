@@ -15,8 +15,6 @@ export default function BookingSuccess() {
     const nama = params.get('nama') || '';
     const email = params.get('email') || '';
     const rawWa = params.get('wa') || '';
-    
-    // Data tambahan untuk Couple & Umum
     const paket = params.get('package') || '';
     const tanggal = params.get('tanggal') || '';
     const jamMulai = params.get('jam_mulai') || '';
@@ -27,11 +25,19 @@ export default function BookingSuccess() {
     const jam = params.get('jam') || '';
 
     // =========================
-    // 2. HELPER FUNGSI
+    // 2. HELPER FUNGSI & HASHING
     // =========================
     const normalizePhone = (phone: string) => {
       let cleaned = phone.replace(/\D/g, ''); 
       return cleaned.startsWith('0') ? '62' + cleaned.substring(1) : cleaned;
+    };
+
+    // Fungsi untuk Hashing agar Meta tidak komplain (PII)
+    const sha256 = async (message: string) => {
+      const msgBuffer = new TextEncoder().encode(message.toLowerCase().trim());
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     };
 
     const getFbc = () => {
@@ -39,62 +45,54 @@ export default function BookingSuccess() {
       return match ? match[1] : localStorage.getItem('fbc') || undefined;
     };
 
-    const normalizedWA = normalizePhone(rawWa);
-    const fbc = getFbc();
-    const eventId = `${service}_booking_${Date.now()}`;
-    
-    const dpRaw = params.get('dp') || '0';
-    const value = Number(dpRaw) < 5000 ? Number(dpRaw) * 1000 : Number(dpRaw);
+    const runTracking = async () => {
+      const normalizedWA = normalizePhone(rawWa);
+      const fbc = getFbc();
+      const eventId = `${service}_booking_${Date.now()}`;
+      const dpRaw = params.get('dp') || '0';
+      const value = Number(dpRaw) < 5000 ? Number(dpRaw) * 1000 : Number(dpRaw);
 
-    // =========================
-    // 3. META PIXEL (Browser)
-    // =========================
-    window.fbq?.('track', 'Purchase', {
-      value,
-      currency: 'IDR',
-      content_name: `Booking_${service}`,
-      service,
-      user_data: { 
-        ph: normalizedWA,
-        em: email,
-        fbc: fbc 
-      }
-    }, { eventID: eventId });
+      // Hash data sebelum dikirim ke Meta
+      const hashedEmail = await sha256(email);
+      const hashedPhone = await sha256(normalizedWA);
 
-    // =========================
-    // 4. CAPI (Server-side)
-    // =========================
-    fetch('/api/meta-capi', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        service,
+      // =========================
+      // 3. META PIXEL (Browser - Hash version)
+      // =========================
+      window.fbq?.('track', 'Purchase', {
         value,
-        event_id: eventId,
-        type: 'booking',
-        user_data: { 
-          ph: normalizedWA,
-          em: email,
-          fn: nama,
-          fbc: fbc
-        }
-      }),
-    }).catch(err => console.log('CAPI ERROR:', err));
+        currency: 'IDR',
+        content_name: `Booking_${service}`,
+        service,
+        user_data: { ph: hashedPhone, em: hashedEmail, fbc: fbc }
+      }, { eventID: eventId });
+
+      // =========================
+      // 4. CAPI (Server-side)
+      // =========================
+      fetch('/api/meta-capi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service, value, event_id: eventId, type: 'booking',
+          user_data: { ph: normalizedWA, em: email, fn: nama, fbc }
+        })
+      }).catch(err => console.log('CAPI ERROR:', err));
+
+      // =========================
+      // 5. GA4 TRACKING
+      // =========================
+      gaTrack('purchase', { transaction_id: eventId, value, currency: 'IDR', content_name: `Booking_${service}`, service });
+    };
+
+    runTracking();
 
     // =========================
-    // 5. GA4 TRACKING
+    // 6. BERSIHKAN URL & WHATSAPP REDIRECT
     // =========================
-    gaTrack('purchase', {
-      transaction_id: eventId,
-      value,
-      currency: 'IDR',
-      content_name: `Booking_${service}`,
-      service,
-    });
+    // Hapus parameter dari URL agar tidak terdeteksi sensitif oleh Meta
+    window.history.replaceState({}, document.title, window.location.pathname);
 
-    // =========================
-    // 6. WHATSAPP REDIRECT DINAMIS
-    // =========================
     let message = "";
     if (service === 'couple') {
       message = `Halo kak, saya sudah booking yah atas nama ${nama}.\n\n*Detail Booking:*\nPasangan: ${pasangan}\nAcara: ${acara}\nTanggal: ${tanggal}\nJam: ${jam}\nLokasi: ${lokasi}\nPaket: ${paket}\nDP: Rp${value.toLocaleString('id-ID')}`;
@@ -103,7 +101,6 @@ export default function BookingSuccess() {
     }
 
     const waLink = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
-
     const timer = setTimeout(() => { window.location.href = waLink; }, 3000);
     return () => clearTimeout(timer);
   }, []);
