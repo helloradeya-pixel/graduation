@@ -97,9 +97,9 @@ export default function BookingSuccess() {
     // =========================
     let message = "";
     if (service === 'couple') {
-      message = `Halo kak, saya ${nama} sudah booking.\n\n*Detail Booking:*\nPasangan: ${pasangan}\nAcara: ${acara}\nTanggal: ${tanggal}\nJam: ${jam}\nLokasi: ${lokasi}\nPaket: ${paket}\nDP: Rp${value.toLocaleString('id-ID')}`;
+      message = `Halo kak, saya sudah booking ${nama}.\n\n*Detail Booking:*\nPasangan: ${pasangan}\nAcara: ${acara}\nTanggal: ${tanggal}\nJam: ${jam}\nLokasi: ${lokasi}\nPaket: ${paket}\nDP: Rp${value.toLocaleString('id-ID')}`;
     } else {
-      message = `Halo kak, saya ${nama} sudah booking ${service}\nPackage: ${paket}\nTanggal: ${tanggal}\nJam: ${jamMulai} - ${jamSelesai}\nDP: Rp${value.toLocaleString('id-ID')}`;
+      message = `Halo kak, saya sudah booking ${nama} ${service}\nPackage: ${paket}\nTanggal: ${tanggal}\nJam: ${jamMulai} - ${jamSelesai}\nDP: Rp${value.toLocaleString('id-ID')}`;
     }
 
     const waLink = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
