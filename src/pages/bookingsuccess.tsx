@@ -1,132 +1,80 @@
-'use client';
-
-import { useEffect } from 'react';
-import { gaTrack } from '@/utils/tracking';
-
-export default function BookingSuccess() {
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
 
     // =========================
-    // HELPER: GET FBC COOKIE
-    // =========================
-    const getFbc = () => {
-      const match = document.cookie.match(/_fbc=([^;]+)/);
-      return match ? match[1] : undefined;
-    };
-
-    // =========================
-    // DATA INPUT & NORMALISASI
+    // 1. AMBIL DATA
     // =========================
     const service = params.get('service') || 'unknown';
     const nama = params.get('nama') || '';
+    const email = params.get('email') || ''; // Email dari Tally
     const rawWa = params.get('wa') || '';
     const paket = params.get('package') || '';
     const tanggal = params.get('tanggal') || '';
     const jamMulai = params.get('jam_mulai') || '';
     const jamSelesai = params.get('jam_selesai') || '';
     
+    // =========================
+    // 2. HELPER FUNGSI
+    // =========================
     const normalizePhone = (phone: string) => {
       let cleaned = phone.replace(/\D/g, ''); 
-      if (cleaned.startsWith('0')) {
-        return '62' + cleaned.substring(1);
-      }
-      return cleaned;
+      return cleaned.startsWith('0') ? '62' + cleaned.substring(1) : cleaned;
     };
+
+    const getFbc = () => {
+      const match = document.cookie.match(/_fbc=([^;]+)/);
+      return match ? match[1] : localStorage.getItem('fbc') || undefined;
+    };
+
     const normalizedWA = normalizePhone(rawWa);
-    const fbc = getFbc(); // Ambil FBC
-
-    const dpRaw = params.get('dp') || '0';
-    const rawValue = Number(dpRaw);
-    const value = rawValue < 5000 ? rawValue * 1000 : rawValue;
-
-    // =========================
-    // UNIQUE EVENT ID
-    // =========================
+    const fbc = getFbc();
     const eventId = `${service}_booking_${Date.now()}`;
+    
+    const dpRaw = params.get('dp') || '0';
+    const value = Number(dpRaw) < 5000 ? Number(dpRaw) * 1000 : Number(dpRaw);
 
     // =========================
-    // META PIXEL (Browser)
+    // 3. META PIXEL (Browser)
     // =========================
-    const fireMetaEvent = () => {
-      window.fbq?.('track', 'Purchase', {
-        value,
-        currency: 'IDR',
-        content_name: `Booking_${service}`,
+    window.fbq?.('track', 'Purchase', {
+      value,
+      currency: 'IDR',
+      content_name: `Booking_${service}`,
+      service,
+      user_data: { 
+        ph: normalizedWA,
+        em: email,
+        fbc: fbc 
+      }
+    }, { eventID: eventId });
+
+    // =========================
+    // 4. CAPI (Server-side)
+    // =========================
+    fetch('/api/meta-capi', { // PASTIKAN NAMA FILE API ANDA 'meta-capi.ts'
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         service,
+        value,
+        event_id: eventId,
+        type: 'booking',
         user_data: { 
           ph: normalizedWA,
-          fbc: fbc 
+          em: email,    // PENTING
+          fn: nama,     // PENTING
+          fbc: fbc      // PENTING
         }
-      }, { eventID: eventId });
-      
-      console.log('PIXEL FIRED (Purchase):', { eventId, service, value, fbc });
-    };
+      }),
+    }).catch(err => console.log('CAPI ERROR:', err));
 
     // =========================
-    // CAPI (Server-side)
+    // 5. REDIRECT
     // =========================
-    const fireCAPI = async () => {
-      try {
-        await fetch('/api/meta-capi', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            service,
-            value,
-            event_id: eventId,
-            type: 'booking',
-            user_data: { 
-              ph: normalizedWA,
-              fbc: fbc // Kirim FBC ke CAPI
-            }
-          }),
-        });
-      } catch (err) {
-        console.log('CAPI ERROR:', err);
-      }
-    };
-
-    // =========================
-    // GA4 TRACKING
-    // =========================
-    const fireGA4 = () => {
-      gaTrack('purchase', {
-        transaction_id: eventId,
-        value,
-        currency: 'IDR',
-        content_name: `Booking_${service}`,
-        service,
-      });
-    };
-
-    // =========================
-    // EXECUTION
-    // =========================
-    fireMetaEvent();
-    fireCAPI();
-    fireGA4();
-
-    // WHATSAPP REDIRECT
-    const message = service === 'graduation' 
-      ? `Halo kak, saya ${nama} sudah booking Graduation\nPackage: ${paket}\nTanggal: ${tanggal}\nJam: ${jamMulai} - ${jamSelesai}\nDP: Rp${value.toLocaleString('id-ID')}`
-      : `Halo kak, saya ${nama} sudah booking ${service}\nDP: Rp${value.toLocaleString('id-ID')}`;
-
+    const message = `Halo kak, saya ${nama} sudah booking ${service}\nPackage: ${paket}\nTanggal: ${tanggal}\nJam: ${jamMulai} - ${jamSelesai}\nDP: Rp${value.toLocaleString('id-ID')}`;
     const waLink = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
-    const timer = setTimeout(() => {
-      window.location.href = waLink;
-    }, 3000);
-
+    const timer = setTimeout(() => { window.location.href = waLink; }, 3000);
     return () => clearTimeout(timer);
   }, []);
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold">Booking Berhasil</h1>
-        <p className="mt-2 text-neutral-400">Sedang menghubungkan ke WhatsApp...</p>
-      </div>
-    </div>
-  );
-}
