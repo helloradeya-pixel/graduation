@@ -1,3 +1,9 @@
+'use client';
+
+import { useEffect } from 'react';
+import { gaTrack } from '@/utils/tracking';
+
+export default function BookingSuccess() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
@@ -7,7 +13,7 @@
     // =========================
     const service = params.get('service') || 'unknown';
     const nama = params.get('nama') || '';
-    const email = params.get('email') || ''; // Email dari Tally
+    const email = params.get('email') || '';
     const rawWa = params.get('wa') || '';
     const paket = params.get('package') || '';
     const tanggal = params.get('tanggal') || '';
@@ -52,7 +58,7 @@
     // =========================
     // 4. CAPI (Server-side)
     // =========================
-    fetch('/api/meta-capi', { // PASTIKAN NAMA FILE API ANDA 'meta-capi.ts'
+    fetch('/api/meta-capi', { // Pastikan file di folder api bernama meta-capi.ts
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -70,7 +76,18 @@
     }).catch(err => console.log('CAPI ERROR:', err));
 
     // =========================
-    // 5. REDIRECT
+    // 5. GA4 TRACKING
+    // =========================
+    gaTrack('purchase', {
+      transaction_id: eventId,
+      value,
+      currency: 'IDR',
+      content_name: `Booking_${service}`,
+      service,
+    });
+
+    // =========================
+    // 6. WHATSAPP REDIRECT
     // =========================
     const message = `Halo kak, saya ${nama} sudah booking ${service}\nPackage: ${paket}\nTanggal: ${tanggal}\nJam: ${jamMulai} - ${jamSelesai}\nDP: Rp${value.toLocaleString('id-ID')}`;
     const waLink = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
@@ -78,3 +95,13 @@
     const timer = setTimeout(() => { window.location.href = waLink; }, 3000);
     return () => clearTimeout(timer);
   }, []);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-black text-white">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold">Booking Berhasil</h1>
+        <p className="mt-2 text-neutral-400">Sedang menghubungkan ke WhatsApp...</p>
+      </div>
+    </div>
+  );
+}
