@@ -1,45 +1,7 @@
-import { useState, useEffect } from 'react';
 import "./Radeyaphoto.css";
 import { Testimonial } from "../Testimonial";
 
 export default function RadeyaphotoPage() {
-  const [isTikTok, setIsTikTok] = useState(false);
-
-  useEffect(() => {
-    // Mendeteksi apakah user membuka melalui in-app browser TikTok
-    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
-    if (/TikTok/i.test(userAgent)) {
-      setIsTikTok(true);
-    }
-  }, []);
-
-  const fireWAEvent = () => {
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'click_whatsapp', {
-        event_category: 'bio_page',
-        event_label: 'wa_admin',
-      });
-    }
-  };
-
-  const fireIGWedding = () => {
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'click_instagram', {
-        event_category: 'outbound',
-        event_label: 'ig_wedding',
-      });
-    }
-  };
-
-  const fireIGWisuda = () => {
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'click_instagram', {
-        event_category: 'outbound',
-        event_label: 'ig_wisuda',
-      });
-    }
-  };
-
   return (
     <div className="radeyaphoto">
       <div className="hero"></div>
@@ -53,7 +15,27 @@ export default function RadeyaphotoPage() {
 
         <h1>Radeyaphoto</h1>
 
-        <p>
+        {/* Kotak Instruksi Edukasi */}
+        <div className="instruction-box" style={{ 
+          background: '#f8f8f8', 
+          padding: '20px', 
+          borderRadius: '12px', 
+          margin: '20px auto',
+          maxWidth: '400px',
+          border: '1px solid #ddd',
+          textAlign: 'center'
+        }}>
+          <h3 style={{ color: '#333', marginBottom: '10px' }}>Tips Akses Cepat</h3>
+          <p style={{ fontSize: '14px', color: '#555', lineHeight: '1.5' }}>
+            TikTok membatasi akses langsung ke aplikasi lain. Agar tombol berfungsi normal, silakan ikuti langkah ini:
+          </p>
+          <ul style={{ fontSize: '14px', color: '#333', textAlign: 'left', paddingLeft: '20px', marginTop: '10px' }}>
+            <li>Klik titik <strong>tiga (•••)</strong> di pojok kanan atas.</li>
+            <li>Pilih <strong>"Buka di Browser"</strong> (Open in Browser).</li>
+          </ul>
+        </div>
+
+        <p style={{ marginBottom: '20px' }}>
           Some memories live in soft light and silent smiles.
           <br />
           I capture them so years from now,
@@ -63,42 +45,29 @@ export default function RadeyaphotoPage() {
           but how it felt.
         </p>
 
-        {/* Notifikasi untuk user TikTok jika tombol tidak merespons */}
-        {isTikTok && (
-          <p style={{ fontSize: '11px', color: '#ff4d4d', marginBottom: '15px', fontWeight: 'bold' }}>
-            *Jika tombol tidak terbuka, klik titik tiga (•••) di pojok kanan atas, lalu pilih "Buka di Browser".
-          </p>
-        )}
-
         <div className="buttons">
-          {/* WA ADMIN - URL diperbarui agar lebih stabil */}
           <a
             href="https://api.whatsapp.com/send?phone=628211251570"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={fireWAEvent}
             className="link-btn"
           >
             WHATSAPP ADMIN
           </a>
 
-          {/* IG WEDDING */}
           <a
             href="https://instagram.com/radeyaphoto"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={fireIGWedding}
             className="link-btn"
           >
             INSTAGRAM WEDDING
           </a>
 
-          {/* IG WISUDA */}
           <a
             href="https://instagram.com/radeya.graduation"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={fireIGWisuda}
             className="link-btn"
           >
             INSTAGRAM WISUDA
