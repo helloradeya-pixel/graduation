@@ -27,7 +27,7 @@ export default function RadeyaphotoPage() {
 
         <div className="buttons">
           <a
-            href="https://api.whatsapp.com/send?phone=628211251570&utm_source=tiktok_bio&utm_medium=organic&utm_campaign=landing_page"
+            href="https://api.whatsapp.com/send?phone=628211251570&text=Halo%20admin,%20aku%20mau%20tanya-tanya%20boleh%20yah.&utm_source=tiktok_bio&utm_medium=organic&utm_campaign=landing_page"
             target="_blank"
             rel="noopener noreferrer"
             className="link-btn"
