@@ -1,17 +1,24 @@
+import { useState, useEffect } from 'react';
 import "./Radeyaphoto.css";
 import { Testimonial } from "../Testimonial";
 
 export default function RadeyaphotoPage() {
+  const [isTikTok, setIsTikTok] = useState(false);
+
+  useEffect(() => {
+    // Mendeteksi apakah user membuka melalui in-app browser TikTok
+    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+    if (/TikTok/i.test(userAgent)) {
+      setIsTikTok(true);
+    }
+  }, []);
 
   const fireWAEvent = () => {
-    if (typeof window !== 'undefined') {
-      // Meta tracking dihapus
-      if ((window as any).gtag) {
-        (window as any).gtag('event', 'click_whatsapp', {
-          event_category: 'bio_page',
-          event_label: 'wa_admin',
-        });
-      }
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'click_whatsapp', {
+        event_category: 'bio_page',
+        event_label: 'wa_admin',
+      });
     }
   };
 
@@ -35,11 +42,9 @@ export default function RadeyaphotoPage() {
 
   return (
     <div className="radeyaphoto">
-
       <div className="hero"></div>
 
       <div className="profile-section">
-
         <img
           src="/assets/images/profile.jpg"
           alt="profile"
@@ -58,12 +63,19 @@ export default function RadeyaphotoPage() {
           but how it felt.
         </p>
 
-        <div className="buttons">
+        {/* Notifikasi untuk user TikTok jika tombol tidak merespons */}
+        {isTikTok && (
+          <p style={{ fontSize: '11px', color: '#ff4d4d', marginBottom: '15px', fontWeight: 'bold' }}>
+            *Jika tombol tidak terbuka, klik titik tiga (•••) di pojok kanan atas, lalu pilih "Buka di Browser".
+          </p>
+        )}
 
-          {/* WA ADMIN */}
+        <div className="buttons">
+          {/* WA ADMIN - URL diperbarui agar lebih stabil */}
           <a
-            href="https://wa.me/628211251570"
+            href="https://api.whatsapp.com/send?phone=628211251570"
             target="_blank"
+            rel="noopener noreferrer"
             onClick={fireWAEvent}
             className="link-btn"
           >
@@ -74,6 +86,7 @@ export default function RadeyaphotoPage() {
           <a
             href="https://instagram.com/radeyaphoto"
             target="_blank"
+            rel="noopener noreferrer"
             onClick={fireIGWedding}
             className="link-btn"
           >
@@ -84,12 +97,12 @@ export default function RadeyaphotoPage() {
           <a
             href="https://instagram.com/radeya.graduation"
             target="_blank"
+            rel="noopener noreferrer"
             onClick={fireIGWisuda}
             className="link-btn"
           >
             INSTAGRAM WISUDA
           </a>
-
         </div>
       </div>
 
@@ -98,7 +111,6 @@ export default function RadeyaphotoPage() {
       <div className="mt-12 border-t border-white/5 pt-6 text-center text-xs text-neutral-500">
         © {new Date().getFullYear()} Radeyaphoto. All rights reserved.
       </div>
-
     </div>
   );
 }
