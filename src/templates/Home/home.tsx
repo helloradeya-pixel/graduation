@@ -27,7 +27,7 @@ export default function RadeyaphotoPage() {
 
         <div className="buttons">
           <a
-            href="https://api.whatsapp.com/send?phone=628211251570"
+            href="https://api.whatsapp.com/send?phone=628211251570&utm_source=tiktok_bio&utm_medium=organic&utm_campaign=landing_page"
             target="_blank"
             rel="noopener noreferrer"
             className="link-btn"
@@ -36,7 +36,7 @@ export default function RadeyaphotoPage() {
           </a>
 
           <a
-            href="https://instagram.com/radeyaphoto"
+            href="https://instagram.com/radeyaphoto?utm_source=tiktok_bio&utm_medium=organic&utm_campaign=landing_page"
             target="_blank"
             rel="noopener noreferrer"
             className="link-btn"
@@ -45,7 +45,7 @@ export default function RadeyaphotoPage() {
           </a>
 
           <a
-            href="https://instagram.com/radeya.graduation"
+            href="https://instagram.com/radeya.graduation?utm_source=tiktok_bio&utm_medium=organic&utm_campaign=landing_page"
             target="_blank"
             rel="noopener noreferrer"
             className="link-btn"
@@ -54,7 +54,6 @@ export default function RadeyaphotoPage() {
           </a>
         </div>
 
-        {/* PESAN EDUKASI DI BAWAH TOMBOL */}
         <div className="instruction-box" style={{ 
           marginTop: '40px',
           padding: '15px', 
