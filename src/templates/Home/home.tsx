@@ -15,27 +15,7 @@ export default function RadeyaphotoPage() {
 
         <h1>Radeyaphoto</h1>
 
-        {/* Kotak Instruksi Edukasi */}
-        <div className="instruction-box" style={{ 
-          background: '#f8f8f8', 
-          padding: '20px', 
-          borderRadius: '12px', 
-          margin: '20px auto',
-          maxWidth: '400px',
-          border: '1px solid #ddd',
-          textAlign: 'center'
-        }}>
-          <h3 style={{ color: '#333', marginBottom: '10px' }}>Tips Akses Cepat</h3>
-          <p style={{ fontSize: '14px', color: '#555', lineHeight: '1.5' }}>
-            TikTok membatasi akses langsung ke aplikasi lain. Agar tombol berfungsi normal, silakan ikuti langkah ini:
-          </p>
-          <ul style={{ fontSize: '14px', color: '#333', textAlign: 'left', paddingLeft: '20px', marginTop: '10px' }}>
-            <li>Klik titik <strong>tiga (•••)</strong> di pojok kanan atas.</li>
-            <li>Pilih <strong>"Buka di Browser"</strong> (Open in Browser).</li>
-          </ul>
-        </div>
-
-        <p style={{ marginBottom: '20px' }}>
+        <p style={{ marginBottom: '30px' }}>
           Some memories live in soft light and silent smiles.
           <br />
           I capture them so years from now,
@@ -72,6 +52,21 @@ export default function RadeyaphotoPage() {
           >
             INSTAGRAM WISUDA
           </a>
+        </div>
+
+        {/* PESAN EDUKASI DI BAWAH TOMBOL */}
+        <div className="instruction-box" style={{ 
+          marginTop: '40px',
+          padding: '15px', 
+          background: '#f1f1f1', 
+          borderRadius: '8px',
+          textAlign: 'center',
+          fontSize: '12px',
+          color: '#666'
+        }}>
+          <p>
+            <strong>Tips:</strong> Jika tombol di atas tidak merespons, klik titik tiga (•••) di pojok kanan atas layar Anda, lalu pilih <strong>"Buka di Browser"</strong>.
+          </p>
         </div>
       </div>
 
