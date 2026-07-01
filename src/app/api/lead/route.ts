@@ -29,8 +29,8 @@ export async function POST(req: Request) {
           rich_text: [{ text: { content: body.budget || '' } }],
         },
 
-        Instagram: {
-          rich_text: [{ text: { content: body.instagram || '' } }],
+        Email: {
+          rich_text: [{ text: { content: body.email || '' } }],
         },
 
         WhatsApp: {
