@@ -1,3 +1,7 @@
+
+
+
+
 'use client';
 
 import { useState } from 'react';
@@ -9,7 +13,7 @@ type FormState = {
   campus: string;
   month: string;
   budget: string;
-  instagram: string;
+  email: string;
   wa: string;
 };
 
@@ -19,7 +23,7 @@ const LeadForm = () => {
     campus: '',
     month: '',
     budget: '',
-    instagram: '',
+    email: '',
     wa: '',
   });
 
@@ -35,23 +39,25 @@ const LeadForm = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const name = form.name.trim();
     const campus = form.campus.trim();
     const month = form.month.trim();
     const wa = form.wa.trim();
+    const email = form.email.trim(); // Tambahkan ini
 
-    if (!name || !campus || !month || !wa) {
-      alert('⚠️ Mohon isi data wajib');
+    // Menambahkan email ke dalam pengecekan validasi
+    if (!name || !campus || !month || !wa || !email) {
+      alert('⚠️ Mohon isi semua data wajib (Nama, Kampus, Bulan, Email, & WhatsApp)');
       return;
     }
 
     try {
       setLoading(true);
-
-      // 1. Jalankan tracking browser dengan menyertakan 'wa' untuk Advanced Matching
+    
+      // 1. Jalankan tracking browser
       const event_id = trackLead('graduation_form', {
         campus: form.campus,
         month: form.month,
@@ -67,17 +73,17 @@ const LeadForm = () => {
         }),
       });
 
-      // 3. Kirim data ke API CAPI dengan user_data (untuk Hashing/Advanced Matching)
+      // 3. Kirim data ke API CAPI
       await fetch('/api/meta-capi', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           service: 'graduation',
-          type: 'inquiry', // Mencatat sebagai 'Lead'
+          type: 'inquiry',
           segment,
           event_id, 
           value: 0,
-          user_data: { ph: wa } // Data ini akan di-hash di backend
+          user_data: { ph: wa, em: form.email } // Advanced Matching dengan WA & Email
         }),
       });
 
@@ -104,7 +110,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
         campus: '',
         month: '',
         budget: '',
-        instagram: '',
+        email: '',
         wa: '',
       });
 
@@ -121,7 +127,8 @@ Boleh dibantu info detail paketnya ya 🙏`;
     !form.name.trim() ||
     !form.campus.trim() ||
     !form.month.trim() ||
-    !form.wa.trim();
+    !form.wa.trim() ||
+    !form.email.trim(); // Tambahkan ini
 
   const fieldStyle =
     'h-[54px] w-full rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white outline-none placeholder:text-neutral-500';
@@ -177,10 +184,11 @@ Boleh dibantu info detail paketnya ya 🙏`;
             <option value="1 Juta+">1 Juta+</option>
           </select>
           <input
-            name="instagram"
-            value={form.instagram}
+            name="email"
+            type="email"
+            value={form.email}
             onChange={handleChange}
-            placeholder="Instagram"
+            placeholder="Alamat Email"
             className={fieldStyle}
           />
           <input
