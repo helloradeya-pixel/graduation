@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import Head from 'next/head';
 
@@ -39,18 +40,32 @@ export default function FrameKenanganPage() {
     if (!selectedPaket || !buktiUrl) return alert('Pilih paket dan unggah bukti transfer!');
     if (!data.wa || !data.email) return alert('Mohon isi nomor WhatsApp dan Email Anda.');
     
+    // 1. Browser Pixel Tracking
     const fbq = (window as any).fbq;
     if (typeof fbq === 'function') {
       const hargaBersih = parseFloat(selectedPaket.harga.replace(/\./g, ''));
       fbq('track', 'Purchase', { 
-        value: hargaBersih, 
-        currency: 'IDR', 
-        content_name: selectedPaket.nama,
-        content_category: 'frame',
-        content_type: 'product'
+        value: hargaBersih, currency: 'IDR', content_name: selectedPaket.nama,
+        content_category: 'frame', content_type: 'product'
       });
     }
 
+    // 2. Server-Side Tracking (CAPI)
+    try {
+      await fetch('/api/meta-capi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service: selectedPaket.nama,
+          segment: 'frame',
+          value: selectedPaket.harga.replace(/\./g, ''),
+          type: 'booking',
+          user_data: { ph: data.wa, em: data.email }
+        })
+      });
+    } catch (e) { console.error("CAPI failed", e); }
+
+    // 3. Notion Integration
     await fetch('/api/send-frame-kenangan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -158,6 +173,8 @@ ${buktiUrl}
       <div style={{ marginTop: '48px', borderTop: '1px solid #eee', paddingTop: '24px', textAlign: 'center', fontSize: '0.9em' }}>
         <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>Radeya Photography</p>
         <p style={{ margin: '0' }}>Whatsapp: 0821-1251-570</p>
+        <p style={{ margin: '0' }}>Cariu RT 05/RW 01, Desa Talagasari, Kecamatan Balaraja, Kabupaten Tangerang, Banten 15610</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=Radeya+Photography+Balaraja" target="_blank" rel="noreferrer" style={{ color: '#000', textDecoration: 'underline', marginTop: '10px', display: 'block' }}>Lihat di Google Maps</a>
         <div style={{ marginTop: '30px', fontSize: '12px', color: '#737373' }}>© 2026 Radeyaphoto. All rights reserved.</div>
       </div>
     </div>
