@@ -65,7 +65,7 @@ export default function FrameKenanganPage() {
       <h1 style={{ textAlign: 'center', marginBottom: '10px' }}>Pilih Paket Layanan</h1>
       
       <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0', marginBottom: '30px' }}>
-        <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>Cara Pesan & Proses Produksi:</h4>
+        <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>Cara Pemesanan & Proses Produksi:</h4>
         <ol style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9em', color: '#444', lineHeight: '1.8' }}>
           <li><b>Pilih & Checkout:</b> Klik paket yang diinginkan, isi data desain wisuda, dan alamat pengiriman dengan lengkap.</li>
           <li><b>Pembayaran:</b> Transfer total biaya ke <b>BCA 2952093623 (a.n Yulviana Kusnia)</b>. <i>Catatan: Harga belum termasuk biaya ongkos kirim.</i> Wajib upload bukti transfer.</li>
@@ -108,7 +108,7 @@ export default function FrameKenanganPage() {
                   <option value="Pasang sendiri oleh klien">Pasang sendiri oleh klien</option>
                 </select>
 
-                <textarea placeholder="Alamat Lengkap Pengiriman" onChange={(e) => setData({...data, alamat: e.target.value})} style={inputStyle} />
+                <textarea placeholder="Alamat Lengkap Penerima Paket" onChange={(e) => setData({...data, alamat: e.target.value})} style={inputStyle} />
                 <label style={{ fontSize: '0.85em', fontWeight: 'bold' }}>Unggah Bukti Transfer:</label>
                 <input type="file" onChange={handleImageUpload} style={{ display: 'block', marginBottom: '15px' }} />
                 
@@ -124,7 +124,6 @@ export default function FrameKenanganPage() {
         <p style={{ margin: '0' }}>Whatsapp: 0821-1251-570</p>
         <p style={{ margin: '0' }}>Cariu RT 05/RW 01, Desa Talagasari, Kecamatan Balaraja, Kabupaten Tangerang, Banten 15610</p>
         <a href="https://www.google.com/maps/search/?api=1&query=Radeya+Photography+Balaraja" target="_blank" rel="noreferrer" style={{ color: '#000', textDecoration: 'underline', marginTop: '10px', display: 'block' }}>Lihat di Google Maps</a>
-
         
         <div style={{ marginTop: '30px', fontSize: '12px', color: '#737373' }}>
           © 2026 Radeyaphoto. All rights reserved.
