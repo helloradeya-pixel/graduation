@@ -1,15 +1,7 @@
 import { useState } from 'react';
 import Head from 'next/head';
 
-// Deklarasi global agar TypeScript mengenali fbq
-declare global {
-  interface Window {
-    fbq: any;
-  }
-}
-
 export default function FrameKenanganPage() {
-  // Masukkan Pixel ID Anda di sini
   const PIXEL_ID = '1413881487242621'; 
 
   const [data, setData] = useState({ 
@@ -47,7 +39,7 @@ export default function FrameKenanganPage() {
     if (!selectedPaket || !buktiUrl) return alert('Pilih paket dan unggah bukti transfer!');
     if (!data.wa || !data.email) return alert('Mohon isi nomor WhatsApp dan Email Anda.');
     
-    // Tracking Purchase ke Pixel (Diperbaiki agar lolos build TypeScript)
+    // Perbaikan: Gunakan (window as any) agar lolos build tanpa deklarasi global
     const fbq = (window as any).fbq;
     if (typeof fbq === 'function') {
       const hargaBersih = parseFloat(selectedPaket.harga.replace(/\./g, ''));
@@ -55,6 +47,7 @@ export default function FrameKenanganPage() {
         value: hargaBersih, 
         currency: 'IDR', 
         content_name: selectedPaket.nama,
+        content_category: 'frame', // Segmentasi untuk Meta
         content_type: 'product'
       });
     }
@@ -94,7 +87,6 @@ ${buktiUrl}
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: 'Inter, sans-serif' }}>
       <Head>
         <title>Pemesanan Resmi | Radeya Photography</title>
-        {/* Meta Pixel Script Manual */}
         <script dangerouslySetInnerHTML={{ __html: `
           !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
           n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
@@ -153,22 +145,9 @@ ${buktiUrl}
         ))}
       </div>
 
-      <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0', marginBottom: '30px' }}>
-        <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>Cara Pemesanan & Proses Produksi:</h4>
-        <ol style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9em', color: '#444', lineHeight: '1.8' }}>
-          <li><b>Pilih & Checkout:</b> Klik paket yang diinginkan, isi data desain wisuda, dan alamat pengiriman dengan lengkap.</li>
-          <li><b>Pembayaran:</b> Transfer total biaya ke <b>BCA 2952093623 (a.n Yulviana Kusnia)</b>. <i>Catatan: Harga belum termasuk biaya ongkos kirim.</i> Wajib upload bukti transfer.</li>
-          <li><b>Verifikasi & Kirim Foto:</b> Setelah konfirmasi, admin akan menghubungi via WhatsApp untuk memberikan link Google Drive pengunggahan foto resolusi tinggi.</li>
-          <li><b>Proses Desain:</b> Tim kami akan mengerjakan desain dan mengirimkan pratinjau (draft) untuk Anda setujui (khusus paket Custom/Full Service).</li>
-          <li><b>Produksi & Pengiriman:</b> Bingkai masuk tahap produksi (7-10 hari kerja). Jika Anda menggunakan selempang/medali, Anda dapat memilih untuk mengirimkannya kepada kami untuk dipasangkan atau memasangnya secara mandiri setelah bingkai tiba.</li>
-        </ol>
-      </div>
-
       <div style={{ marginTop: '48px', borderTop: '1px solid #eee', paddingTop: '24px', textAlign: 'center', fontSize: '0.9em' }}>
         <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>Radeya Photography</p>
         <p style={{ margin: '0' }}>Whatsapp: 0821-1251-570</p>
-        <p style={{ margin: '0' }}>Cariu RT 05/RW 01, Desa Talagasari, Kecamatan Balaraja, Kabupaten Tangerang, Banten 15610</p>
-        <a href="https://www.google.com/maps/search/?api=1&query=Radeya+Photography+Balaraja" target="_blank" rel="noreferrer" style={{ color: '#000', textDecoration: 'underline', marginTop: '10px', display: 'block' }}>Lihat di Google Maps</a>
         <div style={{ marginTop: '30px', fontSize: '12px', color: '#737373' }}>© 2026 Radeyaphoto. All rights reserved.</div>
       </div>
     </div>
