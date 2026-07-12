@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import Head from 'next/head';
-import { Meta } from '../layout/Meta'; // Sesuaikan path jika berbeda
+import { Meta } from '../layout/Meta'; 
 
 export default function FrameKenanganPage() {
   const [data, setData] = useState({ 
