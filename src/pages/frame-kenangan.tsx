@@ -37,7 +37,7 @@ export default function FrameKenanganPage() {
     if (!selectedPaket || !buktiUrl) return alert('Pilih paket dan unggah bukti transfer!');
     if (!data.wa || !data.email) return alert('Mohon isi nomor WhatsApp dan Email Anda.');
     
-    await fetch('/api/send-to-notion', {
+    await fetch('/api/send-frame-kenangan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ data, paket: selectedPaket, buktiUrl })
