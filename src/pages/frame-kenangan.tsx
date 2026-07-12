@@ -47,10 +47,11 @@ export default function FrameKenanganPage() {
     if (!selectedPaket || !buktiUrl) return alert('Pilih paket dan unggah bukti transfer!');
     if (!data.wa || !data.email) return alert('Mohon isi nomor WhatsApp dan Email Anda.');
     
-    // Tracking Purchase ke Pixel
-    if (typeof window !== 'undefined' && (window as any).fbq) {
+    // Tracking Purchase ke Pixel (Diperbaiki agar lolos build TypeScript)
+    const fbq = (window as any).fbq;
+    if (typeof fbq === 'function') {
       const hargaBersih = parseFloat(selectedPaket.harga.replace(/\./g, ''));
-      (window as any).fbq('track', 'Purchase', { 
+      fbq('track', 'Purchase', { 
         value: hargaBersih, 
         currency: 'IDR', 
         content_name: selectedPaket.nama,
