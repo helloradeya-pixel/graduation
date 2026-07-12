@@ -84,7 +84,12 @@ export default function FrameKenanganPage() {
             }}>
               <img src={p.img} alt={p.nama} style={{ width: '100%', maxWidth: '300px', borderRadius: '6px', display: 'block' }} />
               <div style={{ fontWeight: 'bold', marginTop: '15px', textAlign: 'center' }}>{p.nama} - IDR {p.harga}</div>
-              <div style={{ fontSize: '0.9em', color: '#666', textAlign: 'center' }}>{p.desc}</div>
+              
+              <ul style={{ fontSize: '0.9em', color: '#666', textAlign: 'left', paddingLeft: '20px', marginTop: '10px', width: '100%' }}>
+                {p.desc.split(', ').map((item, index) => (
+                  <li key={index} style={{ marginBottom: '5px' }}>{item}</li>
+                ))}
+              </ul>
             </div>
 
             {selectedPaket?.id === p.id && (
