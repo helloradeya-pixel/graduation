@@ -42,18 +42,27 @@ export default function FrameKenanganPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ data, paket: selectedPaket, buktiUrl })
     });
+    const pesan = `*ORDER BARU - FRAME KENANGAN*
+------------------------------------
+*PAKET PILIHAN:* ${selectedPaket.nama} (IDR ${selectedPaket.harga})
 
-    const pesan = `Halo Radeya Photography, saya ingin memesan *${selectedPaket.nama}*.
-    
-    *Data Desain:*
-    ${data.namaTitel} | ${data.universitas} | ${data.jurusan}
-    ${data.kota}, ${data.tglWisuda}
-    
-    *Data Pengiriman:*
-    - WA: ${data.wa}
-    - Opsi Atribut: ${data.opsiTambahan}
-    - Alamat: ${data.alamat}
-    *Bukti:* ${buktiUrl}`;
+*DATA DESAIN:*
+• Nama & Titel : ${data.namaTitel}
+• Universitas  : ${data.universitas}
+• Jurusan      : ${data.jurusan}
+• Kota Wisuda  : ${data.kota}
+• Tgl Wisuda   : ${data.tglWisuda}
+
+*DETAIL ATRIBUT:*
+• Opsi Atribut : ${data.opsiTambahan}
+
+*DATA PENGIRIMAN:*
+• WhatsApp     : ${data.wa}
+• Alamat       : ${data.alamat}
+
+*BUKTI TRANSFER:*
+${buktiUrl}
+------------------------------------`;
 
     window.location.href = `https://wa.me/628211251570?text=${encodeURIComponent(pesan)}`;
   };
