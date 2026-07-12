@@ -1,13 +1,13 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
-
 import { AppConfig } from '../utils/AppConfig';
 
 type IMetaProps = {
   title: string;
   description: string;
   canonical?: string;
+  addPixelId?: string; // ID Pixel tambahan untuk halaman spesifik
 };
 
 const Meta = (props: IMetaProps) => {
@@ -24,7 +24,7 @@ const Meta = (props: IMetaProps) => {
         <link rel="icon" type="image/png" sizes="16x16" href={`${router.basePath}/favicon-16x16.png`} key="icon16" />
         <link rel="icon" href={`${router.basePath}/favicon.ico`} key="favicon" />
 
-        {/* Meta Pixel Code - Dual Tracking */}
+        {/* Meta Pixel Code - Smart Tracking */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -44,22 +44,19 @@ const Meta = (props: IMetaProps) => {
               (window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
 
-              // Pixel Lama (Sedang Running Iklan Wisuda)
+              // 1. Pixel Lama (Wajib selalu jalan untuk stabilitas iklan)
               fbq('init', '804715912719122');
               fbq('track', 'PageView');
 
-              // Pixel Baru (Dataset Radeya Frame)
-              fbq('init', '1413881487242621');
-              fbq('track', 'PageView');
+              // 2. Pixel Baru (Hanya jalan jika addPixelId diberikan)
+              ${props.addPixelId ? `fbq('init', '${props.addPixelId}'); fbq('track', 'PageView');` : ''}
             `,
           }}
         />
+        {/* Noscript hanya untuk Pixel Lama (Stabilitas) */}
         <noscript>
           <img height="1" width="1" style={{display: 'none'}}
             src="https://www.facebook.com/tr?id=804715912719122&ev=PageView&noscript=1"
-          />
-          <img height="1" width="1" style={{display: 'none'}}
-            src="https://www.facebook.com/tr?id=1413881487242621&ev=PageView&noscript=1"
           />
         </noscript>
         {/* End Meta Pixel Code */}
