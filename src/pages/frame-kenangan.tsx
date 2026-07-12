@@ -119,12 +119,11 @@ export default function FrameKenanganPage() {
         ))}
       </div>
 
-      {/* Info Lokasi & Footer */}
       <div style={{ marginTop: '48px', borderTop: '1px solid #eee', paddingTop: '24px', textAlign: 'center', fontSize: '0.9em' }}>
         <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>Radeya Photography</p>
         <p style={{ margin: '0' }}>Whatsapp: 0821-1251-570</p>
-        <p style={{ margin: '0' }}>Kampung Cariu RT 05/RW 01, Desa Talagasari, Kecamatan Balaraja, Kabupaten Tangerang, Banten 15610</p>
-        <a href="https://maps.app.goo.gl/rXzbKhWPjU8d7H3Y7" target="_blank" rel="noreferrer" style={{ color: '#000', textDecoration: 'underline', marginTop: '10px', display: 'block' }}>Lihat di Google Maps</a>
+        <p style={{ margin: '0' }}>Cariu RT 05/RW 01, Desa Talagasari, Kecamatan Balaraja, Kabupaten Tangerang, Banten 15610</p>
+        <a href="https://maps.app.goo.gl/rXzbKhWPjU8d7H3Y7" style={{ color: '#000', textDecoration: 'underline', marginTop: '10px', display: 'block' }}>Lihat di Google Maps</a>
         
         <div style={{ marginTop: '30px', fontSize: '12px', color: '#737373' }}>
           © 2026 Radeyaphoto. All rights reserved.
