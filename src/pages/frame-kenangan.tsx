@@ -9,6 +9,7 @@ declare global {
 }
 
 export default function FrameKenanganPage() {
+  // Masukkan Pixel ID Anda di sini
   const PIXEL_ID = '1413881487242621'; 
 
   const [data, setData] = useState({ 
@@ -46,11 +47,10 @@ export default function FrameKenanganPage() {
     if (!selectedPaket || !buktiUrl) return alert('Pilih paket dan unggah bukti transfer!');
     if (!data.wa || !data.email) return alert('Mohon isi nomor WhatsApp dan Email Anda.');
     
-    // Perbaikan akses fbq untuk build TypeScript yang aman
-    const fbq = (window as any).fbq;
-    if (typeof fbq === 'function') {
+    // Tracking Purchase ke Pixel
+    if (typeof window !== 'undefined' && (window as any).fbq) {
       const hargaBersih = parseFloat(selectedPaket.harga.replace(/\./g, ''));
-      fbq('track', 'Purchase', { 
+      (window as any).fbq('track', 'Purchase', { 
         value: hargaBersih, 
         currency: 'IDR', 
         content_name: selectedPaket.nama,
@@ -93,6 +93,7 @@ ${buktiUrl}
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: 'Inter, sans-serif' }}>
       <Head>
         <title>Pemesanan Resmi | Radeya Photography</title>
+        {/* Meta Pixel Script Manual */}
         <script dangerouslySetInnerHTML={{ __html: `
           !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
           n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
