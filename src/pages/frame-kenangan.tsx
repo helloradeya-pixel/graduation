@@ -67,7 +67,7 @@ export default function FrameKenanganPage() {
         <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>Cara Pesan & Proses Produksi:</h4>
         <ol style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9em', color: '#444', lineHeight: '1.8' }}>
           <li><b>Pilih & Checkout:</b> Klik paket yang diinginkan, isi data desain wisuda, dan alamat pengiriman dengan lengkap.</li>
-          <li><b>Pembayaran:</b> Transfer total biaya ke <b>BCA 1234567890 (a.n Radeya Photography)</b>. <i>Catatan: Harga belum termasuk biaya ongkos kirim.</i> Wajib upload bukti transfer di kolom yang tersedia.</li>
+          <li><b>Pembayaran:</b> Transfer total biaya ke <b>BCA 2952093623 (a.n Yulviana Kusnia)</b>. <i>Catatan: Harga belum termasuk biaya ongkos kirim.</i> Wajib upload bukti transfer di kolom yang tersedia.</li>
           <li><b>Verifikasi & Kirim Foto:</b> Setelah konfirmasi, admin akan menghubungi via WhatsApp untuk memberikan link Google Drive khusus untuk pengunggahan foto resolusi tinggi.</li>
           <li><b>Proses Desain:</b> Tim kami akan mengerjakan desain dan mengirimkan pratinjau (draft) untuk Anda setujui (khusus paket Custom/Full Service).</li>
           <li><b>Produksi & Pengiriman:</b> Bingkai masuk tahap produksi (7-10 hari kerja). Setelah selesai, kami akan segera mengirimkan bingkai ke alamat Anda.</li>
@@ -85,7 +85,7 @@ export default function FrameKenanganPage() {
               <img src={p.img} alt={p.nama} style={{ width: '100%', maxWidth: '300px', borderRadius: '6px', display: 'block' }} />
               <div style={{ fontWeight: 'bold', marginTop: '15px', textAlign: 'center' }}>{p.nama} - IDR {p.harga}</div>
               
-              <ul style={{ fontSize: '0.9em', color: '#666', textAlign: 'left', paddingLeft: '20px', marginTop: '10px', width: '100%' }}>
+              <ul style={{ fontSize: '0.9em', color: '#666', textAlign: 'center', padding: 0, marginTop: '10px', width: '100%', listStyleType: 'none' }}>
                 {p.desc.split(', ').map((item, index) => (
                   <li key={index} style={{ marginBottom: '5px' }}>{item}</li>
                 ))}
@@ -95,14 +95,14 @@ export default function FrameKenanganPage() {
             {selectedPaket?.id === p.id && (
               <div style={{ background: '#fdfdfd', padding: '20px', borderRadius: '12px', border: '1px solid #000', marginTop: '10px' }}>
                 <h3 style={{ marginTop: 0 }}>Formulir Pemesanan</h3>
-                <input placeholder="Nama Lengkap & Titel (Contoh: Asiah, S.Pi.)" onChange={(e) => setData({...data, namaTitel: e.target.value})} style={inputStyle} />
+                <input placeholder="Nama Lengkap & Titel (Contoh: Yulviana Kusnia, S.Pi.)" onChange={(e) => setData({...data, namaTitel: e.target.value})} style={inputStyle} />
                 <input placeholder="Universitas" onChange={(e) => setData({...data, universitas: e.target.value})} style={inputStyle} />
                 <input placeholder="Jurusan" onChange={(e) => setData({...data, jurusan: e.target.value})} style={inputStyle} />
                 <input placeholder="Kota Wisuda" onChange={(e) => setData({...data, kota: e.target.value})} style={inputStyle} />
                 <input placeholder="Tanggal Wisuda" onChange={(e) => setData({...data, tglWisuda: e.target.value})} style={inputStyle} />
                 
                 <div style={{ background: '#eee', padding: '10px', borderRadius: '6px', fontSize: '0.85em', marginBottom: '15px' }}>
-                  Transfer ke <b>BCA 1234567890</b> a.n <b>Radeya Photography</b><br/>
+                  Transfer ke <b>BCA 2952093623</b> a.n <b>Yulviana Kusnia</b><br/>
                   <i>*Harga belum termasuk ongkos kirim.</i>
                 </div>
                 
