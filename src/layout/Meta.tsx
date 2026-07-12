@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
 import { AppConfig } from '../utils/AppConfig';
 
@@ -10,11 +11,19 @@ type IMetaProps = {
 };
 
 const Meta = (props: IMetaProps) => {
+  const router = useRouter();
+
   return (
     <>
       <Head>
         <meta charSet="UTF-8" key="charset" />
         <meta name="viewport" content="width=device-width,initial-scale=1" key="viewport" />
+
+        {/* Favicons */}
+        <link rel="apple-touch-icon" href={`${router.basePath}/apple-touch-icon.png`} key="apple" />
+        <link rel="icon" type="image/png" sizes="32x32" href={`${router.basePath}/favicon-32x32.png`} key="icon32" />
+        <link rel="icon" type="image/png" sizes="16x16" href={`${router.basePath}/favicon-16x16.png`} key="icon16" />
+        <link rel="icon" href={`${router.basePath}/favicon.ico`} key="favicon" />
 
         {/* META PIXEL - PUSAT KENDALI (DUAL TRACKING) */}
         <script
@@ -29,11 +38,11 @@ const Meta = (props: IMetaProps) => {
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
 
-              // Inisialisasi Pixel Lama
+              // Inisialisasi Pixel Utama (Tetap)
               fbq('init', '804715912719122');
               fbq('track', 'PageView');
 
-              // Inisialisasi Pixel Baru (Jika ID tersedia)
+              // Inisialisasi Pixel Kedua (Dinamis)
               ${props.addPixelId ? `fbq('init', '${props.addPixelId}'); fbq('track', 'PageView');` : ''}
             `,
           }}
