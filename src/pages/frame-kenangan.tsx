@@ -30,24 +30,24 @@ export default function FrameKenanganPage() {
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <Head>
-        <title>Toko Radeya Photography</title>
-      </Head>
+      <Head><title>Toko Radeya Photography</title></Head>
 
       <h1 style={{ textAlign: 'center', color: '#333' }}>Pilih Paket Kenangan</h1>
 
       {/* Grid Produk */}
-      <div style={{ display: 'grid', gap: '15px', marginBottom: '30px' }}>
+      <div style={{ display: 'grid', gap: '20px', marginBottom: '30px' }}>
         {paket.map((p) => (
           <div 
             key={p.id} 
             onClick={() => setSelectedPaket(p)}
             style={{ 
-              border: selectedPaket?.id === p.id ? '2px solid #25D366' : '1px solid #ddd',
-              padding: '15px', borderRadius: '10px', cursor: 'pointer', background: '#fff'
+              border: selectedPaket?.id === p.id ? '3px solid #25D366' : '1px solid #ddd',
+              padding: '15px', borderRadius: '12px', cursor: 'pointer', background: '#fff',
+              transition: '0.3s'
             }}
           >
-            <div style={{ fontWeight: 'bold', fontSize: '1.1em' }}>{p.nama} - IDR {p.harga}</div>
+            <img src={p.img} alt={p.nama} style={{ width: '100%', borderRadius: '8px', marginBottom: '10px' }} />
+            <div style={{ fontWeight: 'bold', fontSize: '1.2em', color: '#0070f3' }}>{p.nama} - IDR {p.harga}</div>
             <div style={{ fontSize: '0.9em', color: '#666', marginTop: '5px' }}>{p.desc}</div>
           </div>
         ))}
@@ -56,7 +56,7 @@ export default function FrameKenanganPage() {
       {/* Form Checkout */}
       {selectedPaket && (
         <div style={{ background: '#f9f9f9', padding: '20px', borderRadius: '10px', border: '1px solid #eee' }}>
-          <h3 style={{ marginTop: 0 }}>Lengkapi Data</h3>
+          <h3 style={{ marginTop: 0 }}>Lengkapi Data (Checkout)</h3>
           
           <input placeholder="Nama Lengkap & Titel" onChange={(e) => setData({...data, nama: e.target.value})} style={inputStyle} />
           <input placeholder="Jurusan" onChange={(e) => setData({...data, jurusan: e.target.value})} style={inputStyle} />
@@ -66,7 +66,7 @@ export default function FrameKenanganPage() {
 
           <button 
             onClick={handleCheckout}
-            style={{ width: '100%', padding: '15px', background: '#25D366', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer', fontSize: '1em' }}
+            style={{ width: '100%', padding: '15px', background: '#25D366', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer', fontSize: '1.1em' }}
           >
             Checkout via WhatsApp
           </button>
