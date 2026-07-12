@@ -16,7 +16,7 @@ const Meta = (props: IMetaProps) => {
         <meta charSet="UTF-8" key="charset" />
         <meta name="viewport" content="width=device-width,initial-scale=1" key="viewport" />
 
-        {/* Meta Pixel Code - Smart Dual Tracking */}
+        {/* META PIXEL - PUSAT KENDALI (DUAL TRACKING) */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -29,11 +29,11 @@ const Meta = (props: IMetaProps) => {
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
 
-              // 1. Pixel Lama: Selalu track
+              // Inisialisasi Pixel Lama
               fbq('init', '804715912719122');
               fbq('track', 'PageView');
 
-              // 2. Pixel Baru: Track hanya jika ID diberikan
+              // Inisialisasi Pixel Baru (Jika ID tersedia)
               ${props.addPixelId ? `fbq('init', '${props.addPixelId}'); fbq('track', 'PageView');` : ''}
             `,
           }}
@@ -43,9 +43,9 @@ const Meta = (props: IMetaProps) => {
             src="https://www.facebook.com/tr?id=804715912719122&ev=PageView&noscript=1"
           />
           {props.addPixelId && (
-             <img height="1" width="1" style={{display: 'none'}}
-             src={`https://www.facebook.com/tr?id=${props.addPixelId}&ev=PageView&noscript=1`}
-           />
+            <img height="1" width="1" style={{display: 'none'}}
+              src={"https://www.facebook.com/tr?id=" + props.addPixelId + "&ev=PageView&noscript=1"}
+            />
           )}
         </noscript>
       </Head>
