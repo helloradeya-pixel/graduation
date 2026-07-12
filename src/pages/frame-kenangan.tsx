@@ -15,8 +15,8 @@ export default function FrameKenanganPage() {
     { id: 3, nama: 'Full Service', harga: '250.000', desc: 'Frame Akrilik Premium 30x40 cm, Desain Nama & Jurusan, Cetak 9 Foto, Free Layout & 1x Revisi' }
   ];
 
-  const handleImageUpload = async (e: any) => {
-    const file = e.target.files[0];
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) return;
     setIsUploading(true);
     
@@ -42,14 +42,14 @@ export default function FrameKenanganPage() {
   const handleCheckout = async () => {
     if (!selectedPaket || !buktiUrl) return alert('Pilih paket dan unggah bukti transfer dulu ya!');
 
-    // Kirim ke API Notion Anda
+    // Kirim ke API Notion
     await fetch('/api/send-to-notion', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ data, paket: selectedPaket, buktiUrl })
     });
 
-    // Kirim pesan ke WhatsApp
+    // Arahkan ke WhatsApp
     const pesan = `Halo Radeya Photography, saya ingin memesan *${selectedPaket.nama}*.
     
     *Data Desain:*
@@ -73,7 +73,6 @@ export default function FrameKenanganPage() {
 
       <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>Pemesanan Radeya Photography</h1>
 
-      {/* Daftar Paket */}
       <div style={{ display: 'grid', gap: '15px', marginBottom: '30px' }}>
         {paket.map((p) => (
           <div key={p.id} onClick={() => setSelectedPaket(p)} style={{ 
@@ -120,5 +119,9 @@ export default function FrameKenanganPage() {
   );
 }
 
-const inputStyle = { width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '6px', border: '1px solid #ccc', boxSizing: 'border-box' };
-const btnStyle = { width: '100%', padding: '16px', background: '#000', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' };
+const inputStyle: React.CSSProperties = { 
+  width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '6px', border: '1px solid #ccc', boxSizing: 'border-box' 
+};
+const btnStyle: React.CSSProperties = { 
+  width: '100%', padding: '16px', background: '#000', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' 
+};
