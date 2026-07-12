@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
 
 export default function FrameKenanganPage() {
@@ -30,9 +30,11 @@ export default function FrameKenanganPage() {
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <Head><title>Toko Radeya Photography</title></Head>
+      <Head>
+        <title>Toko Radeya Photography</title>
+      </Head>
 
-      <h1 style={{ textAlign: 'center' }}>Pilih Paket Anda</h1>
+      <h1 style={{ textAlign: 'center', color: '#333' }}>Pilih Paket Kenangan</h1>
 
       {/* Grid Produk */}
       <div style={{ display: 'grid', gap: '15px', marginBottom: '30px' }}>
@@ -45,27 +47,26 @@ export default function FrameKenanganPage() {
               padding: '15px', borderRadius: '10px', cursor: 'pointer', background: '#fff'
             }}
           >
-            <div style={{ fontWeight: 'bold' }}>{p.nama} - IDR {p.harga}</div>
-            <div style={{ fontSize: '0.8em', color: '#666' }}>{p.desc}</div>
+            <div style={{ fontWeight: 'bold', fontSize: '1.1em' }}>{p.nama} - IDR {p.harga}</div>
+            <div style={{ fontSize: '0.9em', color: '#666', marginTop: '5px' }}>{p.desc}</div>
           </div>
         ))}
       </div>
 
-      {/* Form "Checkout" */}
+      {/* Form Checkout */}
       {selectedPaket && (
-        <div style={{ background: '#f4f4f4', padding: '20px', borderRadius: '10px' }}>
-          <h3 style={{ marginTop: 0 }}>Lengkapi Data (Checkout)</h3>
-          {['nama', 'jurusan', 'universitas', 'tglWisuda', 'alamat'].map((field) => (
-            <input 
-              key={field}
-              placeholder={field.charAt(0).toUpperCase() + field.slice(1)} 
-              onChange={(e) => setData({...data, [field]: e.target.value})}
-              style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '5px', border: '1px solid #ccc' }} 
-            />
-          ))}
+        <div style={{ background: '#f9f9f9', padding: '20px', borderRadius: '10px', border: '1px solid #eee' }}>
+          <h3 style={{ marginTop: 0 }}>Lengkapi Data</h3>
+          
+          <input placeholder="Nama Lengkap & Titel" onChange={(e) => setData({...data, nama: e.target.value})} style={inputStyle} />
+          <input placeholder="Jurusan" onChange={(e) => setData({...data, jurusan: e.target.value})} style={inputStyle} />
+          <input placeholder="Universitas" onChange={(e) => setData({...data, universitas: e.target.value})} style={inputStyle} />
+          <input placeholder="Tanggal Wisuda" onChange={(e) => setData({...data, tglWisuda: e.target.value})} style={inputStyle} />
+          <textarea placeholder="Alamat Lengkap Penerima" onChange={(e) => setData({...data, alamat: e.target.value})} style={{...inputStyle, height: '80px'}} />
+
           <button 
             onClick={handleCheckout}
-            style={{ width: '100%', padding: '15px', background: '#25D366', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold' }}
+            style={{ width: '100%', padding: '15px', background: '#25D366', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer', fontSize: '1em' }}
           >
             Checkout via WhatsApp
           </button>
@@ -74,3 +75,7 @@ export default function FrameKenanganPage() {
     </div>
   );
 }
+
+const inputStyle: React.CSSProperties = { 
+  width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '5px', border: '1px solid #ccc', boxSizing: 'border-box' 
+};
