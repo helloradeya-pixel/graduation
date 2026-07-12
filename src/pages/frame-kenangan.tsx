@@ -63,7 +63,6 @@ export default function FrameKenanganPage() {
 
       <h1 style={{ textAlign: 'center', marginBottom: '10px' }}>Pilih Paket Layanan</h1>
       
-      {/* Alur Pemesanan & Produksi yang Diperbarui */}
       <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0', marginBottom: '30px' }}>
         <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>Cara Pesan & Proses Produksi:</h4>
         <ol style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9em', color: '#444', lineHeight: '1.8' }}>
@@ -80,11 +79,12 @@ export default function FrameKenanganPage() {
           <div key={p.id}>
             <div onClick={() => setSelectedPaket(p)} style={{ 
                 border: selectedPaket?.id === p.id ? '2px solid #000' : '1px solid #ddd',
-                padding: '20px', borderRadius: '12px', cursor: 'pointer', background: '#fff' 
+                padding: '20px', borderRadius: '12px', cursor: 'pointer', background: '#fff',
+                display: 'flex', flexDirection: 'column', alignItems: 'center'
             }}>
-              <img src={p.img} alt={p.nama} style={{ width: '100%', borderRadius: '6px' }} />
-              <div style={{ fontWeight: 'bold', marginTop: '10px' }}>{p.nama} - IDR {p.harga}</div>
-              <div style={{ fontSize: '0.9em', color: '#666' }}>{p.desc}</div>
+              <img src={p.img} alt={p.nama} style={{ width: '100%', maxWidth: '300px', borderRadius: '6px', display: 'block' }} />
+              <div style={{ fontWeight: 'bold', marginTop: '15px', textAlign: 'center' }}>{p.nama} - IDR {p.harga}</div>
+              <div style={{ fontSize: '0.9em', color: '#666', textAlign: 'center' }}>{p.desc}</div>
             </div>
 
             {selectedPaket?.id === p.id && (
@@ -112,7 +112,7 @@ export default function FrameKenanganPage() {
                 <textarea placeholder="Alamat Lengkap" onChange={(e) => setData({...data, alamat: e.target.value})} style={inputStyle} />
 
                 <button onClick={handleCheckout} style={btnStyle} disabled={!buktiUrl}>
-                  {buktiUrl ? 'Konfirmasi Pesanan' : 'Harap Unggah Bukti Transfer'}
+                  {buktiUrl ? 'Konfirmasi Pemesanan' : 'Harap Unggah Bukti Transfer'}
                 </button>
               </div>
             )}
