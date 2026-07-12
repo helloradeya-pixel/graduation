@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Head from 'next/head';
+import Testimonial from '../components/Testimonial'; // Pastikan path ini benar sesuai struktur proyek Anda
 
 export default function FrameKenanganPage() {
   const [data, setData] = useState({ 
@@ -123,6 +124,12 @@ export default function FrameKenanganPage() {
             )}
           </div>
         ))}
+      </div>
+
+      <Testimonial />
+
+      <div style={{ marginTop: '48px', borderTop: '1px solid #eee', paddingTop: '24px', textAlign: 'center', fontSize: '12px', color: '#737373' }}>
+        © {new Date().getFullYear()} Radeyaphoto. All rights reserved.
       </div>
     </div>
   );
