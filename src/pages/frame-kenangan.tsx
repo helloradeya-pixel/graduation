@@ -62,20 +62,10 @@ export default function FrameKenanganPage() {
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: 'Inter, sans-serif' }}>
       <Head><title>Pemesanan Resmi | Radeya Photography</title></Head>
 
-      <h1 style={{ textAlign: 'center', marginBottom: '10px' }}>Pilih Paket Layanan</h1>
+      <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Pilih Paket Layanan</h1>
       
-      <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0', marginBottom: '30px' }}>
-        <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>Cara Pemesanan & Proses Produksi:</h4>
-        <ol style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9em', color: '#444', lineHeight: '1.8' }}>
-          <li><b>Pilih & Checkout:</b> Klik paket yang diinginkan, isi data desain wisuda, dan alamat pengiriman dengan lengkap.</li>
-          <li><b>Pembayaran:</b> Transfer total biaya ke <b>BCA 2952093623 (a.n Yulviana Kusnia)</b>. <i>Catatan: Harga belum termasuk biaya ongkos kirim.</i> Wajib upload bukti transfer.</li>
-          <li><b>Verifikasi & Kirim Foto:</b> Setelah konfirmasi, admin akan menghubungi via WhatsApp untuk memberikan link Google Drive pengunggahan foto resolusi tinggi.</li>
-          <li><b>Proses Desain:</b> Tim kami akan mengerjakan desain dan mengirimkan pratinjau (draft) untuk Anda setujui (khusus paket Custom/Full Service).</li>
-          <li><b>Produksi & Pengiriman:</b> Bingkai masuk tahap produksi (7-10 hari kerja). Jika Anda menggunakan selempang/medali, Anda dapat memilih untuk mengirimkannya kepada kami untuk dipasangkan atau memasangnya secara mandiri setelah bingkai tiba.</li>
-        </ol>
-      </div>
-
-      <div style={{ display: 'grid', gap: '20px' }}>
+      {/* 1. Paket di paling atas */}
+      <div style={{ display: 'grid', gap: '20px', marginBottom: '30px' }}>
         {paket.map((p) => (
           <div key={p.id}>
             <div onClick={() => setSelectedPaket(p)} style={{ 
@@ -119,15 +109,24 @@ export default function FrameKenanganPage() {
         ))}
       </div>
 
+      {/* 2. Cara Pemesanan di bawah */}
+      <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0', marginBottom: '30px' }}>
+        <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>Cara Pemesanan & Proses Produksi:</h4>
+        <ol style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9em', color: '#444', lineHeight: '1.8' }}>
+          <li><b>Pilih & Checkout:</b> Klik paket yang diinginkan, isi data desain wisuda, dan alamat pengiriman dengan lengkap.</li>
+          <li><b>Pembayaran:</b> Transfer total biaya ke <b>BCA 2952093623 (a.n Yulviana Kusnia)</b>. <i>Catatan: Harga belum termasuk biaya ongkos kirim.</i> Wajib upload bukti transfer.</li>
+          <li><b>Verifikasi & Kirim Foto:</b> Setelah konfirmasi, admin akan menghubungi via WhatsApp untuk memberikan link Google Drive pengunggahan foto resolusi tinggi.</li>
+          <li><b>Proses Desain:</b> Tim kami akan mengerjakan desain dan mengirimkan pratinjau (draft) untuk Anda setujui (khusus paket Custom/Full Service).</li>
+          <li><b>Produksi & Pengiriman:</b> Bingkai masuk tahap produksi (7-10 hari kerja). Jika Anda menggunakan selempang/medali, Anda dapat memilih untuk mengirimkannya kepada kami untuk dipasangkan atau memasangnya secara mandiri setelah bingkai tiba.</li>
+        </ol>
+      </div>
+
       <div style={{ marginTop: '48px', borderTop: '1px solid #eee', paddingTop: '24px', textAlign: 'center', fontSize: '0.9em' }}>
         <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>Radeya Photography</p>
         <p style={{ margin: '0' }}>Whatsapp: 0821-1251-570</p>
         <p style={{ margin: '0' }}>Cariu RT 05/RW 01, Desa Talagasari, Kecamatan Balaraja, Kabupaten Tangerang, Banten 15610</p>
         <a href="https://www.google.com/maps/search/?api=1&query=Radeya+Photography+Balaraja" target="_blank" rel="noreferrer" style={{ color: '#000', textDecoration: 'underline', marginTop: '10px', display: 'block' }}>Lihat di Google Maps</a>
-        
-        <div style={{ marginTop: '30px', fontSize: '12px', color: '#737373' }}>
-          © 2026 Radeyaphoto. All rights reserved.
-        </div>
+        <div style={{ marginTop: '30px', fontSize: '12px', color: '#737373' }}>© 2026 Radeyaphoto. All rights reserved.</div>
       </div>
     </div>
   );
