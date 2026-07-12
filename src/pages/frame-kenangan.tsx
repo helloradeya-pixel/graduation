@@ -40,7 +40,6 @@ export default function FrameKenanganPage() {
     if (!selectedPaket || !buktiUrl) return alert('Pilih paket dan unggah bukti transfer!');
     if (!data.wa || !data.email) return alert('Mohon isi nomor WhatsApp dan Email Anda.');
     
-    // 1. Browser Pixel Tracking
     const fbq = (window as any).fbq;
     if (typeof fbq === 'function') {
       const hargaBersih = parseFloat(selectedPaket.harga.replace(/\./g, ''));
@@ -50,7 +49,6 @@ export default function FrameKenanganPage() {
       });
     }
 
-    // 2. Server-Side Tracking (CAPI)
     try {
       await fetch('/api/meta-capi', {
         method: 'POST',
@@ -65,7 +63,6 @@ export default function FrameKenanganPage() {
       });
     } catch (e) { console.error("CAPI failed", e); }
 
-    // 3. Notion Integration
     await fetch('/api/send-frame-kenangan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -98,7 +95,7 @@ ${buktiUrl}
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px', fontFamily: 'Inter, sans-serif' }}>
       <Head>
         <title>Pemesanan Resmi | Radeya Photography</title>
         <script dangerouslySetInnerHTML={{ __html: `
@@ -115,10 +112,13 @@ ${buktiUrl}
 
       <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Pilih Paket Layanan</h1>
       
-      <div style={{ display: 'grid', gap: '20px', marginBottom: '30px' }}>
-        {paket.map((p) => (
-          <div key={p.id}>
-            <div onClick={() => setSelectedPaket(p)} style={{ 
+      {/* Container Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', alignItems: 'start' }}>
+        
+        {/* Kiri: Daftar Paket */}
+        <div style={{ display: 'grid', gap: '20px' }}>
+          {paket.map((p) => (
+            <div key={p.id} onClick={() => setSelectedPaket(p)} style={{ 
                 border: selectedPaket?.id === p.id ? '2px solid #000' : '1px solid #ddd',
                 padding: '20px', borderRadius: '12px', cursor: 'pointer', background: '#fff',
                 display: 'flex', flexDirection: 'column', alignItems: 'center'
@@ -129,37 +129,40 @@ ${buktiUrl}
                 {p.desc.split(', ').map((item, index) => (<li key={index} style={{ marginBottom: '5px' }}>{item}</li>))}
               </ul>
             </div>
+          ))}
+        </div>
 
-            {selectedPaket?.id === p.id && (
-              <div style={{ background: '#fdfdfd', padding: '20px', borderRadius: '12px', border: '1px solid #000', marginTop: '10px' }}>
-                <h3 style={{ marginTop: 0 }}>Formulir Pemesanan</h3>
-                <input placeholder="Nama Lengkap & Titel" onChange={(e) => setData({...data, namaTitel: e.target.value})} style={inputStyle} />
-                <input placeholder="No. WhatsApp (Wajib)" onChange={(e) => setData({...data, wa: e.target.value})} style={inputStyle} />
-                <input type="email" placeholder="Alamat Email (Wajib)" onChange={(e) => setData({...data, email: e.target.value})} style={inputStyle} />
-                <input placeholder="Universitas" onChange={(e) => setData({...data, universitas: e.target.value})} style={inputStyle} />
-                <input placeholder="Jurusan" onChange={(e) => setData({...data, jurusan: e.target.value})} style={inputStyle} />
-                <input placeholder="Kota Wisuda" onChange={(e) => setData({...data, kota: e.target.value})} style={inputStyle} />
-                <input placeholder="Tanggal Wisuda" onChange={(e) => setData({...data, tglWisuda: e.target.value})} style={inputStyle} />
-                
-                <label style={{ fontSize: '0.85em', fontWeight: 'bold', display: 'block', marginBottom: '5px' }}>Opsi Atribut Wisuda:</label>
-                <select onChange={(e) => setData({...data, opsiTambahan: e.target.value})} style={{...inputStyle, marginBottom: '15px'}}>
-                  <option value="Tanpa Selempang/Medali">Tanpa Selempang/Medali</option>
-                  <option value="Kirimkan atribut ke kami untuk dipasangkan">Kirimkan atribut ke kami untuk dipasangkan</option>
-                  <option value="Pasang sendiri oleh klien">Pasang sendiri oleh klien</option>
-                </select>
+        {/* Kanan: Form */}
+        <div>
+          {selectedPaket && (
+            <div style={{ background: '#fdfdfd', padding: '20px', borderRadius: '12px', border: '1px solid #000', position: 'sticky', top: '20px' }}>
+              <h3 style={{ marginTop: 0 }}>Formulir Pemesanan: {selectedPaket.nama}</h3>
+              <input placeholder="Nama Lengkap & Titel" onChange={(e) => setData({...data, namaTitel: e.target.value})} style={inputStyle} />
+              <input placeholder="No. WhatsApp (Wajib)" onChange={(e) => setData({...data, wa: e.target.value})} style={inputStyle} />
+              <input type="email" placeholder="Alamat Email (Wajib)" onChange={(e) => setData({...data, email: e.target.value})} style={inputStyle} />
+              <input placeholder="Universitas" onChange={(e) => setData({...data, universitas: e.target.value})} style={inputStyle} />
+              <input placeholder="Jurusan" onChange={(e) => setData({...data, jurusan: e.target.value})} style={inputStyle} />
+              <input placeholder="Kota Wisuda" onChange={(e) => setData({...data, kota: e.target.value})} style={inputStyle} />
+              <input placeholder="Tanggal Wisuda" onChange={(e) => setData({...data, tglWisuda: e.target.value})} style={inputStyle} />
+              
+              <label style={{ fontSize: '0.85em', fontWeight: 'bold', display: 'block', marginBottom: '5px' }}>Opsi Atribut Wisuda:</label>
+              <select onChange={(e) => setData({...data, opsiTambahan: e.target.value})} style={{...inputStyle, marginBottom: '15px'}}>
+                <option value="Tanpa Selempang/Medali">Tanpa Selempang/Medali</option>
+                <option value="Kirimkan atribut ke kami untuk dipasangkan">Kirimkan atribut ke kami untuk dipasangkan</option>
+                <option value="Pasang sendiri oleh klien">Pasang sendiri oleh klien</option>
+              </select>
 
-                <textarea placeholder="Alamat Lengkap Penerima Paket" onChange={(e) => setData({...data, alamat: e.target.value})} style={inputStyle} />
-                <label style={{ fontSize: '0.85em', fontWeight: 'bold' }}>Unggah Bukti Transfer:</label>
-                <input type="file" onChange={handleImageUpload} style={{ display: 'block', marginBottom: '15px' }} />
-                
-                <button onClick={handleCheckout} style={btnStyle}>Konfirmasi Pemesanan</button>
-              </div>
-            )}
-          </div>
-        ))}
+              <textarea placeholder="Alamat Lengkap Penerima Paket" onChange={(e) => setData({...data, alamat: e.target.value})} style={inputStyle} />
+              <label style={{ fontSize: '0.85em', fontWeight: 'bold' }}>Unggah Bukti Transfer:</label>
+              <input type="file" onChange={handleImageUpload} style={{ display: 'block', marginBottom: '15px' }} />
+              
+              <button onClick={handleCheckout} style={btnStyle}>Konfirmasi Pemesanan</button>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0', marginBottom: '30px' }}>
+      <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0', marginTop: '30px' }}>
         <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>Cara Pemesanan & Proses Produksi:</h4>
         <ol style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9em', color: '#444', lineHeight: '1.8' }}>
           <li><b>Pilih & Checkout:</b> Klik paket yang diinginkan, isi data desain wisuda, dan alamat pengiriman dengan lengkap.</li>
