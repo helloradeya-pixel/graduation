@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import Head from 'next/head';
-import { Testimonial } from '../templates/Testimonial';
 
 export default function FrameKenanganPage() {
   const [data, setData] = useState({ 
@@ -50,8 +49,10 @@ export default function FrameKenanganPage() {
     ${data.namaTitel} | ${data.universitas} | ${data.jurusan}
     ${data.kota}, ${data.tglWisuda}
     
-    *Detail Atribut:* ${data.opsiTambahan}
-    *Data Pengiriman:* ${data.alamat}
+    *Data Pengiriman:*
+    - WA: ${data.wa}
+    - Opsi Atribut: ${data.opsiTambahan}
+    - Alamat: ${data.alamat}
     *Bukti:* ${buktiUrl}`;
 
     window.location.href = `https://wa.me/628211251570?text=${encodeURIComponent(pesan)}`;
@@ -118,9 +119,16 @@ export default function FrameKenanganPage() {
         ))}
       </div>
 
-      <Testimonial />
-      <div style={{ marginTop: '48px', borderTop: '1px solid #eee', paddingTop: '24px', textAlign: 'center', fontSize: '12px', color: '#737373' }}>
-        © {new Date().getFullYear()} Radeyaphoto. All rights reserved.
+      {/* Info Lokasi & Footer */}
+      <div style={{ marginTop: '48px', borderTop: '1px solid #eee', paddingTop: '24px', textAlign: 'center', fontSize: '0.9em' }}>
+        <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>Radeya Photography</p>
+        <p style={{ margin: '0' }}>Whatsapp: 0821-1251-570</p>
+        <p style={{ margin: '0' }}>Kampung Cariu RT 05/RW 01, Desa Talagasari, Kecamatan Balaraja, Kabupaten Tangerang, Banten 15610</p>
+        <a href="https://maps.app.goo.gl/rXzbKhWPjU8d7H3Y7" target="_blank" rel="noreferrer" style={{ color: '#000', textDecoration: 'underline', marginTop: '10px', display: 'block' }}>Lihat di Google Maps</a>
+        
+        <div style={{ marginTop: '30px', fontSize: '12px', color: '#737373' }}>
+          © 2026 Radeyaphoto. All rights reserved.
+        </div>
       </div>
     </div>
   );
