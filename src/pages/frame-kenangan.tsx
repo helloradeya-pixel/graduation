@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Head from 'next/head';
-import Testimonial from '../templates/Testimonial';
+import { Testimonial } from '../templates/Testimonial';
 
 export default function FrameKenanganPage() {
   const [data, setData] = useState({ 
