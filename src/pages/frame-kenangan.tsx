@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Head from 'next/head';
+import { Meta } from '../layout/Meta'; // Sesuaikan path jika berbeda
 
 export default function FrameKenanganPage() {
   const [data, setData] = useState({ 
@@ -37,12 +38,25 @@ export default function FrameKenanganPage() {
     if (!selectedPaket || !buktiUrl) return alert('Pilih paket dan unggah bukti transfer!');
     if (!data.wa || !data.email) return alert('Mohon isi nomor WhatsApp dan Email Anda.');
     
+    // 1. Kirim data ke Backend
     await fetch('/api/send-frame-kenangan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ data, paket: selectedPaket, buktiUrl })
     });
 
+    // 2. Tracking Purchase ke DUA Pixel
+    if (typeof window !== 'undefined' && window.fbq) {
+      const hargaBersih = selectedPaket.harga.replace('.', '');
+      const eventData = { value: hargaBersih, currency: 'IDR', content_name: selectedPaket.nama };
+      
+      // Lapor ke Pixel Lama (Iklan Stabil)
+      window.fbq('trackSingle', '804715912719122', 'Purchase', eventData);
+      // Lapor ke Pixel Baru (Dataset Radeya Frame)
+      window.fbq('trackSingle', '1413881487242621', 'Purchase', eventData);
+    }
+
+    // 3. Redirect ke WhatsApp
     const pesan = `Halo Radeya Photography, saya ingin memesan *${selectedPaket.nama}*.
     
     *Data Desain:*
@@ -59,76 +73,80 @@ export default function FrameKenanganPage() {
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: 'Inter, sans-serif' }}>
-      <Head><title>Pemesanan Resmi | Radeya Photography</title></Head>
-
-      <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Pilih Paket Layanan</h1>
+    <>
+      <Meta 
+        title="Pemesanan Resmi | Radeya Photography" 
+        description="Pemesanan Frame Kenangan Wisuda" 
+        addPixelId="1413881487242621" 
+      />
       
-      {/* 1. Paket di paling atas */}
-      <div style={{ display: 'grid', gap: '20px', marginBottom: '30px' }}>
-        {paket.map((p) => (
-          <div key={p.id}>
-            <div onClick={() => setSelectedPaket(p)} style={{ 
-                border: selectedPaket?.id === p.id ? '2px solid #000' : '1px solid #ddd',
-                padding: '20px', borderRadius: '12px', cursor: 'pointer', background: '#fff',
-                display: 'flex', flexDirection: 'column', alignItems: 'center'
-            }}>
-              <img src={p.img} alt={p.nama} style={{ width: '100%', maxWidth: '300px', borderRadius: '6px', display: 'block' }} />
-              <div style={{ fontWeight: 'bold', marginTop: '15px', textAlign: 'center' }}>{p.nama} - IDR {p.harga}</div>
-              <ul style={{ fontSize: '0.9em', color: '#666', textAlign: 'center', padding: 0, marginTop: '10px', width: '100%', listStyleType: 'none' }}>
-                {p.desc.split(', ').map((item, index) => (<li key={index} style={{ marginBottom: '5px' }}>{item}</li>))}
-              </ul>
-            </div>
-
-            {selectedPaket?.id === p.id && (
-              <div style={{ background: '#fdfdfd', padding: '20px', borderRadius: '12px', border: '1px solid #000', marginTop: '10px' }}>
-                <h3 style={{ marginTop: 0 }}>Formulir Pemesanan</h3>
-                <input placeholder="Nama Lengkap & Titel" onChange={(e) => setData({...data, namaTitel: e.target.value})} style={inputStyle} />
-                <input placeholder="No. WhatsApp (Wajib)" onChange={(e) => setData({...data, wa: e.target.value})} style={inputStyle} />
-                <input type="email" placeholder="Alamat Email (Wajib)" onChange={(e) => setData({...data, email: e.target.value})} style={inputStyle} />
-                <input placeholder="Universitas" onChange={(e) => setData({...data, universitas: e.target.value})} style={inputStyle} />
-                <input placeholder="Jurusan" onChange={(e) => setData({...data, jurusan: e.target.value})} style={inputStyle} />
-                <input placeholder="Kota Wisuda" onChange={(e) => setData({...data, kota: e.target.value})} style={inputStyle} />
-                <input placeholder="Tanggal Wisuda" onChange={(e) => setData({...data, tglWisuda: e.target.value})} style={inputStyle} />
-                
-                <label style={{ fontSize: '0.85em', fontWeight: 'bold', display: 'block', marginBottom: '5px' }}>Opsi Atribut Wisuda:</label>
-                <select onChange={(e) => setData({...data, opsiTambahan: e.target.value})} style={{...inputStyle, marginBottom: '15px'}}>
-                  <option value="Tanpa Selempang/Medali">Tanpa Selempang/Medali</option>
-                  <option value="Kirimkan atribut ke kami untuk dipasangkan">Kirimkan atribut ke kami untuk dipasangkan</option>
-                  <option value="Pasang sendiri oleh klien">Pasang sendiri oleh klien</option>
-                </select>
-
-                <textarea placeholder="Alamat Lengkap Penerima Paket" onChange={(e) => setData({...data, alamat: e.target.value})} style={inputStyle} />
-                <label style={{ fontSize: '0.85em', fontWeight: 'bold' }}>Unggah Bukti Transfer:</label>
-                <input type="file" onChange={handleImageUpload} style={{ display: 'block', marginBottom: '15px' }} />
-                
-                <button onClick={handleCheckout} style={btnStyle}>Konfirmasi Pemesanan</button>
+      <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: 'Inter, sans-serif' }}>
+        <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Pilih Paket Layanan</h1>
+        
+        <div style={{ display: 'grid', gap: '20px', marginBottom: '30px' }}>
+          {paket.map((p) => (
+            <div key={p.id}>
+              <div onClick={() => setSelectedPaket(p)} style={{ 
+                  border: selectedPaket?.id === p.id ? '2px solid #000' : '1px solid #ddd',
+                  padding: '20px', borderRadius: '12px', cursor: 'pointer', background: '#fff',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center'
+              }}>
+                <img src={p.img} alt={p.nama} style={{ width: '100%', maxWidth: '300px', borderRadius: '6px', display: 'block' }} />
+                <div style={{ fontWeight: 'bold', marginTop: '15px', textAlign: 'center' }}>{p.nama} - IDR {p.harga}</div>
+                <ul style={{ fontSize: '0.9em', color: '#666', textAlign: 'center', padding: 0, marginTop: '10px', width: '100%', listStyleType: 'none' }}>
+                  {p.desc.split(', ').map((item, index) => (<li key={index} style={{ marginBottom: '5px' }}>{item}</li>))}
+                </ul>
               </div>
-            )}
-          </div>
-        ))}
-      </div>
 
-      {/* 2. Cara Pemesanan di bawah */}
-      <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0', marginBottom: '30px' }}>
-        <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>Cara Pemesanan & Proses Produksi:</h4>
-        <ol style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9em', color: '#444', lineHeight: '1.8' }}>
-          <li><b>Pilih & Checkout:</b> Klik paket yang diinginkan, isi data desain wisuda, dan alamat pengiriman dengan lengkap.</li>
-          <li><b>Pembayaran:</b> Transfer total biaya ke <b>BCA 2952093623 (a.n Yulviana Kusnia)</b>. <i>Catatan: Harga belum termasuk biaya ongkos kirim.</i> Wajib upload bukti transfer.</li>
-          <li><b>Verifikasi & Kirim Foto:</b> Setelah konfirmasi, admin akan menghubungi via WhatsApp untuk memberikan link Google Drive pengunggahan foto resolusi tinggi.</li>
-          <li><b>Proses Desain:</b> Tim kami akan mengerjakan desain dan mengirimkan pratinjau (draft) untuk Anda setujui (khusus paket Custom/Full Service).</li>
-          <li><b>Produksi & Pengiriman:</b> Bingkai masuk tahap produksi (7-10 hari kerja). Jika Anda menggunakan selempang/medali, Anda dapat memilih untuk mengirimkannya kepada kami untuk dipasangkan atau memasangnya secara mandiri setelah bingkai tiba.</li>
-        </ol>
-      </div>
+              {selectedPaket?.id === p.id && (
+                <div style={{ background: '#fdfdfd', padding: '20px', borderRadius: '12px', border: '1px solid #000', marginTop: '10px' }}>
+                  <h3 style={{ marginTop: 0 }}>Formulir Pemesanan</h3>
+                  <input placeholder="Nama Lengkap & Titel" onChange={(e) => setData({...data, namaTitel: e.target.value})} style={inputStyle} />
+                  <input placeholder="No. WhatsApp (Wajib)" onChange={(e) => setData({...data, wa: e.target.value})} style={inputStyle} />
+                  <input type="email" placeholder="Alamat Email (Wajib)" onChange={(e) => setData({...data, email: e.target.value})} style={inputStyle} />
+                  <input placeholder="Universitas" onChange={(e) => setData({...data, universitas: e.target.value})} style={inputStyle} />
+                  <input placeholder="Jurusan" onChange={(e) => setData({...data, jurusan: e.target.value})} style={inputStyle} />
+                  <input placeholder="Kota Wisuda" onChange={(e) => setData({...data, kota: e.target.value})} style={inputStyle} />
+                  <input placeholder="Tanggal Wisuda" onChange={(e) => setData({...data, tglWisuda: e.target.value})} style={inputStyle} />
+                  
+                  <label style={{ fontSize: '0.85em', fontWeight: 'bold', display: 'block', marginBottom: '5px' }}>Opsi Atribut Wisuda:</label>
+                  <select onChange={(e) => setData({...data, opsiTambahan: e.target.value})} style={{...inputStyle, marginBottom: '15px'}}>
+                    <option value="Tanpa Selempang/Medali">Tanpa Selempang/Medali</option>
+                    <option value="Kirimkan atribut ke kami untuk dipasangkan">Kirimkan atribut ke kami untuk dipasangkan</option>
+                    <option value="Pasang sendiri oleh klien">Pasang sendiri oleh klien</option>
+                  </select>
 
-      <div style={{ marginTop: '48px', borderTop: '1px solid #eee', paddingTop: '24px', textAlign: 'center', fontSize: '0.9em' }}>
-        <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>Radeya Photography</p>
-        <p style={{ margin: '0' }}>Whatsapp: 0821-1251-570</p>
-        <p style={{ margin: '0' }}>Cariu RT 05/RW 01, Desa Talagasari, Kecamatan Balaraja, Kabupaten Tangerang, Banten 15610</p>
-        <a href="https://www.google.com/maps/search/?api=1&query=Radeya+Photography+Balaraja" target="_blank" rel="noreferrer" style={{ color: '#000', textDecoration: 'underline', marginTop: '10px', display: 'block' }}>Lihat di Google Maps</a>
-        <div style={{ marginTop: '30px', fontSize: '12px', color: '#737373' }}>© 2026 Radeyaphoto. All rights reserved.</div>
+                  <textarea placeholder="Alamat Lengkap Penerima Paket" onChange={(e) => setData({...data, alamat: e.target.value})} style={inputStyle} />
+                  <label style={{ fontSize: '0.85em', fontWeight: 'bold' }}>Unggah Bukti Transfer:</label>
+                  <input type="file" onChange={handleImageUpload} style={{ display: 'block', marginBottom: '15px' }} />
+                  
+                  <button onClick={handleCheckout} style={btnStyle}>Konfirmasi Pemesanan</button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0', marginBottom: '30px' }}>
+          <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>Cara Pemesanan & Proses Produksi:</h4>
+          <ol style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9em', color: '#444', lineHeight: '1.8' }}>
+            <li><b>Pilih & Checkout:</b> Klik paket yang diinginkan, isi data desain wisuda, dan alamat pengiriman dengan lengkap.</li>
+            <li><b>Pembayaran:</b> Transfer total biaya ke <b>BCA 2952093623 (a.n Yulviana Kusnia)</b>. <i>Catatan: Harga belum termasuk biaya ongkos kirim.</i> Wajib upload bukti transfer.</li>
+            <li><b>Verifikasi & Kirim Foto:</b> Setelah konfirmasi, admin akan menghubungi via WhatsApp untuk memberikan link Google Drive pengunggahan foto resolusi tinggi.</li>
+            <li><b>Proses Desain:</b> Tim kami akan mengerjakan desain dan mengirimkan pratinjau (draft) untuk Anda setujui (khusus paket Custom/Full Service).</li>
+            <li><b>Produksi & Pengiriman:</b> Bingkai masuk tahap produksi (7-10 hari kerja). Jika Anda menggunakan selempang/medali, Anda dapat memilih untuk mengirimkannya kepada kami untuk dipasangkan atau memasangnya secara mandiri setelah bingkai tiba.</li>
+          </ol>
+        </div>
+
+        <div style={{ marginTop: '48px', borderTop: '1px solid #eee', paddingTop: '24px', textAlign: 'center', fontSize: '0.9em' }}>
+          <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>Radeya Photography</p>
+          <p style={{ margin: '0' }}>Whatsapp: 0821-1251-570</p>
+          <p style={{ margin: '0' }}>Cariu RT 05/RW 01, Desa Talagasari, Kecamatan Balaraja, Kabupaten Tangerang, Banten 15610</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=Radeya+Photography+Balaraja" target="_blank" rel="noreferrer" style={{ color: '#000', textDecoration: 'underline', marginTop: '10px', display: 'block' }}>Lihat di Google Maps</a>
+          <div style={{ marginTop: '30px', fontSize: '12px', color: '#737373' }}>© 2026 Radeyaphoto. All rights reserved.</div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
