@@ -1,13 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import crypto from "crypto";
 
-// Fungsi Hashing SHA-256
 const hashData = (data: string) => {
   if (!data) return undefined;
   return crypto.createHash("sha256").update(data.toLowerCase().trim()).digest("hex");
 };
 
-// Fungsi Normalisasi WhatsApp
 const normalizePhone = (phone: string) => {
   let cleaned = phone.replace(/\D/g, "");
   if (cleaned.startsWith("0")) cleaned = "62" + cleaned.substring(1);
@@ -24,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // 1. DATA INPUT
     const service = body.service || "unknown";
-    const segment = body.segment || service;
+    const segment = body.segment || "graduation"; // Default ke graduation
     const rawValue = Number(body.value || 0);
     const value = rawValue < 5000 ? rawValue * 1000 : rawValue;
     
@@ -32,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const event_type = body.type || 'inquiry'; 
     const event_name = event_type === 'booking' ? 'Purchase' : 'Lead';
 
-    // 2. ADVANCED MATCHING (Hashed Data)
+    // 2. ADVANCED MATCHING
     const phone = body.user_data?.ph || "";
     const email = body.user_data?.em || "";
     const fbc = body.user_data?.fbc || undefined;
@@ -63,33 +61,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ],
     };
 
-    // 3. LOGIKA PENGIRIMAN PIXEL (Sesuai Kategori)
-    // Jika frame, kirim ke Pixel Frame. Jika graduation/couple, kirim ke Pixel Utama.
-    let pixelTargetIds: string[] = [];
+    // 3. LOGIKA PEMISAHAN PIXEL (Dinamis)
+    let pixelTargetId: string;
+    
     if (segment === 'frame') {
-      pixelTargetIds = ['1413881487242621'];
+      pixelTargetId = process.env.PIXEL_FRAME_ID || '1413881487242621';
     } else {
-      pixelTargetIds = [process.env.PIXEL_ID || '804715912719122'];
+      pixelTargetId = process.env.PIXEL_GRADUATION_ID || '804715912719122';
     }
 
-    console.log(`🔥 CAPI HIT | Event: ${event_name} | Target: ${pixelTargetIds.join(', ')}`);
+    console.log(`🔥 CAPI HIT | Event: ${event_name} | Segment: ${segment} | Target Pixel: ${pixelTargetId}`);
 
-    const results = await Promise.all(
-      pixelTargetIds.map(async (pixelId) => {
-        const response = await fetch(
-          `https://graph.facebook.com/v20.0/${pixelId}/events?access_token=${process.env.META_TOKEN}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          }
-        );
-        const data = await response.json();
-        return { pixelId, data };
-      })
+    // 4. KIRIM KE META
+    const response = await fetch(
+      `https://graph.facebook.com/v20.0/${pixelTargetId}/events?access_token=${process.env.META_TOKEN}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }
     );
 
-    return res.status(200).json({ success: true, meta_results: results });
+    const result = await response.json();
+
+    return res.status(200).json({ success: true, meta_result: result });
 
   } catch (error: any) {
     console.error("🔥 CAPI ERROR:", error);
