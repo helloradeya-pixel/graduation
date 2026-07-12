@@ -1,106 +1,171 @@
-'use client';
+import { useState } from 'react';
+import Head from 'next/head';
 
-import { useEffect } from 'react';
-import { gaTrack } from '@/utils/tracking';
+export default function FrameKenanganPage() {
+  // Masukkan Pixel ID Anda di sini
+  const PIXEL_ID = '1413881487242621'; 
 
-declare global {
-  interface Window {
-    fbq: any;
-  }
-}
+  const [data, setData] = useState({ 
+    namaTitel: '', jurusan: '', universitas: '', kota: '', tglWisuda: '', alamat: '', 
+    wa: '', email: '', opsiTambahan: 'Tanpa Selempang/Medali' 
+  });
+  const [selectedPaket, setSelectedPaket] = useState<any>(null);
+  const [buktiUrl, setBuktiUrl] = useState('');
 
-export default function BookingSuccess() {
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const params = new URLSearchParams(window.location.search);
+  const paket = [
+    { id: 1, nama: 'Frame Only', harga: '150.000', desc: 'Frame Akrilik Premium 30x40 cm', img: '/assets/images/frame-only.png' },
+    { id: 2, nama: 'Frame + Custom Design', harga: '200.000', desc: 'Frame 30x40 cm, Desain Nama & Jurusan, Free 1x Revisi', img: '/assets/images/frame-custom.png' },
+    { id: 3, nama: 'Full Service', harga: '250.000', desc: 'Frame Akrilik Premium 30x40 cm, Desain Nama & Jurusan, Cetak 9 Foto, Free Layout & 1x Revisi', img: '/assets/images/full-service.png' }
+  ];
 
-    const service = params.get('service') || 'unknown';
-    const nama = params.get('nama') || '';
-    const email = params.get('email') || '';
-    const rawWa = params.get('wa') || '';
-    const paket = params.get('package') || '';
-    const tanggal = params.get('tanggal') || '';
-    const jamMulai = params.get('jam_mulai') || '';
-    const jamSelesai = params.get('jam_selesai') || '';
-    const pasangan = params.get('pasangan') || '';
-    const acara = params.get('acara') || '';
-    const lokasi = params.get('lokasi') || '';
-    const jam = params.get('jam') || '';
-    
-    const dpRaw = params.get('dp') || '0';
-    const value = Number(dpRaw) < 5000 ? Number(dpRaw) * 1000 : Number(dpRaw);
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'preset_radeyaframe');
 
-    const normalizePhone = (phone: string) => {
-      let cleaned = phone.replace(/\D/g, ''); 
-      return cleaned.startsWith('0') ? '62' + cleaned.substring(1) : cleaned;
-    };
-
-    const sha256 = async (message: string) => {
-      const msgBuffer = new TextEncoder().encode(message.toLowerCase().trim());
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    };
-
-    const getFbc = () => {
-      const match = document.cookie.match(/_fbc=([^;]+)/);
-      return match ? match[1] : localStorage.getItem('fbc') || undefined;
-    };
-
-    const runTracking = async () => {
-      const normalizedWA = normalizePhone(rawWa);
-      const fbc = getFbc();
-      const eventId = `${service}_booking_${Date.now()}`;
-
-      const hashedEmail = await sha256(email);
-      const hashedPhone = await sha256(normalizedWA);
-
-      // Pastikan menggunakan window.fbq?. untuk menghindari error saat build
-      const pixelIds = ['804715912719122', '1413881487242621'];
-      pixelIds.forEach((pid) => {
-        window.fbq?.('trackSingle', pid, 'Purchase', {
-          value,
-          currency: 'IDR',
-          content_name: `Booking_${service}`,
-          service,
-          user_data: { ph: hashedPhone, em: hashedEmail, fbc: fbc }
-        }, { eventID: eventId });
-      });
-
-      fetch('/api/meta-capi', {
+    try {
+      const res = await fetch('https://api.cloudinary.com/v1_1/zj5bpv8i/image/upload', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          service, value, event_id: eventId, type: 'booking',
-          user_data: { ph: normalizedWA, em: email, fn: nama, fbc }
-        })
-      }).catch(console.error);
+        body: formData
+      });
+      const json = await res.json();
+      setBuktiUrl(json.secure_url);
+      alert('Bukti transfer berhasil diunggah!');
+    } catch (err) { alert('Gagal unggah foto.'); }
+  };
 
-      gaTrack('purchase', { transaction_id: eventId, value, currency: 'IDR', content_name: `Booking_${service}`, service });
-    };
-
-    runTracking();
-
-    window.history.replaceState({}, document.title, window.location.pathname);
-
-    let message = "";
-    if (service === 'couple') {
-      message = `Halo kak, saya sudah booking yah atas nama ${nama}.\n\n*Detail Booking:*\nPasangan: ${pasangan}\nAcara: ${acara}\nTanggal: ${tanggal}\nJam: ${jam}\nLokasi: ${lokasi}\nPaket: ${paket}\nDP: Rp${value.toLocaleString('id-ID')}`;
-    } else {
-      message = `Halo kak, saya sudah booking ${service} atas nama ${nama}.\n\n*Detail Booking:*\nPackage: ${paket}\nTanggal: ${tanggal}\nJam: ${jamMulai} - ${jamSelesai}\nDP: Rp${value.toLocaleString('id-ID')}`;
+  const handleCheckout = async () => {
+    if (!selectedPaket || !buktiUrl) return alert('Pilih paket dan unggah bukti transfer!');
+    if (!data.wa || !data.email) return alert('Mohon isi nomor WhatsApp dan Email Anda.');
+    
+    // Tracking Purchase ke Pixel
+    if (typeof window !== 'undefined' && window.fbq) {
+      const hargaBersih = parseFloat(selectedPaket.harga.replace(/\./g, ''));
+      window.fbq('track', 'Purchase', { 
+        value: hargaBersih, 
+        currency: 'IDR', 
+        content_name: selectedPaket.nama,
+        content_type: 'product'
+      });
     }
 
-    const waLink = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
-    const timer = setTimeout(() => { window.location.href = waLink; }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
+    await fetch('/api/send-frame-kenangan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data, paket: selectedPaket, buktiUrl })
+    });
+    
+    const pesan = `*ORDER BARU - FRAME KENANGAN*
+------------------------------------
+*PAKET PILIHAN:* ${selectedPaket.nama} (IDR ${selectedPaket.harga})
+
+*DATA DESAIN:*
+• Nama & Titel : ${data.namaTitel}
+• Universitas  : ${data.universitas}
+• Jurusan      : ${data.jurusan}
+• Kota Wisuda  : ${data.kota}
+• Tgl Wisuda   : ${data.tglWisuda}
+
+*DETAIL ATRIBUT:*
+• Opsi Atribut : ${data.opsiTambahan}
+
+*DATA PENGIRIMAN:*
+• WhatsApp     : ${data.wa}
+• Alamat       : ${data.alamat}
+
+*BUKTI TRANSFER:*
+${buktiUrl}
+------------------------------------`;
+
+    window.location.href = `https://wa.me/628211251570?text=${encodeURIComponent(pesan)}`;
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold">Booking Berhasil</h1>
-        <p className="mt-2 text-neutral-400">Sedang menghubungkan ke WhatsApp...</p>
+    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: 'Inter, sans-serif' }}>
+      <Head>
+        <title>Pemesanan Resmi | Radeya Photography</title>
+        {/* Meta Pixel Script Manual */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+          n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+          n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+          t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+          (window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+          fbq('init', '${PIXEL_ID}');
+          fbq('track', 'PageView');
+        `}} />
+        <noscript><img height="1" width="1" style={{display:'none'}} src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}/></noscript>
+      </Head>
+
+      <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Pilih Paket Layanan</h1>
+      
+      <div style={{ display: 'grid', gap: '20px', marginBottom: '30px' }}>
+        {paket.map((p) => (
+          <div key={p.id}>
+            <div onClick={() => setSelectedPaket(p)} style={{ 
+                border: selectedPaket?.id === p.id ? '2px solid #000' : '1px solid #ddd',
+                padding: '20px', borderRadius: '12px', cursor: 'pointer', background: '#fff',
+                display: 'flex', flexDirection: 'column', alignItems: 'center'
+            }}>
+              <img src={p.img} alt={p.nama} style={{ width: '100%', maxWidth: '300px', borderRadius: '6px', display: 'block' }} />
+              <div style={{ fontWeight: 'bold', marginTop: '15px', textAlign: 'center' }}>{p.nama} - IDR {p.harga}</div>
+              <ul style={{ fontSize: '0.9em', color: '#666', textAlign: 'center', padding: 0, marginTop: '10px', width: '100%', listStyleType: 'none' }}>
+                {p.desc.split(', ').map((item, index) => (<li key={index} style={{ marginBottom: '5px' }}>{item}</li>))}
+              </ul>
+            </div>
+
+            {selectedPaket?.id === p.id && (
+              <div style={{ background: '#fdfdfd', padding: '20px', borderRadius: '12px', border: '1px solid #000', marginTop: '10px' }}>
+                <h3 style={{ marginTop: 0 }}>Formulir Pemesanan</h3>
+                <input placeholder="Nama Lengkap & Titel" onChange={(e) => setData({...data, namaTitel: e.target.value})} style={inputStyle} />
+                <input placeholder="No. WhatsApp (Wajib)" onChange={(e) => setData({...data, wa: e.target.value})} style={inputStyle} />
+                <input type="email" placeholder="Alamat Email (Wajib)" onChange={(e) => setData({...data, email: e.target.value})} style={inputStyle} />
+                <input placeholder="Universitas" onChange={(e) => setData({...data, universitas: e.target.value})} style={inputStyle} />
+                <input placeholder="Jurusan" onChange={(e) => setData({...data, jurusan: e.target.value})} style={inputStyle} />
+                <input placeholder="Kota Wisuda" onChange={(e) => setData({...data, kota: e.target.value})} style={inputStyle} />
+                <input placeholder="Tanggal Wisuda" onChange={(e) => setData({...data, tglWisuda: e.target.value})} style={inputStyle} />
+                
+                <label style={{ fontSize: '0.85em', fontWeight: 'bold', display: 'block', marginBottom: '5px' }}>Opsi Atribut Wisuda:</label>
+                <select onChange={(e) => setData({...data, opsiTambahan: e.target.value})} style={{...inputStyle, marginBottom: '15px'}}>
+                  <option value="Tanpa Selempang/Medali">Tanpa Selempang/Medali</option>
+                  <option value="Kirimkan atribut ke kami untuk dipasangkan">Kirimkan atribut ke kami untuk dipasangkan</option>
+                  <option value="Pasang sendiri oleh klien">Pasang sendiri oleh klien</option>
+                </select>
+
+                <textarea placeholder="Alamat Lengkap Penerima Paket" onChange={(e) => setData({...data, alamat: e.target.value})} style={inputStyle} />
+                <label style={{ fontSize: '0.85em', fontWeight: 'bold' }}>Unggah Bukti Transfer:</label>
+                <input type="file" onChange={handleImageUpload} style={{ display: 'block', marginBottom: '15px' }} />
+                
+                <button onClick={handleCheckout} style={btnStyle}>Konfirmasi Pemesanan</button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0', marginBottom: '30px' }}>
+        <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>Cara Pemesanan & Proses Produksi:</h4>
+        <ol style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9em', color: '#444', lineHeight: '1.8' }}>
+          <li><b>Pilih & Checkout:</b> Klik paket yang diinginkan, isi data desain wisuda, dan alamat pengiriman dengan lengkap.</li>
+          <li><b>Pembayaran:</b> Transfer total biaya ke <b>BCA 2952093623 (a.n Yulviana Kusnia)</b>. <i>Catatan: Harga belum termasuk biaya ongkos kirim.</i> Wajib upload bukti transfer.</li>
+          <li><b>Verifikasi & Kirim Foto:</b> Setelah konfirmasi, admin akan menghubungi via WhatsApp untuk memberikan link Google Drive pengunggahan foto resolusi tinggi.</li>
+          <li><b>Proses Desain:</b> Tim kami akan mengerjakan desain dan mengirimkan pratinjau (draft) untuk Anda setujui (khusus paket Custom/Full Service).</li>
+          <li><b>Produksi & Pengiriman:</b> Bingkai masuk tahap produksi (7-10 hari kerja). Jika Anda menggunakan selempang/medali, Anda dapat memilih untuk mengirimkannya kepada kami untuk dipasangkan atau memasangnya secara mandiri setelah bingkai tiba.</li>
+        </ol>
+      </div>
+
+      <div style={{ marginTop: '48px', borderTop: '1px solid #eee', paddingTop: '24px', textAlign: 'center', fontSize: '0.9em' }}>
+        <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>Radeya Photography</p>
+        <p style={{ margin: '0' }}>Whatsapp: 0821-1251-570</p>
+        <p style={{ margin: '0' }}>Cariu RT 05/RW 01, Desa Talagasari, Kecamatan Balaraja, Kabupaten Tangerang, Banten 15610</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=Radeya+Photography+Balaraja" target="_blank" rel="noreferrer" style={{ color: '#000', textDecoration: 'underline', marginTop: '10px', display: 'block' }}>Lihat di Google Maps</a>
+        <div style={{ marginTop: '30px', fontSize: '12px', color: '#737373' }}>© 2026 Radeyaphoto. All rights reserved.</div>
       </div>
     </div>
   );
 }
+
+const inputStyle: React.CSSProperties = { width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '6px', border: '1px solid #ccc', boxSizing: 'border-box' };
+const btnStyle: React.CSSProperties = { width: '100%', padding: '16px', background: '#000', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' };
