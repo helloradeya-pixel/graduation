@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Client } from '@notionhq/client';
 
-const notion = new Client({ auth: process.env.NOTION_API_KEY });
+const notion = new Client({ auth: process.env.NOTION_TOKEN });
 
 export async function POST(req: Request) {
   try {
