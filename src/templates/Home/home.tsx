@@ -1,5 +1,4 @@
 
-
 import "./Radeyaphoto.css";
 import { Testimonial } from "../Testimonial";
 
@@ -28,8 +27,8 @@ export default function RadeyaphotoPage() {
         </p>
 
         <div className="buttons">
-          {/* Tombol Baru untuk Frame */}
-          <a href="/frame-kenangan" className="link-btn" style={{ background: '#000', color: '#fff', border: '2px solid #000' }}>
+          {/* Semua tombol sekarang menggunakan class link-btn agar warnanya seragam */}
+          <a href="/frame-kenangan" className="link-btn">
             FRAME KENANGAN
           </a>
 
@@ -84,3 +83,4 @@ export default function RadeyaphotoPage() {
     </div>
   );
 }
+
