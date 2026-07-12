@@ -7,7 +7,6 @@ export default function FrameKenanganPage() {
   });
   const [selectedPaket, setSelectedPaket] = useState<any>(null);
   const [buktiUrl, setBuktiUrl] = useState('');
-  const [isUploading, setIsUploading] = useState(false);
 
   const paket = [
     { id: 1, nama: 'Frame Only', harga: '150.000', desc: 'Frame Akrilik Premium 30x40 cm', img: '/assets/images/frame-only.png' },
@@ -18,7 +17,6 @@ export default function FrameKenanganPage() {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setIsUploading(true);
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', 'preset_radeyaframe');
@@ -31,7 +29,7 @@ export default function FrameKenanganPage() {
       const json = await res.json();
       setBuktiUrl(json.secure_url);
       alert('Bukti transfer berhasil diunggah!');
-    } catch (err) { alert('Gagal unggah foto.'); } finally { setIsUploading(false); }
+    } catch (err) { alert('Gagal unggah foto.'); }
   };
 
   const handleCheckout = async () => {
@@ -44,8 +42,16 @@ export default function FrameKenanganPage() {
     });
 
     const pesan = `Halo Radeya Photography, saya ingin memesan *${selectedPaket.nama}*.
-    *Data Desain:* ${data.namaTitel} | ${data.universitas} | ${data.jurusan} | ${data.kota}, ${data.tglWisuda}
-    *Data Pengiriman:* ${data.opsiTambahan} | Alamat: ${data.alamat}
+    
+    *Data Desain:*
+    ${data.namaTitel}
+    ${data.universitas}
+    ${data.jurusan}
+    ${data.kota}, ${data.tglWisuda}
+    
+    *Data Pengiriman:*
+    - Opsi Atribut: ${data.opsiTambahan}
+    - Alamat: ${data.alamat}
     *Bukti:* ${buktiUrl}`;
 
     window.location.href = `https://wa.me/628211251570?text=${encodeURIComponent(pesan)}`;
@@ -58,21 +64,18 @@ export default function FrameKenanganPage() {
       <h1 style={{ textAlign: 'center', marginBottom: '10px' }}>Pilih Paket Layanan</h1>
       <p style={{ textAlign: 'center', color: '#666', marginBottom: '30px' }}>Solusi premium untuk momen wisuda Anda.</p>
 
-      {/* Alur Pemesanan */}
       <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0', marginBottom: '30px' }}>
         <h4 style={{ margin: '0 0 10px 0' }}>Alur Pemesanan:</h4>
         <ol style={{ fontSize: '0.9em', paddingLeft: '20px' }}>
           <li>Klik paket yang diinginkan.</li>
-          <li>Formulir akan muncul tepat di bawah paket.</li>
-          <li>Isi data, transfer ke BCA 1234567890 a.n Radeya Photography, dan upload bukti.</li>
+          <li>Isi formulir, transfer ke BCA 1234567890 a.n Radeya Photography, dan upload bukti.</li>
+          <li>Klik Konfirmasi untuk memproses pesanan.</li>
         </ol>
       </div>
 
-      {/* Grid Paket */}
       <div style={{ display: 'grid', gap: '20px' }}>
         {paket.map((p) => (
           <div key={p.id}>
-            {/* Kartu Paket */}
             <div onClick={() => setSelectedPaket(p)} style={{ 
                 border: selectedPaket?.id === p.id ? '2px solid #000' : '1px solid #ddd',
                 padding: '20px', borderRadius: '12px', cursor: 'pointer', background: '#fff' 
@@ -82,7 +85,6 @@ export default function FrameKenanganPage() {
               <div style={{ fontSize: '0.9em', color: '#666' }}>{p.desc}</div>
             </div>
 
-            {/* Form Hanya Muncul di Bawah Paket yang Dipilih */}
             {selectedPaket?.id === p.id && (
               <div style={{ background: '#fdfdfd', padding: '20px', borderRadius: '12px', border: '1px solid #000', marginTop: '10px' }}>
                 <h3 style={{ marginTop: 0 }}>Formulir Pemesanan</h3>
