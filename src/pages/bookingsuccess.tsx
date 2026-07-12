@@ -3,14 +3,18 @@
 import { useEffect } from 'react';
 import { gaTrack } from '@/utils/tracking';
 
+// Deklarasi agar TypeScript mengenali fbq di window
+declare global {
+  interface Window {
+    fbq: any;
+  }
+}
+
 export default function BookingSuccess() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
 
-    // =========================
-    // 1. AMBIL DATA & DEFINISI VARIABEL
-    // =========================
     const service = params.get('service') || 'unknown';
     const nama = params.get('nama') || '';
     const email = params.get('email') || '';
@@ -27,9 +31,6 @@ export default function BookingSuccess() {
     const dpRaw = params.get('dp') || '0';
     const value = Number(dpRaw) < 5000 ? Number(dpRaw) * 1000 : Number(dpRaw);
 
-    // =========================
-    // 2. HELPER FUNGSI & HASHING
-    // =========================
     const normalizePhone = (phone: string) => {
       let cleaned = phone.replace(/\D/g, ''); 
       return cleaned.startsWith('0') ? '62' + cleaned.substring(1) : cleaned;
@@ -47,9 +48,6 @@ export default function BookingSuccess() {
       return match ? match[1] : localStorage.getItem('fbc') || undefined;
     };
 
-    // =========================
-    // 3. TRACKING (Async)
-    // =========================
     const runTracking = async () => {
       const normalizedWA = normalizePhone(rawWa);
       const fbc = getFbc();
@@ -58,18 +56,16 @@ export default function BookingSuccess() {
       const hashedEmail = await sha256(email);
       const hashedPhone = await sha256(normalizedWA);
 
-      // Menggunakan trackSingle agar data terpisah per pixel
-      if (window.fbq) {
-        const pixelIds = ['804715912719122', '1413881487242621'];
-        pixelIds.forEach((pid) => {
-          window.fbq('trackSingle', pid, 'Purchase', {
-            value,
-            currency: 'IDR',
-            content_name: `Booking_${service}`,
-            service,
-            user_data: { ph: hashedPhone, em: hashedEmail, fbc: fbc }
-          }, { eventID: eventId });
-        });
+      // --- PERBAIKAN: Menggunakan satu Pixel tunggal dengan (window as any) ---
+      const fbq = (window as any).fbq;
+      if (typeof fbq === 'function') {
+        fbq('track', 'Purchase', {
+          value,
+          currency: 'IDR',
+          content_name: `Booking_${service}`,
+          content_category: service,
+          user_data: { ph: hashedPhone, em: hashedEmail, fbc: fbc }
+        }, { eventID: eventId });
       }
 
       fetch('/api/meta-capi', {
@@ -86,9 +82,6 @@ export default function BookingSuccess() {
 
     runTracking();
 
-    // =========================
-    // 4. BERSIHKAN URL & REDIRECT WA
-    // =========================
     window.history.replaceState({}, document.title, window.location.pathname);
 
     let message = "";
