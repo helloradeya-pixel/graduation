@@ -1,3 +1,5 @@
+
+
 import "./Radeyaphoto.css";
 import { Testimonial } from "../Testimonial";
 
@@ -26,6 +28,11 @@ export default function RadeyaphotoPage() {
         </p>
 
         <div className="buttons">
+          {/* Tombol Baru untuk Frame */}
+          <a href="/frame-kenangan" className="link-btn" style={{ background: '#000', color: '#fff', border: '2px solid #000' }}>
+            FRAME KENANGAN
+          </a>
+
           <a
             href="https://api.whatsapp.com/send?phone=628211251570&text=Halo%20admin,%20aku%20mau%20tanya-tanya%20boleh%20yah.&utm_source=tiktok_bio&utm_medium=organic&utm_campaign=landing_page"
             target="_blank"
