@@ -24,7 +24,6 @@ export default function BookingSuccess() {
     const lokasi = params.get('lokasi') || '';
     const jam = params.get('jam') || '';
     
-    // Hitung value di lingkup yang bisa diakses oleh pesan WhatsApp
     const dpRaw = params.get('dp') || '0';
     const value = Number(dpRaw) < 5000 ? Number(dpRaw) * 1000 : Number(dpRaw);
 
@@ -59,13 +58,19 @@ export default function BookingSuccess() {
       const hashedEmail = await sha256(email);
       const hashedPhone = await sha256(normalizedWA);
 
-      window.fbq?.('track', 'Purchase', {
-        value,
-        currency: 'IDR',
-        content_name: `Booking_${service}`,
-        service,
-        user_data: { ph: hashedPhone, em: hashedEmail, fbc: fbc }
-      }, { eventID: eventId });
+      // Menggunakan trackSingle agar data terpisah per pixel
+      if (window.fbq) {
+        const pixelIds = ['804715912719122', '1413881487242621'];
+        pixelIds.forEach((pid) => {
+          window.fbq('trackSingle', pid, 'Purchase', {
+            value,
+            currency: 'IDR',
+            content_name: `Booking_${service}`,
+            service,
+            user_data: { ph: hashedPhone, em: hashedEmail, fbc: fbc }
+          }, { eventID: eventId });
+        });
+      }
 
       fetch('/api/meta-capi', {
         method: 'POST',
