@@ -5,11 +5,13 @@ export default function FrameKenanganPage() {
   const [formData, setFormData] = useState({ nama: '', jurusan: '' });
 
   // Pastikan nama file di folder /public sama dengan yang di 'img' bawah ini
-  const paket = [
-    { nama: 'Frame Only', harga: '150.000', desc: 'Frame Akrilik Premium 30x40 cm', img: '/frame-only.png' },
-    { nama: 'Frame + Custom Design', harga: '200.000', desc: 'Frame 30x40 cm, Desain Nama & Jurusan, Free 1x Revisi', img: '/frame-custom.png' },
-    { nama: 'Full Service', harga: '250.000', desc: 'Frame Akrilik Premium 30x40 cm, Desain Nama & Jurusan, Cetak 9 Foto, Free Layout & 1x Revisi', img: '/full-service.png' }
+    const paket = [
+    // Tambahkan path '/assets/images/' sebelum nama file
+    { nama: 'Frame Only', harga: '150.000', desc: 'Frame Akrilik Premium 30x40 cm', img: '/assets/images/frame-only.png' },
+    { nama: 'Frame + Custom Design', harga: '200.000', desc: 'Frame 30x40 cm, Desain Nama & Jurusan, Free 1x Revisi', img: '/assets/images/frame-custom.png' },
+    { nama: 'Full Service', harga: '250.000', desc: 'Frame Akrilik Premium 30x40 cm, Desain Nama & Jurusan, Cetak 9 Foto, Free Layout & 1x Revisi', img: '/assets/images/full-service.png' }
   ];
+
 
   const handlePesan = (p: { nama: string; harga: string }) => {
     if (typeof window !== 'undefined' && (window as any).fbq) {
