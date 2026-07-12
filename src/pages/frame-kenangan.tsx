@@ -62,14 +62,16 @@ export default function FrameKenanganPage() {
       <Head><title>Pemesanan Resmi | Radeya Photography</title></Head>
 
       <h1 style={{ textAlign: 'center', marginBottom: '10px' }}>Pilih Paket Layanan</h1>
-      <p style={{ textAlign: 'center', color: '#666', marginBottom: '30px' }}>Solusi premium untuk momen wisuda Anda.</p>
-
+      
+      {/* Alur Pemesanan & Produksi yang Didetailkan */}
       <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0', marginBottom: '30px' }}>
-        <h4 style={{ margin: '0 0 10px 0' }}>Alur Pemesanan:</h4>
-        <ol style={{ fontSize: '0.9em', paddingLeft: '20px' }}>
-          <li>Klik paket yang diinginkan.</li>
-          <li>Isi formulir, transfer ke BCA 1234567890 a.n Radeya Photography, dan upload bukti.</li>
-          <li>Klik Konfirmasi untuk memproses pesanan.</li>
+        <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>Cara Pesan & Proses Produksi:</h4>
+        <ol style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9em', color: '#444', lineHeight: '1.8' }}>
+          <li><b>Pilih & Checkout:</b> Klik paket yang diinginkan, isi data desain wisuda, dan alamat pengiriman dengan lengkap.</li>
+          <li><b>Pembayaran:</b> Transfer total biaya ke <b>BCA 1234567890 (a.n Radeya Photography)</b>. Wajib upload bukti transfer di kolom yang tersedia.</li>
+          <li><b>Verifikasi & Kirim Foto:</b> Setelah konfirmasi, admin akan menghubungi via WhatsApp untuk memberikan link Google Drive khusus untuk pengunggahan foto resolusi tinggi.</li>
+          <li><b>Proses Desain:</b> Tim kami akan mengerjakan desain dan mengirimkan pratinjau (draft) untuk Anda setujui (khusus paket Custom/Full Service).</li>
+          <li><b>Produksi & Pengiriman:</b> Bingkai masuk tahap produksi (7-10 hari kerja). Setelah selesai, kami akan segera mengirimkan bingkai ke alamat Anda.</li>
         </ol>
       </div>
 
@@ -88,14 +90,14 @@ export default function FrameKenanganPage() {
             {selectedPaket?.id === p.id && (
               <div style={{ background: '#fdfdfd', padding: '20px', borderRadius: '12px', border: '1px solid #000', marginTop: '10px' }}>
                 <h3 style={{ marginTop: 0 }}>Formulir Pemesanan</h3>
-                <input placeholder="Nama Lengkap & Titel" onChange={(e) => setData({...data, namaTitel: e.target.value})} style={inputStyle} />
+                <input placeholder="Nama Lengkap & Titel (Contoh: Asiah, S.Pi.)" onChange={(e) => setData({...data, namaTitel: e.target.value})} style={inputStyle} />
                 <input placeholder="Universitas" onChange={(e) => setData({...data, universitas: e.target.value})} style={inputStyle} />
                 <input placeholder="Jurusan" onChange={(e) => setData({...data, jurusan: e.target.value})} style={inputStyle} />
                 <input placeholder="Kota Wisuda" onChange={(e) => setData({...data, kota: e.target.value})} style={inputStyle} />
                 <input placeholder="Tanggal Wisuda" onChange={(e) => setData({...data, tglWisuda: e.target.value})} style={inputStyle} />
                 
                 <div style={{ background: '#eee', padding: '10px', borderRadius: '6px', fontSize: '0.85em', marginBottom: '15px' }}>
-                  Transfer ke BCA 1234567890 a.n Radeya Photography
+                  Transfer ke <b>BCA 1234567890</b> a.n <b>Radeya Photography</b>
                 </div>
                 
                 <label style={{ fontSize: '0.85em', fontWeight: 'bold' }}>Unggah Bukti Transfer:</label>
@@ -109,7 +111,7 @@ export default function FrameKenanganPage() {
                 <textarea placeholder="Alamat Lengkap" onChange={(e) => setData({...data, alamat: e.target.value})} style={inputStyle} />
 
                 <button onClick={handleCheckout} style={btnStyle} disabled={!buktiUrl}>
-                  {buktiUrl ? 'Konfirmasi Pesanan' : 'Harap Unggah Bukti Transfer'}
+                  {buktiUrl ? 'Konfirmasi Pemesanan' : 'Harap Unggah Bukti Transfer'}
                 </button>
               </div>
             )}
