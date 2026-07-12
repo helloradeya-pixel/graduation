@@ -17,42 +17,14 @@ const Meta = (props: IMetaProps) => {
     <>
       <Head>
         <meta charSet="UTF-8" key="charset" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" key="viewport" />
 
-        <meta
-          name="viewport"
-          content="width=device-width,initial-scale=1"
-          key="viewport"
-        />
+        <link rel="apple-touch-icon" href={`${router.basePath}/apple-touch-icon.png`} key="apple" />
+        <link rel="icon" type="image/png" sizes="32x32" href={`${router.basePath}/favicon-32x32.png`} key="icon32" />
+        <link rel="icon" type="image/png" sizes="16x16" href={`${router.basePath}/favicon-16x16.png`} key="icon16" />
+        <link rel="icon" href={`${router.basePath}/favicon.ico`} key="favicon" />
 
-        <link
-          rel="apple-touch-icon"
-          href={`${router.basePath}/apple-touch-icon.png`}
-          key="apple"
-        />
-
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href={`${router.basePath}/favicon-32x32.png`}
-          key="icon32"
-        />
-
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href={`${router.basePath}/favicon-16x16.png`}
-          key="icon16"
-        />
-
-        <link
-          rel="icon"
-          href={`${router.basePath}/favicon.ico`}
-          key="favicon"
-        />
-
-        {/* Meta Pixel Code */}
+        {/* Meta Pixel Code - Dual Tracking */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -72,11 +44,24 @@ const Meta = (props: IMetaProps) => {
               (window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
 
+              // Pixel Lama (Sedang Running Iklan Wisuda)
               fbq('init', '804715912719122');
+              fbq('track', 'PageView');
+
+              // Pixel Baru (Dataset Radeya Frame)
+              fbq('init', '1413881487242621');
               fbq('track', 'PageView');
             `,
           }}
         />
+        <noscript>
+          <img height="1" width="1" style={{display: 'none'}}
+            src="https://www.facebook.com/tr?id=804715912719122&ev=PageView&noscript=1"
+          />
+          <img height="1" width="1" style={{display: 'none'}}
+            src="https://www.facebook.com/tr?id=1413881487242621&ev=PageView&noscript=1"
+          />
+        </noscript>
         {/* End Meta Pixel Code */}
       </Head>
 
