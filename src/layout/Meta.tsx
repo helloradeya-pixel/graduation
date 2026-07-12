@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
 import { AppConfig } from '../utils/AppConfig';
 
@@ -7,12 +6,10 @@ type IMetaProps = {
   title: string;
   description: string;
   canonical?: string;
-  addPixelId?: string; 
+  addPixelId?: string;
 };
 
 const Meta = (props: IMetaProps) => {
-  const router = useRouter();
-
   return (
     <>
       <Head>
@@ -32,7 +29,7 @@ const Meta = (props: IMetaProps) => {
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
 
-              // 1. Pixel Lama: Wajib selalu track
+              // 1. Pixel Lama: Selalu track
               fbq('init', '804715912719122');
               fbq('track', 'PageView');
 
