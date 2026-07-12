@@ -12,6 +12,7 @@ type IMetaProps = {
 
 const Meta = (props: IMetaProps) => {
   const router = useRouter();
+  const MAIN_PIXEL_ID = '804715912719122';
 
   return (
     <>
@@ -25,7 +26,7 @@ const Meta = (props: IMetaProps) => {
         <link rel="icon" type="image/png" sizes="16x16" href={`${router.basePath}/favicon-16x16.png`} key="icon16" />
         <link rel="icon" href={`${router.basePath}/favicon.ico`} key="favicon" />
 
-        {/* META PIXEL - PUSAT KENDALI (DUAL TRACKING) */}
+        {/* META PIXEL - DUAL TRACKING (Deduplicated via trackSingle) */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -38,22 +39,23 @@ const Meta = (props: IMetaProps) => {
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
 
-              // Inisialisasi Pixel Utama (Tetap)
-              fbq('init', '804715912719122');
-              fbq('track', 'PageView');
+              // Inisialisasi Kedua Pixel
+              fbq('init', '${MAIN_PIXEL_ID}');
+              ${props.addPixelId ? `fbq('init', '${props.addPixelId}');` : ''}
 
-              // Inisialisasi Pixel Kedua (Dinamis)
-              ${props.addPixelId ? `fbq('init', '${props.addPixelId}'); fbq('track', 'PageView');` : ''}
+              // Kirim PageView secara spesifik ke masing-masing Pixel
+              fbq('trackSingle', '${MAIN_PIXEL_ID}', 'PageView');
+              ${props.addPixelId ? `fbq('trackSingle', '${props.addPixelId}', 'PageView');` : ''}
             `,
           }}
         />
         <noscript>
           <img height="1" width="1" style={{display: 'none'}}
-            src="https://www.facebook.com/tr?id=804715912719122&ev=PageView&noscript=1"
+            src={`https://www.facebook.com/tr?id=${MAIN_PIXEL_ID}&ev=PageView&noscript=1`}
           />
           {props.addPixelId && (
             <img height="1" width="1" style={{display: 'none'}}
-              src={"https://www.facebook.com/tr?id=" + props.addPixelId + "&ev=PageView&noscript=1"}
+              src={`https://www.facebook.com/tr?id=${props.addPixelId}&ev=PageView&noscript=1`}
             />
           )}
         </noscript>
