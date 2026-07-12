@@ -2,6 +2,9 @@ import { useState } from 'react';
 import Head from 'next/head';
 
 export default function FrameKenanganPage() {
+  // Masukkan Pixel ID Anda di sini
+  const PIXEL_ID = '1413881487242621'; 
+
   const [data, setData] = useState({ 
     namaTitel: '', jurusan: '', universitas: '', kota: '', tglWisuda: '', alamat: '', 
     wa: '', email: '', opsiTambahan: 'Tanpa Selempang/Medali' 
@@ -37,11 +40,23 @@ export default function FrameKenanganPage() {
     if (!selectedPaket || !buktiUrl) return alert('Pilih paket dan unggah bukti transfer!');
     if (!data.wa || !data.email) return alert('Mohon isi nomor WhatsApp dan Email Anda.');
     
+    // Tracking Purchase ke Pixel
+    if (typeof window !== 'undefined' && window.fbq) {
+      const hargaBersih = parseFloat(selectedPaket.harga.replace(/\./g, ''));
+      window.fbq('track', 'Purchase', { 
+        value: hargaBersih, 
+        currency: 'IDR', 
+        content_name: selectedPaket.nama,
+        content_type: 'product'
+      });
+    }
+
     await fetch('/api/send-frame-kenangan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ data, paket: selectedPaket, buktiUrl })
     });
+    
     const pesan = `*ORDER BARU - FRAME KENANGAN*
 ------------------------------------
 *PAKET PILIHAN:* ${selectedPaket.nama} (IDR ${selectedPaket.harga})
@@ -69,11 +84,23 @@ ${buktiUrl}
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: 'Inter, sans-serif' }}>
-      <Head><title>Pemesanan Resmi | Radeya Photography</title></Head>
+      <Head>
+        <title>Pemesanan Resmi | Radeya Photography</title>
+        {/* Meta Pixel Script Manual */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+          n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+          n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+          t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+          (window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+          fbq('init', '${PIXEL_ID}');
+          fbq('track', 'PageView');
+        `}} />
+        <noscript><img height="1" width="1" style={{display:'none'}} src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}/></noscript>
+      </Head>
 
       <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Pilih Paket Layanan</h1>
       
-      {/* 1. Paket di paling atas */}
       <div style={{ display: 'grid', gap: '20px', marginBottom: '30px' }}>
         {paket.map((p) => (
           <div key={p.id}>
@@ -118,7 +145,6 @@ ${buktiUrl}
         ))}
       </div>
 
-      {/* 2. Cara Pemesanan di bawah */}
       <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0', marginBottom: '30px' }}>
         <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>Cara Pemesanan & Proses Produksi:</h4>
         <ol style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9em', color: '#444', lineHeight: '1.8' }}>
