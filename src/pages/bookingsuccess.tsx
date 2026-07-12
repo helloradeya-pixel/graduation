@@ -3,13 +3,6 @@
 import { useEffect } from 'react';
 import { gaTrack } from '@/utils/tracking';
 
-// Deklarasi agar TypeScript mengenali fbq di window
-declare global {
-  interface Window {
-    fbq: any;
-  }
-}
-
 export default function BookingSuccess() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -56,7 +49,7 @@ export default function BookingSuccess() {
       const hashedEmail = await sha256(email);
       const hashedPhone = await sha256(normalizedWA);
 
-      // --- PERBAIKAN: Menggunakan satu Pixel tunggal dengan (window as any) ---
+      // --- PERBAIKAN: Tanpa declare global, cukup gunakan (window as any) ---
       const fbq = (window as any).fbq;
       if (typeof fbq === 'function') {
         fbq('track', 'Purchase', {
