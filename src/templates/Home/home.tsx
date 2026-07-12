@@ -1,8 +1,18 @@
-
 import "./Radeyaphoto.css";
 import { Testimonial } from "../Testimonial";
 
 export default function RadeyaphotoPage() {
+  
+  // Fungsi untuk mengirim data klik ke GA4
+  const trackClick = (namaTombol: string) => {
+    if (typeof (window as any).gtag !== 'undefined') {
+      (window as any).gtag('event', 'click_button', {
+        'event_category': 'Link Bio',
+        'event_label': namaTombol
+      });
+    }
+  };
+
   return (
     <div className="radeyaphoto">
       <div className="hero"></div>
@@ -27,8 +37,12 @@ export default function RadeyaphotoPage() {
         </p>
 
         <div className="buttons">
-          {/* Semua tombol sekarang menggunakan class link-btn agar warnanya seragam */}
-          <a href="/frame-kenangan" className="link-btn">
+          {/* Tombol dengan tracking */}
+          <a 
+            href="/frame-kenangan" 
+            className="link-btn"
+            onClick={() => trackClick('Pesan Frame Kenangan')}
+          >
             FRAME KENANGAN
           </a>
 
@@ -37,6 +51,7 @@ export default function RadeyaphotoPage() {
             target="_blank"
             rel="noopener noreferrer"
             className="link-btn"
+            onClick={() => trackClick('WhatsApp Admin')}
           >
             WHATSAPP ADMIN
           </a>
@@ -46,6 +61,7 @@ export default function RadeyaphotoPage() {
             target="_blank"
             rel="noopener noreferrer"
             className="link-btn"
+            onClick={() => trackClick('Instagram Wedding')}
           >
             INSTAGRAM WEDDING
           </a>
@@ -55,6 +71,7 @@ export default function RadeyaphotoPage() {
             target="_blank"
             rel="noopener noreferrer"
             className="link-btn"
+            onClick={() => trackClick('Instagram Wisuda')}
           >
             INSTAGRAM WISUDA
           </a>
@@ -83,4 +100,3 @@ export default function RadeyaphotoPage() {
     </div>
   );
 }
-
