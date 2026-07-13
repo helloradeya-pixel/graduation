@@ -1,9 +1,10 @@
+import Head from 'next/head';
+import { AppConfig } from '../utils/AppConfig'; // Import AppConfig
 import "./Radeyaphoto.css";
 import { Testimonial } from "../Testimonial";
 
 export default function RadeyaphotoPage() {
   
-  // Fungsi untuk mengirim data klik ke GA4
   const trackClick = (namaTombol: string) => {
     if (typeof (window as any).gtag !== 'undefined') {
       (window as any).gtag('event', 'click_button', {
@@ -15,6 +16,12 @@ export default function RadeyaphotoPage() {
 
   return (
     <div className="radeyaphoto">
+      <Head>
+        <title>{AppConfig.title}</title>
+        <meta name="description" content={AppConfig.description} />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+
       <div className="hero"></div>
 
       <div className="profile-section">
@@ -24,7 +31,7 @@ export default function RadeyaphotoPage() {
           className="profile-img"
         />
 
-        <h1>Radeyaphoto</h1>
+        <h1>{AppConfig.site_name}</h1>
 
         <p style={{ marginBottom: '30px' }}>
           Some memories live in soft light and silent smiles.
@@ -37,7 +44,6 @@ export default function RadeyaphotoPage() {
         </p>
 
         <div className="buttons">
-          {/* Tombol dengan tracking */}
           <a 
             href="/frame-kenangan" 
             className="link-btn"
@@ -95,7 +101,7 @@ export default function RadeyaphotoPage() {
       <Testimonial />
 
       <div className="mt-12 border-t border-white/5 pt-6 text-center text-xs text-neutral-500">
-        © {new Date().getFullYear()} Radeyaphoto. All rights reserved.
+        © {new Date().getFullYear()} {AppConfig.site_name}. All rights reserved.
       </div>
     </div>
   );
