@@ -1,4 +1,7 @@
+'use client';
+
 import { useEffect, useState } from 'react';
+import Head from 'next/head'; // Head ditambahkan
 import { Base } from '../templates/Base';
 import { trackGraduationView } from '@/utils/tracking';
 
@@ -55,6 +58,10 @@ export default function Graduation() {
 
   return (
     <>
+      <Head>
+        <title>Fotografi Wisuda | Radeya Photography</title>
+      </Head>
+
       <Base />
 
       {/* SOFT POPUP */}
