@@ -22,7 +22,7 @@ const Couple = () => {
   return (
     <div className="text-gray-600 antialiased">
       <Meta
-        title="Fotografi Couple | Radeya Photography"
+        title="Fotografi Couple | Radeyaphoto"
         description={AppConfig.description}
         // Jika Anda ingin mengaktifkan Pixel Baru di halaman Couple ini, 
         // cukup tambahkan prop di bawah ini:
