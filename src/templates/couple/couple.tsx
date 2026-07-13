@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect } from 'react';
 
 import { Meta } from '../../layout/Meta';
@@ -20,7 +22,7 @@ const Couple = () => {
   return (
     <div className="text-gray-600 antialiased">
       <Meta
-        title={AppConfig.title}
+        title="Fotografi Couple | Radeya Photography"
         description={AppConfig.description}
         // Jika Anda ingin mengaktifkan Pixel Baru di halaman Couple ini, 
         // cukup tambahkan prop di bawah ini:
