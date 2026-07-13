@@ -25,9 +25,14 @@ export default function BookingSuccess() {
     const dpRaw = params.get('dp') || '0';
     const value = Number(dpRaw) < 5000 ? Number(dpRaw) * 1000 : Number(dpRaw);
 
+    // Fungsi Helper
     const normalizePhone = (phone: string) => {
       let cleaned = phone.replace(/\D/g, ''); 
       return cleaned.startsWith('0') ? '62' + cleaned.substring(1) : cleaned;
+    };
+
+    const getCookie = (name: string) => {
+      return document.cookie.split('; ').find(row => row.startsWith(name + '='))?.split('=')[1];
     };
 
     const sha256 = async (message: string) => {
@@ -37,19 +42,21 @@ export default function BookingSuccess() {
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     };
 
-    const getFbc = () => {
-      const match = document.cookie.match(/_fbc=([^;]+)/);
-      return match ? match[1] : localStorage.getItem('fbc') || undefined;
-    };
-
     const runTracking = async () => {
       const normalizedWA = normalizePhone(rawWa);
-      const fbc = getFbc();
+      const fbc = getCookie('_fbc') || localStorage.getItem('fbc');
+      const fbp = getCookie('_fbp');
       const eventId = `${service}_booking_${Date.now()}`;
+      
+      // Pecah nama untuk Matching Quality
+      const namaParts = nama.split(' ');
+      const fn = namaParts[0];
+      const ln = namaParts.slice(1).join(' ');
 
       const hashedEmail = await sha256(email);
       const hashedPhone = await sha256(normalizedWA);
 
+      // 1. Browser Tracking
       const fbq = (window as any).fbq;
       if (typeof fbq === 'function') {
         fbq('track', 'Purchase', {
@@ -57,16 +64,18 @@ export default function BookingSuccess() {
           currency: 'IDR',
           content_name: `Booking_${service}`,
           content_category: service,
-          user_data: { ph: hashedPhone, em: hashedEmail, fbc: fbc }
+          user_data: { ph: hashedPhone, em: hashedEmail, fbc: fbc, fbp: fbp }
         }, { eventID: eventId });
       }
 
+      // 2. Server Tracking (CAPI) - Lengkap dengan fbp, fn, ln
       fetch('/api/meta-capi', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           service, value, event_id: eventId, type: 'booking',
-          user_data: { ph: normalizedWA, em: email, fn: nama, fbc }
+          url: window.location.href,
+          user_data: { ph: normalizedWA, em: email, fn, ln, fbc, fbp }
         })
       }).catch(console.error);
 
@@ -74,7 +83,6 @@ export default function BookingSuccess() {
     };
 
     runTracking();
-
     window.history.replaceState({}, document.title, window.location.pathname);
 
     let message = "";
