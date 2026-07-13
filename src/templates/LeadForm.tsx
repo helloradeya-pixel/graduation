@@ -26,6 +26,11 @@ const LeadForm = () => {
   const [loading, setLoading] = useState(false);
   const segment = getSegment();
 
+  const getCookie = (name: string) => {
+    if (typeof document === 'undefined') return undefined;
+    return document.cookie.split('; ').find(row => row.startsWith(name + '='))?.split('=')[1];
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -44,7 +49,6 @@ const LeadForm = () => {
     const wa = form.wa.trim();
     const email = form.email.trim();
 
-    // Validasi: Sekarang alert ini AKAN MUNCUL karena tombol tidak di-disable
     if (!name || !campus || !month || !wa || !email) {
       alert('⚠️ Mohon isi semua data wajib (Nama, Kampus, Bulan, Email, & WhatsApp)');
       return;
@@ -52,6 +56,10 @@ const LeadForm = () => {
 
     try {
       setLoading(true);
+
+      const namaParts = name.split(' ');
+      const fbc = getCookie('_fbc');
+      const fbp = getCookie('_fbp');
 
       const event_id = trackLead('graduation_form', {
         campus: form.campus,
@@ -73,7 +81,15 @@ const LeadForm = () => {
           segment,
           event_id,
           value: 0,
-          user_data: { ph: wa, em: email }
+          url: window.location.href,
+          user_data: { 
+            ph: wa, 
+            em: email,
+            fn: namaParts[0],
+            ln: namaParts.slice(1).join(' '),
+            fbc: fbc,
+            fbp: fbp 
+          }
         }),
       });
 
@@ -120,7 +136,7 @@ const LeadForm = () => {
           
           <button
             type="submit"
-            disabled={loading} // Tombol hanya disable saat proses kirim (loading)
+            disabled={loading}
             className={`h-[54px] w-full rounded-xl bg-white text-black font-medium transition-opacity ${loading ? 'opacity-50' : 'opacity-100'}`}
           >
             {loading ? 'Mengirim...' : 'Kirim & Konsultasi'}
