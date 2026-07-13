@@ -24,6 +24,12 @@ const LeadForm = () => {
   const [loading, setLoading] = useState(false);
   const segment = getSegment();
 
+  // Helper untuk mengambil cookies tracking
+  const getCookie = (name: string) => {
+    if (typeof document === 'undefined') return undefined;
+    return document.cookie.split('; ').find(row => row.startsWith(name + '='))?.split('=')[1];
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -45,6 +51,10 @@ const LeadForm = () => {
     try {
       setLoading(true);
 
+      const namaParts = name.split(' ');
+      const fbc = getCookie('_fbc');
+      const fbp = getCookie('_fbp');
+
       // 1. Jalankan tracking browser (WA disisipkan di argumen ke-3)
       const event_id = trackLead('couple_form', {
         service: form.service || 'unknown',
@@ -59,7 +69,7 @@ const LeadForm = () => {
         body: JSON.stringify({ ...form, segment }),
       });
 
-      // 3. Kirim ke Meta CAPI
+      // 3. Kirim ke Meta CAPI dengan parameter lengkap
       await fetch('/api/meta-capi', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -69,7 +79,14 @@ const LeadForm = () => {
           segment,
           event_id, 
           value: 0,
-          user_data: { ph: wa } // Data ini akan di-hash di backend
+          url: window.location.href,
+          user_data: { 
+            ph: wa,
+            fn: namaParts[0],
+            ln: namaParts.slice(1).join(' '),
+            fbc: fbc,
+            fbp: fbp
+          }
         }),
       });
 
