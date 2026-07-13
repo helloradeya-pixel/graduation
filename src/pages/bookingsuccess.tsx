@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Head from 'next/head';
 import { gaTrack } from '@/utils/tracking';
 
 export default function BookingSuccess() {
@@ -49,7 +50,6 @@ export default function BookingSuccess() {
       const hashedEmail = await sha256(email);
       const hashedPhone = await sha256(normalizedWA);
 
-      // --- PERBAIKAN: Tanpa declare global, cukup gunakan (window as any) ---
       const fbq = (window as any).fbq;
       if (typeof fbq === 'function') {
         fbq('track', 'Purchase', {
@@ -91,6 +91,9 @@ export default function BookingSuccess() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
+      <Head>
+        <title>Form Booking | Radeya Photography</title>
+      </Head>
       <div className="text-center">
         <h1 className="text-2xl font-bold">Booking Berhasil</h1>
         <p className="mt-2 text-neutral-400">Sedang menghubungkan ke WhatsApp...</p>
