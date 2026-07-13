@@ -47,17 +47,31 @@ export default function FrameKenanganPage() {
     
     const eventId = `booking_${Date.now()}`;
     const namaParts = data.namaTitel.split(' ');
+    const hargaBersih = parseFloat(selectedPaket.harga.replace(/\./g, ''));
     
     // 1. Browser Pixel Tracking
     const fbq = (window as any).fbq;
     if (typeof fbq === 'function') {
-      const hargaBersih = parseFloat(selectedPaket.harga.replace(/\./g, ''));
       fbq('track', 'Purchase', { 
         value: hargaBersih, currency: 'IDR', content_name: selectedPaket.nama
       }, { eventID: eventId });
     }
 
-    // 2. Server-Side Tracking (CAPI)
+    // 2. GA4 Purchase Tracking
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'purchase', {
+        transaction_id: eventId,
+        value: hargaBersih,
+        currency: 'IDR',
+        items: [{
+          item_id: selectedPaket.id,
+          item_name: selectedPaket.nama,
+          price: hargaBersih
+        }]
+      });
+    }
+
+    // 3. Server-Side Tracking (CAPI)
     try {
       await fetch('/api/meta-capi', {
         method: 'POST',
@@ -65,7 +79,7 @@ export default function FrameKenanganPage() {
         body: JSON.stringify({
           service: selectedPaket.nama,
           segment: 'frame',
-          value: selectedPaket.harga.replace(/\./g, ''),
+          value: hargaBersih,
           type: 'booking',
           event_id: eventId,
           url: window.location.href,
@@ -81,7 +95,7 @@ export default function FrameKenanganPage() {
       });
     } catch (e) { console.error("CAPI failed", e); }
 
-    // 3. Notion Integration
+    // 4. Notion Integration
     await fetch('/api/send-frame-kenangan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -120,9 +134,6 @@ export default function FrameKenanganPage() {
             }}>
               <img src={p.img} alt={p.nama} style={{ width: '100%', maxWidth: '300px', borderRadius: '6px', display: 'block' }} />
               <div style={{ fontWeight: 'bold', marginTop: '15px', textAlign: 'center' }}>{p.nama} - IDR {p.harga}</div>
-              <ul style={{ fontSize: '0.9em', color: '#666', textAlign: 'center', padding: 0, marginTop: '10px', width: '100%', listStyleType: 'none' }}>
-                {p.desc.split(', ').map((item, index) => (<li key={index} style={{ marginBottom: '5px' }}>{item}</li>))}
-              </ul>
             </div>
 
             {selectedPaket?.id === p.id && (
