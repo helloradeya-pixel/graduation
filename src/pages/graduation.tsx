@@ -59,7 +59,7 @@ export default function Graduation() {
   return (
     <>
       <Head>
-        <title>Fotografi Wisuda | Radeya Photography</title>
+        <title>Fotografi Wisuda | Radeyaphoto</title>
       </Head>
 
       <Base />
