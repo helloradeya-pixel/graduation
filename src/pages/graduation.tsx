@@ -60,6 +60,7 @@ export default function Graduation() {
     <>
       <Head>
         <title>Fotografi Wisuda | Radeyaphoto</title>
+        <meta name="description" content="Jasa fotografi wisuda estetik & natural dengan arahan pose profesional oleh Radeyaphoto." />
       </Head>
 
       <Base />
