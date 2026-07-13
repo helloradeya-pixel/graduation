@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { AppConfig } from '../utils/AppConfig'; // Import AppConfig
+import { AppConfig } from '../../utils/AppConfig'; // Import AppConfig
 import "./Radeyaphoto.css";
 import { Testimonial } from "../Testimonial";
 
