@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Head from 'next/head'; // Head ditambahkan
 import { Base } from '../templates/Base';
 import { trackGraduationView } from '@/utils/tracking';
 
@@ -58,12 +57,14 @@ export default function Graduation() {
 
   return (
     <>
-      <Head>
-        <title>Fotografi Wisuda | Radeyaphoto</title>
-        <meta name="description" content="Jasa fotografi wisuda estetik & natural dengan arahan pose profesional oleh Radeyaphoto." />
-      </Head>
-
-      <Base />
+      {/* 
+        Bagian Head bawaan dihapus. 
+        Sekarang kita langsung mengirimkan title dan description ke dalam komponen Base.
+      */}
+      <Base 
+        title="Fotografi Wisuda | Radeyaphoto" 
+        description="Jasa fotografi wisuda estetik & natural dengan arahan pose profesional oleh Radeyaphoto." 
+      />
 
       {/* SOFT POPUP */}
       {showPromo && (
