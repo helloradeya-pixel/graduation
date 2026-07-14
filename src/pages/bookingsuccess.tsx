@@ -22,10 +22,9 @@ export default function BookingSuccess() {
     const lokasi = params.get('lokasi') || '';
     const jam = params.get('jam') || '';
     
+    // PERBAIKAN: Logika perhitungan value yang lebih aman
     const dpRaw = params.get('dp') || '0';
-    // Membersihkan input dari simbol titik/koma/spasi
     const dpClean = Number(dpRaw.replace(/[^0-9]/g, ''));
-    // Logika deteksi: jika di bawah 10.000 (singkat), kali 1.000. Jika 10.000 ke atas, anggap nominal utuh.
     const value = dpClean < 10000 ? dpClean * 1000 : dpClean;
 
     // Fungsi Helper
@@ -51,7 +50,6 @@ export default function BookingSuccess() {
       const fbp = getCookie('_fbp');
       const eventId = `${service}_booking_${Date.now()}`;
       
-      // Pecah nama untuk Matching Quality
       const namaParts = nama.split(' ');
       const fn = namaParts[0];
       const ln = namaParts.slice(1).join(' ');
@@ -71,12 +69,16 @@ export default function BookingSuccess() {
         }, { eventID: eventId });
       }
 
-      // 2. Server Tracking (CAPI) - Lengkap dengan fbp, fn, ln
+      // 2. Server Tracking (CAPI) - PERBAIKAN: Mengirim segment agar backend benar memilih Pixel ID
       fetch('/api/meta-capi', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          service, value, event_id: eventId, type: 'booking',
+          service, 
+          segment: service, // Penting agar backend tahu ini graduation/couple/frame
+          value, 
+          event_id: eventId, 
+          type: 'booking',
           url: window.location.href,
           user_data: { ph: normalizedWA, em: email, fn, ln, fbc, fbp }
         })
