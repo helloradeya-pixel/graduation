@@ -23,7 +23,10 @@ export default function BookingSuccess() {
     const jam = params.get('jam') || '';
     
     const dpRaw = params.get('dp') || '0';
-    const value = Number(dpRaw) < 5000 ? Number(dpRaw) * 1000 : Number(dpRaw);
+    // Membersihkan input dari simbol titik/koma/spasi
+    const dpClean = Number(dpRaw.replace(/[^0-9]/g, ''));
+    // Logika deteksi: jika di bawah 10.000 (singkat), kali 1.000. Jika 10.000 ke atas, anggap nominal utuh.
+    const value = dpClean < 10000 ? dpClean * 1000 : dpClean;
 
     // Fungsi Helper
     const normalizePhone = (phone: string) => {
