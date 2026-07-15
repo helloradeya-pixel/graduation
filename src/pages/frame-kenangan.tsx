@@ -41,6 +41,12 @@ export default function FrameKenanganPage() {
       alert('Bukti transfer berhasil diunggah!');
     } catch (err) { alert('Gagal unggah foto.'); }
   };
+  
+const normalizePhone = (phone: string) => {
+  let cleaned = phone.replace(/\D/g, "");
+  if (cleaned.startsWith("0")) cleaned = "62" + cleaned.substring(1);
+  return cleaned;
+};
 
   const handleCheckout = async () => {
     if (!selectedPaket || !buktiUrl) return alert('Pilih paket dan unggah bukti transfer!');
@@ -69,7 +75,7 @@ export default function FrameKenanganPage() {
       });
     }
 
-    // 3. Server-Side Tracking (CAPI)
+        // 3. Server-Side Tracking (CAPI)
     try {
       await fetch('/api/meta-capi', {
         method: 'POST',
@@ -82,12 +88,14 @@ export default function FrameKenanganPage() {
           event_id: eventId,
           url: window.location.href,
           user_data: { 
-            ph: data.wa, 
+            // PERBAIKAN DI SINI: Gunakan fungsi normalizePhone
+            ph: normalizePhone(data.wa), 
             em: data.email,
             fn: namaParts[0],
             ln: namaParts.slice(1).join(' '),
-            fbc: getCookie('_fbc'),
-            fbp: getCookie('_fbp')
+            // Tambahkan backup ke localStorage agar data tidak hilang
+            fbc: getCookie('_fbc') || (typeof window !== 'undefined' ? localStorage.getItem('fbc') : undefined),
+            fbp: getCookie('_fbp') || (typeof window !== 'undefined' ? localStorage.getItem('fbp') : undefined)
           }
         })
       });
