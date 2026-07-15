@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { NextSeo } from 'next-seo';
 import { AppConfig } from '../utils/AppConfig';
 
@@ -14,8 +15,25 @@ const Meta = (props: IMetaProps) => {
   const router = useRouter();
   const MAIN_PIXEL_ID = '804715912719122';
   
-  // LOGIKA BARU: Jika addPixelId ada, pakai itu. Jika tidak, pakai MAIN_PIXEL_ID.
+  // Logika: Jika addPixelId ada, pakai itu. Jika tidak, pakai MAIN_PIXEL_ID.
   const activePixelId = props.addPixelId || MAIN_PIXEL_ID;
+
+  // Otomatis simpan fbc & fbp ke localStorage setiap kali halaman diakses
+  // Ini adalah jaring pengaman agar data tidak hilang saat redirect ke Tally
+  useEffect(() => {
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(';').shift();
+      return null;
+    };
+
+    const fbc = getCookie('_fbc');
+    const fbp = getCookie('_fbp');
+
+    if (fbc) localStorage.setItem('fbc', fbc);
+    if (fbp) localStorage.setItem('fbp', fbp);
+  }, []);
 
   return (
     <>
@@ -29,7 +47,7 @@ const Meta = (props: IMetaProps) => {
         <link rel="icon" type="image/png" sizes="16x16" href={`${router.basePath}/favicon-16x16.png`} key="icon16" />
         <link rel="icon" href={`${router.basePath}/favicon.ico`} key="favicon" />
 
-        {/* META PIXEL - ISOLATED TRACKING (Hanya 1 Pixel yang aktif per halaman) */}
+        {/* META PIXEL */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -42,7 +60,6 @@ const Meta = (props: IMetaProps) => {
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
 
-              // Inisialisasi HANYA pixel yang aktif
               fbq('init', '${activePixelId}');
               fbq('track', 'PageView');
             `,
