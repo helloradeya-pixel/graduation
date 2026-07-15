@@ -38,15 +38,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           action_source: "website",
           event_source_url: body.url || "https://radeyaphoto.com/",
           user_data: {
-            client_user_agent: req.headers["user-agent"] || "",
-            client_ip_address: (req.headers["x-forwarded-for"] as string)?.split(",")[0] || req.socket.remoteAddress || "",
-            ph: ph ? hashData(normalizePhone(ph)) : undefined,
-            em: em ? hashData(em) : undefined,
-            fn: fn ? hashData(fn) : undefined,
-            ln: ln ? hashData(ln) : undefined,
-            fbc: fbc,
-            fbp: fbp,
-          },
+  client_user_agent: req.headers["user-agent"] || "",
+  client_ip_address: (req.headers["x-forwarded-for"] as string)?.split(",")[0] || req.socket.remoteAddress || "",
+  ph: ph ? hashData(normalizePhone(ph)) : undefined,
+  em: em ? hashData(em) : undefined,
+  fn: fn ? hashData(fn) : undefined,
+  ln: ln ? hashData(ln) : undefined,
+  // Menambahkan external_id menggunakan hash email atau telepon untuk meningkatkan match quality
+  external_id: em ? hashData(em) : (ph ? hashData(normalizePhone(ph)) : undefined),
+  // Menggunakan undefined jika nilai null/kosong agar tidak dikirim ke Meta
+  fbc: fbc || undefined,
+  fbp: fbp || undefined,
+},
+
           custom_data: {
             value,
             currency: "IDR",
