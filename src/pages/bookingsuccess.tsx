@@ -49,9 +49,10 @@ export default function BookingSuccess() {
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       const normalizedWA = normalizePhone(rawWa);
-      const fbc = getCookie('_fbc');
-      const fbp = getCookie('_fbp');
-      const eventId = `${service}_booking_${Date.now()}`;
+      // Di dalam runTracking
+const fbc = getCookie('_fbc') || localStorage.getItem('fbc');
+const fbp = getCookie('_fbp') || localStorage.getItem('fbp');
+const eventId = `${service}_booking_${Date.now()}`;
       
       const namaParts = nama.split(' ');
       const fn = namaParts[0];
