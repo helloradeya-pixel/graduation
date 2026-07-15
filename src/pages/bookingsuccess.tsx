@@ -44,9 +44,12 @@ export default function BookingSuccess() {
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     };
 
-    const runTracking = async () => {
+        const runTracking = async () => {
+      // Tunggu 1 detik agar Meta Pixel selesai memproses cookie
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
       const normalizedWA = normalizePhone(rawWa);
-      const fbc = getCookie('_fbc') || localStorage.getItem('fbc');
+      const fbc = getCookie('_fbc');
       const fbp = getCookie('_fbp');
       const eventId = `${service}_booking_${Date.now()}`;
       
@@ -65,22 +68,34 @@ export default function BookingSuccess() {
           currency: 'IDR',
           content_name: `Booking_${service}`,
           content_category: service,
-          user_data: { ph: hashedPhone, em: hashedEmail, fbc: fbc, fbp: fbp }
+          user_data: { 
+            ph: hashedPhone, 
+            em: hashedEmail, 
+            ...(fbc && { fbc }), 
+            ...(fbp && { fbp }) 
+          }
         }, { eventID: eventId });
       }
 
-      // 2. Server Tracking (CAPI) - PERBAIKAN: Mengirim segment agar backend benar memilih Pixel ID
+      // 2. Server Tracking (CAPI)
       fetch('/api/meta-capi', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           service, 
-          segment: service, // Penting agar backend tahu ini graduation/couple/frame
+          segment: service, 
           value, 
           event_id: eventId, 
           type: 'booking',
           url: window.location.href,
-          user_data: { ph: normalizedWA, em: email, fn, ln, fbc, fbp }
+          user_data: { 
+            ph: normalizedWA, 
+            em: email, 
+            fn, 
+            ln, 
+            ...(fbc && { fbc }), 
+            ...(fbp && { fbp }) 
+          }
         })
       }).catch(console.error);
 
