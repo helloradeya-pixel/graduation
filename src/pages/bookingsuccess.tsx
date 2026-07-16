@@ -103,7 +103,7 @@ gaTrack('purchase', {
   service: service,        // Pastikan parameter ini terkirim
   segment: segment         // Kirimkan segment agar bisa dibuat report-nya
 });
-
+};
 
     // 3. Eksekusi Tracking, setelah SELESAI baru pindah ke WA
     runTracking().then(() => {
