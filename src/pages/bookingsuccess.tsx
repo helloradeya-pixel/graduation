@@ -94,8 +94,16 @@ export default function BookingSuccess() {
 
       // KUNCI: Tunggu sampai KEDUANYA sukses
       await Promise.all([browserPromise, serverPromise]);
-      gaTrack('purchase', { transaction_id: eventId, value, currency: 'IDR', content_name: `Booking_${service}`, service });
-    };
+      // Ubah bagian ini di dalam fungsi runTracking
+gaTrack('purchase', { 
+  transaction_id: eventId, 
+  value, 
+  currency: 'IDR', 
+  content_name: `Booking_${service}`, 
+  service: service,        // Pastikan parameter ini terkirim
+  segment: segment         // Kirimkan segment agar bisa dibuat report-nya
+});
+
 
     // 3. Eksekusi Tracking, setelah SELESAI baru pindah ke WA
     runTracking().then(() => {
