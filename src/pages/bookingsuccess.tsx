@@ -63,6 +63,8 @@ export default function BookingSuccess() {
       const fn = namaParts[0];
       const ln = namaParts.slice(1).join(' ');
 
+      const segment = service === 'couple' ? 'couple' : (service === 'frame' ? 'frame' : 'graduation');
+
       const [hashedEmail, hashedPhone] = await Promise.all([sha256(email), sha256(normalizedWA)]);
 
       // Browser Tracking
@@ -84,7 +86,7 @@ export default function BookingSuccess() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          service, value, event_id: eventId, type: 'booking',
+          service, segment, value, event_id: eventId, type: 'booking',
           url: window.location.href,
           user_data: { ph: normalizedWA, em: email, fn, ln, ...(fbc && { fbc }), ...(fbp && { fbp }) }
         })
