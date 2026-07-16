@@ -19,9 +19,30 @@ export default function FrameKenanganPage() {
   };
 
   const paket = [
-    { id: 1, nama: 'Frame Only', harga: '150.000', desc: 'Frame Akrilik Premium 30x40 cm', img: '/assets/images/frame-only.png' },
-    { id: 2, nama: 'Frame + Custom Design', harga: '200.000', desc: 'Frame 30x40 cm, Desain Nama & Jurusan, Free 1x Revisi', img: '/assets/images/frame-custom.png' },
-    { id: 3, nama: 'Full Service', harga: '250.000', desc: 'Frame Akrilik Premium 30x40 cm, Desain Nama & Jurusan, Cetak 9 Foto, Free Layout & 1x Revisi', img: '/assets/images/full-service.png' }
+    { 
+      id: 1, 
+      nama: 'Frame Only', 
+      harga: '150.000', 
+      //hargaCoret: '185.000', 
+      desc: 'Frame Akrilik Premium 30x40 cm', 
+      img: '/assets/images/frame-only.png' 
+    },
+    { 
+      id: 2, 
+      nama: 'Frame + Custom Design', 
+      harga: '180.000', 
+      hargaCoret: '200.000', 
+      desc: 'Frame 30x40 cm, Desain Nama & Jurusan, Free 1x Revisi', 
+      img: '/assets/images/frame-custom.png' 
+    },
+    { 
+      id: 3, 
+      nama: 'Full Service', 
+      harga: '220.000', 
+      hargaCoret: '250.000', 
+      desc: 'Frame Akrilik Premium 30x40 cm, Desain Nama & Jurusan, Cetak 9 Foto, Free Layout & 1x Revisi', 
+      img: '/assets/images/full-service.png' 
+    }
   ];
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,20 +172,50 @@ ${buktiUrl}
 
       <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Pilih Paket Layanan</h1>
       
-      <div style={{ display: 'grid', gap: '20px', marginBottom: '30px' }}>
-        {paket.map((p) => (
-          <div key={p.id}>
-            <div onClick={() => setSelectedPaket(p)} style={{ 
-                border: selectedPaket?.id === p.id ? '2px solid #000' : '1px solid #ddd',
-                padding: '20px', borderRadius: '12px', cursor: 'pointer', background: '#fff',
-                display: 'flex', flexDirection: 'column', alignItems: 'center'
+     <div style={{ display: 'grid', gap: '20px', marginBottom: '30px' }}>
+  {paket.map((p) => (
+    <div key={p.id}>
+      <div 
+        onClick={() => setSelectedPaket(p)} 
+        style={{ 
+          border: selectedPaket?.id === p.id ? '2px solid #000' : '1px solid #ddd',
+          padding: '20px', 
+          borderRadius: '12px', 
+          cursor: 'pointer', 
+          background: '#fff',
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center'
+        }}
+      >
+        <img src={p.img} alt={p.nama} style={{ width: '100%', maxWidth: '300px', borderRadius: '6px', display: 'block' }} />
+        
+        <div style={{ fontWeight: 'bold', marginTop: '15px', textAlign: 'center', fontSize: '1.1em' }}>
+          {p.nama}
+        </div>
+
+        {/* Bagian Harga dengan Coret */}
+        <div style={{ marginTop: '5px', textAlign: 'center' }}>
+          {p.hargaCoret && (
+            <span style={{ 
+              textDecoration: 'line-through', 
+              color: '#999', 
+              fontSize: '0.9em', 
+              marginRight: '8px' 
             }}>
-              <img src={p.img} alt={p.nama} style={{ width: '100%', maxWidth: '300px', borderRadius: '6px', display: 'block' }} />
-              <div style={{ fontWeight: 'bold', marginTop: '15px', textAlign: 'center' }}>{p.nama} - IDR {p.harga}</div>
-              <ul style={{ fontSize: '0.9em', color: '#666', textAlign: 'center', padding: 0, marginTop: '10px', width: '100%', listStyleType: 'none' }}>
-                {p.desc.split(', ').map((item, index) => (<li key={index} style={{ marginBottom: '5px' }}>{item}</li>))}
-              </ul>
-            </div>
+              IDR {p.hargaCoret}
+            </span>
+          )}
+          <span style={{ fontWeight: 'bold', color: '#000', fontSize: '1.1em' }}>
+            IDR {p.harga}
+          </span>
+        </div>
+
+        <ul style={{ fontSize: '0.9em', color: '#666', textAlign: 'center', padding: 0, marginTop: '10px', width: '100%', listStyleType: 'none' }}>
+          {p.desc.split(', ').map((item, index) => (<li key={index} style={{ marginBottom: '5px' }}>{item}</li>))}
+        </ul>
+      </div>
+
 
             {selectedPaket?.id === p.id && (
               <div style={{ background: '#fdfdfd', padding: '20px', borderRadius: '12px', border: '1px solid #000', marginTop: '10px' }}>
