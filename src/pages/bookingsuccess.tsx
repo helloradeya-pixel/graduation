@@ -44,80 +44,64 @@ export default function BookingSuccess() {
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     };
 
-        const runTracking = async () => {
-      // Tunggu 1 detik agar Meta Pixel selesai memproses cookie
-      await new Promise(resolve => setTimeout(resolve, 1000));
+       
+    // 1. Definisikan pesan & link WA terlebih dahulu agar siap digunakan
+    let message = service === 'couple' 
+      ? `Halo kak, saya sudah booking yah atas nama ${nama}.\n\n*Detail Booking:*\nPasangan: ${pasangan}\nAcara: ${acara}\nTanggal: ${tanggal}\nJam: ${jam}\nLokasi: ${lokasi}\nPaket: ${paket}\nDP: Rp${value.toLocaleString('id-ID')}`
+      : `Halo kak, saya sudah booking ${service} atas nama ${nama}.\n\n*Detail Booking:*\nPackage: ${paket}\nTanggal: ${tanggal}\nJam: ${jamMulai} - ${jamSelesai}\nDP: Rp${value.toLocaleString('id-ID')}`;
 
+    const waLink = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
+
+    // 2. Fungsi Tracking yang "Mengunci" browser sampai data terkirim
+    const runTracking = async () => {
       const normalizedWA = normalizePhone(rawWa);
-      // Di dalam runTracking
-const fbc = getCookie('_fbc') || localStorage.getItem('fbc');
-const fbp = getCookie('_fbp') || localStorage.getItem('fbp');
-const eventId = `${service}_booking_${Date.now()}`;
+      const fbc = getCookie('_fbc') || localStorage.getItem('fbc');
+      const fbp = getCookie('_fbp') || localStorage.getItem('fbp');
+      const eventId = `${service}_booking_${Date.now()}`;
       
       const namaParts = nama.split(' ');
       const fn = namaParts[0];
       const ln = namaParts.slice(1).join(' ');
 
-      const hashedEmail = await sha256(email);
-      const hashedPhone = await sha256(normalizedWA);
+      const [hashedEmail, hashedPhone] = await Promise.all([sha256(email), sha256(normalizedWA)]);
 
-      // 1. Browser Tracking
-      const fbq = (window as any).fbq;
-      if (typeof fbq === 'function') {
-        fbq('track', 'Purchase', {
-          value,
-          currency: 'IDR',
-          content_name: `Booking_${service}`,
-          content_category: service,
-          user_data: { 
-            ph: hashedPhone, 
-            em: hashedEmail, 
-            ...(fbc && { fbc }), 
-            ...(fbp && { fbp }) 
-          }
-        }, { eventID: eventId });
-      }
+      // Browser Tracking
+      const browserPromise = new Promise((resolve) => {
+        const fbq = (window as any).fbq;
+        if (typeof fbq === 'function') {
+          fbq('track', 'Purchase', {
+            value, currency: 'IDR', content_name: `Booking_${service}`,
+            user_data: { ph: hashedPhone, em: hashedEmail, ...(fbc && { fbc }), ...(fbp && { fbp }) }
+          }, { eventID: eventId });
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      });
 
-      // 2. Server Tracking (CAPI)
-      fetch('/api/meta-capi', {
+      // Server Tracking
+      const serverPromise = fetch('/api/meta-capi', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          service, 
-          segment: service, 
-          value, 
-          event_id: eventId, 
-          type: 'booking',
+          service, value, event_id: eventId, type: 'booking',
           url: window.location.href,
-          user_data: { 
-            ph: normalizedWA, 
-            em: email, 
-            fn, 
-            ln, 
-            ...(fbc && { fbc }), 
-            ...(fbp && { fbp }) 
-          }
+          user_data: { ph: normalizedWA, em: email, fn, ln, ...(fbc && { fbc }), ...(fbp && { fbp }) }
         })
-      }).catch(console.error);
+      });
 
+      // KUNCI: Tunggu sampai KEDUANYA sukses
+      await Promise.all([browserPromise, serverPromise]);
       gaTrack('purchase', { transaction_id: eventId, value, currency: 'IDR', content_name: `Booking_${service}`, service });
     };
 
-    runTracking();
+    // 3. Eksekusi Tracking, setelah SELESAI baru pindah ke WA
+    runTracking().then(() => {
+      window.location.href = waLink;
+    });
+
     window.history.replaceState({}, document.title, window.location.pathname);
-
-    let message = "";
-    if (service === 'couple') {
-      message = `Halo kak, saya sudah booking yah atas nama ${nama}.\n\n*Detail Booking:*\nPasangan: ${pasangan}\nAcara: ${acara}\nTanggal: ${tanggal}\nJam: ${jam}\nLokasi: ${lokasi}\nPaket: ${paket}\nDP: Rp${value.toLocaleString('id-ID')}`;
-    } else {
-      message = `Halo kak, saya sudah booking ${service} atas nama ${nama}.\n\n*Detail Booking:*\nPackage: ${paket}\nTanggal: ${tanggal}\nJam: ${jamMulai} - ${jamSelesai}\nDP: Rp${value.toLocaleString('id-ID')}`;
-    }
-
-    const waLink = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
-    const timer = setTimeout(() => { window.location.href = waLink; }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
-
+ 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
       <Head>
