@@ -37,6 +37,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           event_id,
           action_source: "website",
           event_source_url: body.url || "https://radeyaphoto.com/",
+           // TAMBAHKAN BARIS DI BAWAH INI:
+          test_event_code: "TEST13400", 
           user_data: {
   client_user_agent: req.headers["user-agent"] || "",
   client_ip_address: (req.headers["x-forwarded-for"] as string)?.split(",")[0] || req.socket.remoteAddress || "",
