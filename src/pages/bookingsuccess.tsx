@@ -101,6 +101,7 @@ export default function BookingSuccess() {
     });
 
     window.history.replaceState({}, document.title, window.location.pathname);
+  }, []); // <--- KURUNG TUTUP INI YANG TADI HILANG
  
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
