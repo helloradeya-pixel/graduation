@@ -109,7 +109,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
 
       window.location.href = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
-      setForm({ name: '', domisili: '', service: '', wa: '' });
+      setForm({ name: '', email: '', domisili: '', service: '', wa: '' });
 
     } catch (error) {
       console.error(error);
