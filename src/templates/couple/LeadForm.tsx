@@ -6,7 +6,7 @@ import { trackLead } from '@/utils/tracking';
 
 type FormState = {
   name: string;
-  instagram: string;
+  email: string;
   domisili: string;
   service: string;
   wa: string;
@@ -15,7 +15,7 @@ type FormState = {
 const LeadForm = () => {
   const [form, setForm] = useState<FormState>({
     name: '',
-    instagram: '',
+    email: '',
     domisili: '',
     service: '',
     wa: '',
@@ -59,7 +59,7 @@ const LeadForm = () => {
       const event_id = trackLead('couple_form', {
         service: form.service || 'unknown',
         domisili: form.domisili || '-',
-        instagram: form.instagram || '-',
+        email: form.email || '-',
       }, wa);
 
       // 2. Simpan Lead ke Database (Notion)
@@ -82,6 +82,7 @@ const LeadForm = () => {
           url: window.location.href,
           user_data: { 
             ph: wa,
+            em: form.email || undefined,
             fn: namaParts[0],
             ln: namaParts.slice(1).join(' '),
             fbc: fbc,
@@ -101,7 +102,6 @@ const LeadForm = () => {
 Saya mau tanya info paket & pricelist couple photoshoot:
 
 Nama: ${name}
-Instagram: ${form.instagram || '-'}
 Domisili: ${form.domisili || '-'}
 Paket: ${form.service || '-'}
 
@@ -109,7 +109,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
 
       window.location.href = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
-      setForm({ name: '', instagram: '', domisili: '', service: '', wa: '' });
+      setForm({ name: '', domisili: '', service: '', wa: '' });
 
     } catch (error) {
       console.error(error);
@@ -133,7 +133,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
 
         <form onSubmit={handleSubmit} className="mt-12 space-y-4">
           <input name="name" value={form.name} onChange={handleChange} placeholder="Nama Lengkap *" className={fieldStyle} />
-          <input name="instagram" value={form.instagram} onChange={handleChange} placeholder="Instagram" className={fieldStyle} />
+          <input name="email" value={form.email} onChange={handleChange} placeholder="email" className={fieldStyle} />
           <input name="domisili" value={form.domisili} onChange={handleChange} placeholder="Domisili" className={fieldStyle} />
           <select name="service" value={form.service} onChange={handleChange} className={fieldStyle}>
             <option value="">Pilih Paket</option>
