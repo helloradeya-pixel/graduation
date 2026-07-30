@@ -16,7 +16,7 @@ export async function POST(req: Request) {
         Name: {
           title: [{ text: { content: body.name || '' } }],
         },
-        email: {
+        Email: {
           email: body.email || null,
         },
         Domisili: {
