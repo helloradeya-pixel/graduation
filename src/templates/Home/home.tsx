@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Link from 'next/link';
 import { AppConfig } from '../../utils/AppConfig'; // Import AppConfig
 import "./Radeyaphoto.css";
 import { Testimonial } from "../Testimonial";
@@ -44,13 +45,21 @@ export default function RadeyaphotoPage() {
         </p>
 
         <div className="buttons">
-          <a 
-            href="/frame-kenangan" 
+               {/* 2. Tombol Frame Kenangan diubah menggunakan Link dengan query UTM */}
+          <Link 
+            href={{
+              pathname: '/frame-kenangan',
+              query: { 
+                utm_source: 'tiktok_bio', 
+                utm_medium: 'organic', 
+                utm_campaign: 'landing_page' 
+              }
+            }}
             className="link-btn"
             onClick={() => trackClick('Pesan Frame Kenangan')}
           >
             FRAME KENANGAN
-          </a>
+          </Link>
 
           <a
             href="https://api.whatsapp.com/send?phone=628211251570&text=Halo%20admin,%20aku%20mau%20tanya-tanya%20boleh%20yah.&utm_source=tiktok_bio&utm_medium=organic&utm_campaign=landing_page"
