@@ -133,7 +133,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
 
         <form onSubmit={handleSubmit} className="mt-12 space-y-4">
           <input name="name" value={form.name} onChange={handleChange} placeholder="Nama Lengkap *" className={fieldStyle} />
-          <input name="email" value={form.email} onChange={handleChange} placeholder="email" className={fieldStyle} />
+          <input name="email" value={form.email} onChange={handleChange} placeholder="Email" className={fieldStyle} />
           <input name="domisili" value={form.domisili} onChange={handleChange} placeholder="Domisili" className={fieldStyle} />
           <select name="service" value={form.service} onChange={handleChange} className={fieldStyle}>
             <option value="">Pilih Paket</option>
