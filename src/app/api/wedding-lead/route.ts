@@ -17,7 +17,7 @@ export async function POST(req: Request) {
           title: [{ text: { content: body.name || '' } }],
         },
         email: {
-          rich_text: [{ text: { content: body.email || '' } }],
+          email: body.email || null,
         },
         Domisili: {
           rich_text: [{ text: { content: body.domisili || '' } }],
