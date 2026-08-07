@@ -88,9 +88,13 @@ export default function BookingSuccessWisuda() {
       });
     };
 
-    runTracking().then(() => {
-      window.location.href = waLink;
+      runTracking().then(() => {
+      // Beri jeda 1 detik (1000 ms) agar data GA4 & Meta Pixel terkirim sempurna
+      setTimeout(() => {
+        window.location.href = waLink;
+      }, 1500);
     });
+
 
     window.history.replaceState({}, document.title, window.location.pathname);
   }, []);
