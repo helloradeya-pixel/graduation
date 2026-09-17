@@ -44,9 +44,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const hashedLastName = hashData(ln);
     const externalId = hashedEmail || hashedPhone || undefined;
 
-    // Client IP Extraction
-    const rawIp = (req.headers["x-forwarded-for"] as string) || req.socket.remoteAddress || "";
-    const client_ip_address = rawIp.split(",")[0].trim();
+    // Client IP Extraction (Aman dari type undefined)
+    const xForwardedFor = req.headers["x-forwarded-for"];
+    const rawIp = typeof xForwardedFor === "string" ? xForwardedFor : req.socket.remoteAddress || "";
+    const client_ip_address = (rawIp || "").split(",")[0]?.trim() || "";
 
     // Objek user_data bersih (hanya mengirimkan field yang valid)
     const userDataObj: Record<string, any> = {
