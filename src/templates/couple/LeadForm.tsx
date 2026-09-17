@@ -55,12 +55,12 @@ const LeadForm = () => {
       const fbc = getCookie('_fbc');
       const fbp = getCookie('_fbp');
 
-      // 1. Jalankan tracking browser (WA disisipkan di argumen ke-3)
+      // 1. Jalankan tracking browser (wa dihapus dari argumen ke-3)
       const event_id = trackLead('couple_form', {
         service: form.service || 'unknown',
         domisili: form.domisili || '-',
         email: form.email || '-',
-      }, wa);
+      });
 
       // 2. Simpan Lead ke Database (Notion)
       const res = await fetch('/api/wedding-lead', {
@@ -97,19 +97,10 @@ const LeadForm = () => {
         return;
       }
 
-      const message = `Halo Admin Radeya 👋
-
-Saya mau tanya info paket & pricelist couple photoshoot:
-
-Nama: ${name}
-Domisili: ${form.domisili || '-'}
-Paket: ${form.service || '-'}
-
-Boleh dibantu info detail paketnya ya 🙏`;
-
-      window.location.href = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
+      const message = `Halo Admin Radeya 👋\n\nSaya mau tanya info paket & pricelist couple photoshoot:\n\nNama: ${name}\nDomisili: ${form.domisili || '-'}\nPaket: ${form.service || '-'}\n\nBoleh dibantu info detail paketnya ya 🙏`;
 
       setForm({ name: '', email: '', domisili: '', service: '', wa: '' });
+      window.location.href = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
     } catch (error) {
       console.error(error);
@@ -136,7 +127,7 @@ Boleh dibantu info detail paketnya ya 🙏`;
           <input name="email" value={form.email} onChange={handleChange} placeholder="Email" className={fieldStyle} />
           <input name="domisili" value={form.domisili} onChange={handleChange} placeholder="Domisili" className={fieldStyle} />
           <select name="service" value={form.service} onChange={handleChange} className={fieldStyle}>
-            <option value="">Pilih Paket</option>
+            <option value="" disabled hidden>Pilih Paket</option>
             <option value="Prewedding">Prewedding</option>
             <option value="Engagement">Engagement</option>
             <option value="Wedding">Wedding</option>
