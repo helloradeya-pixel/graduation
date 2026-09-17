@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -61,10 +62,11 @@ const LeadForm = () => {
       const fbc = getCookie('_fbc');
       const fbp = getCookie('_fbp');
 
+      // PERBAIKAN DI BARIS INI (wa dihapus)
       const event_id = trackLead('graduation_form', {
         campus: form.campus,
         month: form.month,
-      }, wa);
+      });
 
       await fetch('/api/lead', {
         method: 'POST',
@@ -119,13 +121,13 @@ const LeadForm = () => {
           <input name="name" value={form.name} onChange={handleChange} placeholder="Nama Lengkap *" className={fieldStyle} />
           <input name="campus" value={form.campus} onChange={handleChange} placeholder="Universitas *" className={fieldStyle} />
           <select name="month" value={form.month} onChange={handleChange} className={fieldStyle}>
-            <option value="">Perkiraan Bulan Wisuda *</option>
+            <option value="" disabled hidden>Perkiraan Bulan Wisuda *</option>
             {['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'].map((m) => (
               <option key={m} value={m}>{m}</option>
             ))}
           </select>
           <select name="budget" value={form.budget} onChange={handleChange} className={fieldStyle}>
-            <option value="">Pilih Budget</option>
+            <option value="" disabled hidden>Pilih Budget</option>
             <option value="400K - 600K">400K - 600K</option>
             <option value="600K - 800K">600K - 800K</option>
             <option value="800K - 1 Juta">800K - 1 Juta</option>
