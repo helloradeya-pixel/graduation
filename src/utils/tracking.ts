@@ -3,16 +3,9 @@ import { getSegment } from './getSegment';
 type TrackLabel = string;
 const isBrowser = () => typeof window !== 'undefined';
 
-// Helper: Membuat ID unik untuk deduplikasi Meta (Penting untuk CAPI/Pixel)
+// Helper: Generator Event ID unik untuk deduplikasi Meta Pixel & CAPI
 export const generateEventId = () => {
   return `${getSegment()}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-};
-
-// Helper: Ambil FBC (Facebook Click ID) dari cookie untuk akurasi pelacakan
-const getFbc = () => {
-  if (!isBrowser()) return undefined;
-  const match = document.cookie.match(/_fbc=([^;]+)/);
-  return match ? match[1] : undefined;
 };
 
 const getBasePayload = () => ({
@@ -22,21 +15,18 @@ const getBasePayload = () => ({
 // =========================
 // META PIXEL WRAPPER
 // =========================
-const metaTrack = (event: string, event_id: string, params?: any, userData?: any) => {
+const metaTrack = (event: string, event_id: string, params?: any) => {
   if (!isBrowser()) return;
-
-  const finalUserData = {
-    ...userData,
-    fbc: getFbc(),
-  };
 
   const payload = {
     ...getBasePayload(),
     ...params,
-    user_data: finalUserData,
   };
 
-  // Menggunakan trackSingle agar tidak bentrok jika ada 2 pixel
+  // Parameter 1: Event Type ('track')
+  // Parameter 2: Event Name ('Lead' / 'Contact')
+  // Parameter 3: Custom Data Payload
+  // Parameter 4: Option Object berisi eventID untuk deduplikasi CAPI
   window.fbq?.('track', event, payload, { eventID: event_id });
 };
 
@@ -54,33 +44,33 @@ export const gaTrack = (event: string, params?: any) => {
 // =========================
 // KONVERSI: WHATSAPP CLICK
 // =========================
-export const trackWA = (label: TrackLabel = 'unknown', extra?: Record<string, any>, wa?: string) => {
+export const trackWA = (label: TrackLabel = 'unknown', extra?: Record<string, any>) => {
   const segment = getSegment();
   const event_id = generateEventId();
-  const userData = wa ? { ph: wa } : {};
 
   metaTrack('Contact', event_id, {
     content_name: `WA_${segment}_${label}`,
-    segment, // Segmentasi tetap dikirim ke Meta
+    segment,
     ...extra,
-  }, userData);
+  });
 
   gaTrack('click_whatsapp', { event_label: label, segment, ...extra });
+
+  return event_id;
 };
 
 // =========================
 // KONVERSI: LEAD FORM
 // =========================
-export const trackLead = (label: TrackLabel = 'form_submit', extra?: Record<string, any>, wa?: string) => {
+export const trackLead = (label: TrackLabel = 'form_submit', extra?: Record<string, any>) => {
   const segment = getSegment();
   const event_id = generateEventId();
-  const userData = wa ? { ph: wa } : {};
 
   metaTrack('Lead', event_id, {
     content_name: `Lead_${segment}_${label}`,
-    segment, // Segmentasi tetap dikirim ke Meta
+    segment,
     ...extra,
-  }, userData);
+  });
 
   gaTrack('generate_lead', { event_label: label, segment, ...extra });
   
@@ -89,7 +79,6 @@ export const trackLead = (label: TrackLabel = 'form_submit', extra?: Record<stri
 
 // =========================
 // PAGE VIEW (GA4 ONLY)
-// Meta Pixel sudah handle otomatis melalui Meta.tsx
 // =========================
 export const trackGraduationView = () => {
   if (!isBrowser()) return;
