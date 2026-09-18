@@ -12,6 +12,35 @@ const getBasePayload = () => ({
   segment: getSegment(),
 });
 
+// Helper: Ambil Cookie Pelacak Meta (_fbp & _fbc)
+const getCookie = (name: string) => {
+  if (!isBrowser()) return '';
+  return document.cookie.split('; ').find((row) => row.startsWith(`${name}=`))?.split('=')[1] || '';
+};
+
+// Helper: Tembak Event ke API Handler CAPI Next.js kamu
+const sendCapi = (event_id: string, label: string, eventType: 'inquiry' | 'booking' = 'inquiry', extraUserData?: any) => {
+  if (!isBrowser()) return;
+
+  // Pastikan path endpoint ini sesuai dengan lokasi file API handler kamu (misal: /api/meta-capi)
+  fetch('/api/meta-capi', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      event_id,
+      type: eventType, // 'inquiry' otomatis diubah API handler menjadi event 'Lead'
+      segment: getSegment(),
+      service: label,
+      url: window.location.href,
+      user_data: {
+        fbp: getCookie('_fbp'),
+        fbc: getCookie('_fbc'),
+        ...extraUserData,
+      },
+    }),
+  }).catch((err) => console.error('CAPI Error:', err));
+};
+
 // =========================
 // META PIXEL WRAPPER
 // =========================
@@ -23,10 +52,6 @@ const metaTrack = (event: string, event_id: string, params?: any) => {
     ...params,
   };
 
-  // Parameter 1: Event Type ('track')
-  // Parameter 2: Event Name ('Lead' / 'Contact')
-  // Parameter 3: Custom Data Payload
-  // Parameter 4: Option Object berisi eventID untuk deduplikasi CAPI
   window.fbq?.('track', event, payload, { eventID: event_id });
 };
 
@@ -47,13 +72,19 @@ export const gaTrack = (event: string, params?: any) => {
 export const trackWA = (label: TrackLabel = 'unknown', extra?: Record<string, any>) => {
   const segment = getSegment();
   const event_id = generateEventId();
+  const labelName = `WA_${segment}_${label}`;
 
-  metaTrack('Contact', event_id, {
-    content_name: `WA_${segment}_${label}`,
+  // 1. Meta Pixel (Browser) -> Mengirim 'Lead' (bukan 'Contact' lagi)
+  metaTrack('Lead', event_id, {
+    content_name: labelName,
     segment,
     ...extra,
   });
 
+  // 2. Meta CAPI (Server) -> Tembak API Route Next.js dengan type 'inquiry' (menjadi 'Lead')
+  sendCapi(event_id, labelName, 'inquiry');
+
+  // 3. Google Analytics 4
   gaTrack('click_whatsapp', { event_label: label, segment, ...extra });
 
   return event_id;
@@ -62,18 +93,28 @@ export const trackWA = (label: TrackLabel = 'unknown', extra?: Record<string, an
 // =========================
 // KONVERSI: LEAD FORM
 // =========================
-export const trackLead = (label: TrackLabel = 'form_submit', extra?: Record<string, any>) => {
+export const trackLead = (
+  label: TrackLabel = 'form_submit',
+  userData?: { ph?: string; em?: string; fn?: string; ln?: string },
+  extra?: Record<string, any>
+) => {
   const segment = getSegment();
   const event_id = generateEventId();
+  const labelName = `Lead_${segment}_${label}`;
 
+  // 1. Meta Pixel (Browser) -> Mengirim 'Lead'
   metaTrack('Lead', event_id, {
-    content_name: `Lead_${segment}_${label}`,
+    content_name: labelName,
     segment,
     ...extra,
   });
 
+  // 2. Meta CAPI (Server) -> Mengirim data form (ph, em, fn, ln) untuk di-hash API handler
+  sendCapi(event_id, labelName, 'inquiry', userData);
+
+  // 3. Google Analytics 4
   gaTrack('generate_lead', { event_label: label, segment, ...extra });
-  
+
   return event_id;
 };
 
