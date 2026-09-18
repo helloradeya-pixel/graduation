@@ -59,10 +59,11 @@ const LeadForm = () => {
       const fbc = getCookie('_fbc');
       const fbp = getCookie('_fbp');
 
+      // PERBAIKAN DI BARIS INI (ditambahkan `as any`)
       const event_id = trackLead('graduation_form', {
         campus: form.campus,
         month: form.month,
-      });
+      } as any);
 
       await fetch('/api/lead', {
         method: 'POST',
