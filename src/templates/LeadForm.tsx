@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -9,7 +8,6 @@ type FormState = {
   name: string;
   campus: string;
   month: string;
-  budget: string;
   email: string;
   wa: string;
 };
@@ -19,7 +17,6 @@ const LeadForm = () => {
     name: '',
     campus: '',
     month: '',
-    budget: '',
     email: '',
     wa: '',
   });
@@ -62,7 +59,6 @@ const LeadForm = () => {
       const fbc = getCookie('_fbc');
       const fbp = getCookie('_fbp');
 
-      // PERBAIKAN DI BARIS INI (wa dihapus)
       const event_id = trackLead('graduation_form', {
         campus: form.campus,
         month: form.month,
@@ -97,7 +93,7 @@ const LeadForm = () => {
 
       const message = `Halo Admin Radeya 👋\n\nSaya mau tanya info paket & pricelist graduation photoshoot.\n\nNama: ${name}\nKampus: ${campus}\nPerkiraan Wisuda: ${month}\n\nBoleh dibantu info detail paketnya ya 🙏`;
 
-      setForm({ name: '', campus: '', month: '', budget: '', email: '', wa: '' });
+      setForm({ name: '', campus: '', month: '', email: '', wa: '' });
       window.location.href = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
     } catch (error) {
       console.log(error);
@@ -125,13 +121,6 @@ const LeadForm = () => {
             {['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'].map((m) => (
               <option key={m} value={m}>{m}</option>
             ))}
-          </select>
-          <select name="budget" value={form.budget} onChange={handleChange} className={fieldStyle}>
-            <option value="" disabled hidden>Pilih Budget</option>
-            <option value="400K - 600K">400K - 600K</option>
-            <option value="600K - 800K">600K - 800K</option>
-            <option value="800K - 1 Juta">800K - 1 Juta</option>
-            <option value="1 Juta+">1 Juta+</option>
           </select>
           <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="Alamat Email *" className={fieldStyle} />
           <input name="wa" value={form.wa} onChange={handleChange} placeholder="WhatsApp *" className={fieldStyle} />
