@@ -19,7 +19,13 @@ const getCookie = (name: string) => {
 };
 
 // Helper: Tembak Event ke API Handler CAPI Next.js kamu
-const sendCapi = (event_id: string, label: string, eventType: 'inquiry' | 'booking' = 'inquiry', extraUserData?: any) => {
+const sendCapi = (
+  event_id: string,
+  label: string,
+  eventType: 'inquiry' | 'booking' = 'inquiry',
+  extraUserData?: any,
+  customData?: any
+) => {
   if (!isBrowser()) return;
 
   fetch('/api/meta-capi', {
@@ -36,6 +42,7 @@ const sendCapi = (event_id: string, label: string, eventType: 'inquiry' | 'booki
         fbc: getCookie('_fbc'),
         ...extraUserData,
       },
+      ...customData, // campus & month dikirim ke tingkat utama payload
     }),
   }).catch((err) => console.error('CAPI Error:', err));
 };
@@ -73,7 +80,7 @@ export const trackWA = (label: TrackLabel = 'unknown', extra?: Record<string, an
   const event_id = generateEventId();
   const labelName = `WA_${segment}_${label}`;
 
-  // 1. Meta Pixel (Browser) -> Mengirim 'Lead' (Bukan 'Contact')
+  // 1. Meta Pixel (Browser) -> Mengirim 'Lead'
   metaTrack('Lead', event_id, {
     content_name: labelName,
     segment,
@@ -92,7 +99,6 @@ export const trackWA = (label: TrackLabel = 'unknown', extra?: Record<string, an
 // =========================
 // KONVERSI: LEAD FORM
 // =========================
-// Diperbarui agar menerima userData fleksibel (termasuk campus, month, ph, em, dll)
 export const trackLead = (
   label: TrackLabel = 'form_submit',
   userData?: { ph?: string; em?: string; fn?: string; ln?: string; campus?: string; month?: string; [key: string]: any },
@@ -102,19 +108,27 @@ export const trackLead = (
   const event_id = generateEventId();
   const labelName = `Lead_${segment}_${label}`;
 
-  // 1. Meta Pixel (Browser) -> Mengirim 'Lead'
-  metaTrack('Lead', event_id, {
+  // Pisahkan identitas user (ph, em, fn, ln) dan custom parameter (campus, month)
+  const { ph, em, fn, ln, campus, month, ...restUserData } = userData || {};
+
+  const userIdentity = { ph, em, fn, ln };
+  const customParams = {
     content_name: labelName,
     segment,
-    ...userData,
+    campus,
+    month,
+    ...restUserData,
     ...extra,
-  });
+  };
 
-  // 2. Meta CAPI (Server) -> Mengirim data form untuk diproses oleh API handler
-  sendCapi(event_id, labelName, 'inquiry', userData);
+  // 1. Meta Pixel (Browser) -> Mengirim 'Lead' + Custom Parameters (campus & month)
+  metaTrack('Lead', event_id, customParams);
+
+  // 2. Meta CAPI (Server) -> Mengirim identitas ke user_data & parameter bisnis ke customData
+  sendCapi(event_id, labelName, 'inquiry', userIdentity, customParams);
 
   // 3. Google Analytics 4
-  gaTrack('generate_lead', { event_label: label, segment, ...userData, ...extra });
+  gaTrack('generate_lead', { event_label: label, segment, ...customParams });
 
   return event_id;
 };
