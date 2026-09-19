@@ -18,7 +18,7 @@ const getCookie = (name: string) => {
   return document.cookie.split('; ').find((row) => row.startsWith(`${name}=`))?.split('=')[1] || '';
 };
 
-// Helper: Tembak Event ke API Handler CAPI Next.js kamu
+// Helper: Tembak Event ke API Handler CAPI Next.js
 const sendCapi = (
   event_id: string,
   label: string,
@@ -127,8 +127,8 @@ export const trackLead = (
   // 2. Meta CAPI (Server) -> Mengirim identitas ke user_data & parameter bisnis ke customData
   sendCapi(event_id, labelName, 'inquiry', userIdentity, customParams);
 
-  // 3. Google Analytics 4
-  gaTrack('generate_lead', { event_label: label, segment, ...customParams });
+  // 3. Google Analytics 4 (segment di dalam customParams tidak dibentrokan lagi)
+  gaTrack('generate_lead', { event_label: label, ...customParams });
 
   return event_id;
 };
