@@ -22,7 +22,6 @@ const getCookie = (name: string) => {
 const sendCapi = (event_id: string, label: string, eventType: 'inquiry' | 'booking' = 'inquiry', extraUserData?: any) => {
   if (!isBrowser()) return;
 
-  // Pastikan path endpoint ini sesuai dengan lokasi file API handler kamu (misal: /api/meta-capi)
   fetch('/api/meta-capi', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -74,14 +73,14 @@ export const trackWA = (label: TrackLabel = 'unknown', extra?: Record<string, an
   const event_id = generateEventId();
   const labelName = `WA_${segment}_${label}`;
 
-  // 1. Meta Pixel (Browser) -> Mengirim 'Lead' (bukan 'Contact' lagi)
+  // 1. Meta Pixel (Browser) -> Mengirim 'Lead' (Bukan 'Contact')
   metaTrack('Lead', event_id, {
     content_name: labelName,
     segment,
     ...extra,
   });
 
-  // 2. Meta CAPI (Server) -> Tembak API Route Next.js dengan type 'inquiry' (menjadi 'Lead')
+  // 2. Meta CAPI (Server) -> Tembak API Route Next.js
   sendCapi(event_id, labelName, 'inquiry');
 
   // 3. Google Analytics 4
@@ -93,9 +92,10 @@ export const trackWA = (label: TrackLabel = 'unknown', extra?: Record<string, an
 // =========================
 // KONVERSI: LEAD FORM
 // =========================
+// Diperbarui agar menerima userData fleksibel (termasuk campus, month, ph, em, dll)
 export const trackLead = (
   label: TrackLabel = 'form_submit',
-  userData?: { ph?: string; em?: string; fn?: string; ln?: string },
+  userData?: { ph?: string; em?: string; fn?: string; ln?: string; campus?: string; month?: string; [key: string]: any },
   extra?: Record<string, any>
 ) => {
   const segment = getSegment();
@@ -106,14 +106,15 @@ export const trackLead = (
   metaTrack('Lead', event_id, {
     content_name: labelName,
     segment,
+    ...userData,
     ...extra,
   });
 
-  // 2. Meta CAPI (Server) -> Mengirim data form (ph, em, fn, ln) untuk di-hash API handler
+  // 2. Meta CAPI (Server) -> Mengirim data form untuk diproses oleh API handler
   sendCapi(event_id, labelName, 'inquiry', userData);
 
   // 3. Google Analytics 4
-  gaTrack('generate_lead', { event_label: label, segment, ...extra });
+  gaTrack('generate_lead', { event_label: label, segment, ...userData, ...extra });
 
   return event_id;
 };
