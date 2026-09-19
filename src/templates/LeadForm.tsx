@@ -24,11 +24,6 @@ const LeadForm = () => {
   const [loading, setLoading] = useState(false);
   const segment = getSegment();
 
-  const getCookie = (name: string) => {
-    if (typeof document === 'undefined') return undefined;
-    return document.cookie.split('; ').find(row => row.startsWith(name + '='))?.split('=')[1];
-  };
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -56,42 +51,29 @@ const LeadForm = () => {
       setLoading(true);
 
       const namaParts = name.split(' ');
-      const fbc = getCookie('_fbc');
-      const fbp = getCookie('_fbp');
 
-      // PERBAIKAN DI BARIS INI (ditambahkan `as any`)
-      const event_id = trackLead('graduation_form', {
-        campus: form.campus,
-        month: form.month,
-      } as any);
+      // 1. Kirim Pixel Browser + CAPI Server sekaligus via trackLead
+      const event_id = trackLead(
+        'graduation_form',
+        {
+          ph: wa,
+          em: email,
+          fn: namaParts[0],
+          ln: namaParts.slice(1).join(' '),
+          campus,
+          month,
+        },
+        { campus, month }
+      );
 
+      // 2. Simpan ke database / Google Sheets internal kamu
       await fetch('/api/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, segment }),
+        body: JSON.stringify({ ...form, segment, event_id }),
       });
 
-      await fetch('/api/meta-capi', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          service: 'graduation',
-          type: 'inquiry',
-          segment,
-          event_id,
-          value: 0,
-          url: window.location.href,
-          user_data: { 
-            ph: wa, 
-            em: email,
-            fn: namaParts[0],
-            ln: namaParts.slice(1).join(' '),
-            fbc: fbc,
-            fbp: fbp 
-          }
-        }),
-      });
-
+      // 3. Redirection ke WhatsApp Admin
       const message = `Halo Admin Radeya 👋\n\nSaya mau tanya info paket & pricelist graduation photoshoot.\n\nNama: ${name}\nKampus: ${campus}\nPerkiraan Wisuda: ${month}\n\nBoleh dibantu info detail paketnya ya 🙏`;
 
       setForm({ name: '', campus: '', month: '', email: '', wa: '' });
