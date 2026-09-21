@@ -40,9 +40,16 @@ const Hero = () => {
       <div className="fixed left-0 top-0 z-50 flex w-full justify-end px-5 py-5 md:px-16 md:py-8">
         <button
           onClick={() => openWA('hero_wa')}
-          className="rounded-full border border-white/20 px-4 py-2 text-[9px] tracking-[0.22em] text-white transition hover:bg-white hover:text-black md:px-5 md:text-[11px]"
+          className="flex items-center gap-1.5 rounded-full border border-white/30 bg-black/40 px-3.5 py-2 text-[9px] tracking-[0.18em] text-white backdrop-blur-md transition hover:bg-white hover:text-black md:px-5 md:py-2.5 md:text-[11px]"
         >
-          KONSULTASI GRATIS →
+          <Image
+            src="/assets/images/Whatsapp.png"
+            alt="WhatsApp"
+            width={14}
+            height={14}
+            className="h-3.5 w-3.5 md:h-4 md:w-4"
+          />
+          <span>KONSULTASI VIA WA →</span>
         </button>
       </div>
 
