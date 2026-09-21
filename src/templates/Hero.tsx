@@ -1,8 +1,16 @@
 'use client';
 
+import Image from 'next/image';
 import { Background } from '../background/Background';
 import { Button } from '../button/Button';
 import { trackWA } from '@/utils/tracking';
+
+// Mencegah error TypeScript pada window.fbq saat build
+declare global {
+  interface Window {
+    fbq?: (...args: any[]) => void;
+  }
+}
 
 const Hero = () => {
 
@@ -12,13 +20,11 @@ const Hero = () => {
     const message = "Halo Radeya, saya tertarik untuk Tanya tanya jasa foto wisuda.";
     const url = `https://wa.me/628211251570?text=${encodeURIComponent(message)}`;
 
-    setTimeout(() => {
-      window.open(url, '_blank');
-    }, 150);
+    // Menggunakan window.location.href agar langsung redirect tanpa diblokir popup blocker di Safari/In-App Browser Instagram
+    window.location.href = url;
   };
 
   const firePricelistEvent = () => {
-    // Menggunakan ViewContent agar tidak terbaca sebagai Lead/Prospek palsu
     if (typeof window !== 'undefined' && window.fbq) {
       window.fbq('track', 'ViewContent', {
         content_name: 'Hero_CTA_Pricelist_Click',
@@ -45,9 +51,11 @@ const Hero = () => {
         onClick={() => openWA('floating_wa')}
         className="fixed bottom-5 right-5 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-lg transition hover:scale-110 md:bottom-6 md:right-6 md:h-14 md:w-14"
       >
-        <img
+        <Image
           src="/assets/images/Whatsapp.png"
           alt="WhatsApp"
+          width={28}
+          height={28}
           className="h-5 w-5 md:h-7 md:w-7"
         />
       </button>
@@ -55,10 +63,13 @@ const Hero = () => {
       {/* HERO */}
       <section className="relative min-h-screen overflow-hidden">
 
-        <img
+        <Image
           src="/assets/images/ADS00680.jpg"
           alt="Graduation"
-          className="absolute inset-0 h-full w-full object-cover object-center"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
         />
 
         <div className="absolute inset-0 bg-black/50" />
@@ -82,11 +93,9 @@ const Hero = () => {
 
             {/* CTA */}
             <div className="mt-6 md:mt-12 scale-75 origin-left md:scale-100">
-              <div onClick={firePricelistEvent}>
-                <a href="#leadform">
-                  <Button>Get Pricelist →</Button>
-                </a>
-              </div>
+              <a href="#leadform" onClick={firePricelistEvent}>
+                <Button>Get Pricelist →</Button>
+              </a>
             </div>
 
           </div>
